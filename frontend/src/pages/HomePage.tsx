@@ -77,43 +77,60 @@ export const HomePage: React.FC = () => {
           </h1>
 
           <p className="mt-6 max-w-2xl text-neutral-300 text-sm sm:text-base md:text-lg font-normal leading-relaxed drop-shadow">
-            Experience the pinnacle of college eFootball. 16 elite squads battling through 4 groups
-            and high-voltage knockout stages for eternal glory at TKM College of Engineering.
+            Experience the pinnacle of college eFootball. {tournament?.team_count || 21} elite squads competing across{' '}
+            {tournament?.groups_count || (standings.length > 0 ? standings.length : 6)} groups and high-voltage knockout stages for eternal glory at TKM College of Engineering.
           </p>
 
-          {/* Key Stat Cards */}
+          {/* Key Stat Cards: Live Dashboard Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-10 w-full max-w-3xl">
-            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center">
+            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center relative overflow-hidden group hover:border-brand-red transition-all shadow-lg">
               <span className="block font-display text-3xl sm:text-4xl text-white tabular-nums">
-                {tournament?.team_count || 16}
+                {tournament?.team_count ?? (standings.reduce((acc, g) => acc + g.standings.length, 0) || 21)}
               </span>
               <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
-                Squads
+                Teams Registered
               </span>
+              <div className="flex items-center justify-center space-x-1 mt-1 text-[10px] text-emerald-400 font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>LIVE UPDATES</span>
+              </div>
             </div>
-            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center">
+
+            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center relative overflow-hidden group hover:border-brand-red transition-all shadow-lg">
+              <span className="block font-display text-3xl sm:text-4xl text-brand-red tabular-nums">
+                {tournament?.groups_count || (standings.length > 0 ? standings.length : 6)}
+              </span>
+              <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
+                Groups Formed
+              </span>
+              <div className="flex items-center justify-center space-x-1 mt-1 text-[10px] text-neutral-400 font-mono">
+                <span>MAX 4 TEAMS / GRP</span>
+              </div>
+            </div>
+
+            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center relative overflow-hidden group hover:border-brand-red transition-all shadow-lg">
               <span className="block font-display text-3xl sm:text-4xl text-white tabular-nums">
-                {tournament?.match_count || 31}
+                {tournament?.match_count || (recentMatches.length + upcomingMatches.length) || 0}
               </span>
               <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
                 Total Matches
               </span>
+              <div className="flex items-center justify-center space-x-1 mt-1 text-[10px] text-neutral-400 font-mono">
+                <span>{tournament?.completed_matches || 0} COMPLETED</span>
+              </div>
             </div>
-            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center">
-              <span className="block font-display text-3xl sm:text-4xl text-brand-red tabular-nums">
-                {tournament?.completed_matches || 0}
-              </span>
-              <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
-                Completed
-              </span>
-            </div>
-            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center">
-              <span className="block font-display text-3xl sm:text-4xl text-emerald-400 tabular-nums">
-                {tournament?.status || 'GROUP_STAGE'}
+
+            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center relative overflow-hidden group hover:border-brand-red transition-all shadow-lg">
+              <span className="block font-display text-2xl sm:text-3xl text-emerald-400 tracking-wider">
+                {tournament?.status || 'GROUP STAGE'}
               </span>
               <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
                 Current Stage
               </span>
+              <div className="flex items-center justify-center space-x-1 mt-1 text-[10px] text-emerald-400 font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                <span>SYNCHRONIZED</span>
+              </div>
             </div>
           </div>
 
@@ -251,8 +268,8 @@ export const HomePage: React.FC = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {(Array.isArray(standings) ? standings : []).slice(0, 4).map((g) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {(Array.isArray(standings) ? standings : []).map((g) => (
               <StandingsTable key={g.group_name} groupData={g} />
             ))}
           </div>

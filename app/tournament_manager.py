@@ -5,6 +5,8 @@ and tournament settings.
 """
 
 import random
+import math
+import string
 import logging
 from typing import List, Dict, Any, Optional, Tuple
 
@@ -173,30 +175,47 @@ class TournamentManager:
     def preview_team_distribution(
         self,
         randomize: bool = False,
-        seed_aware: bool = True
+        seed_aware: bool = True,
+        max_teams_per_group: int = 4,
+        auto_create_groups: bool = True
     ) -> Dict[str, List[Dict[str, Any]]]:
         """
         Generate a proposed group allocation for all confirmed teams.
+        If auto_create_groups=True or no groups exist in the database,
+        automatically derives groups ('Group A', 'Group B', ...) with at most
+        max_teams_per_group (default: 4) teams per group.
         Returns a dict mapping group_name -> list of team dicts.
-        Uses real randomization if randomize=True.
-        Respects seeds if seed_aware=True.
         """
-        groups = self.get_groups()
-        if not groups:
-            raise ValueError("No groups available. Please create groups first.")
-
         # Fetch all confirmed teams
         teams_rows = self.db.execute_query("""
             SELECT id, name, seed FROM teams WHERE status = 'Confirmed' ORDER BY seed DESC, name ASC;
         """)
-        teams = [{"id": r["id"], "name": r["name"], "seed": r["seed"]} for r in teams_rows]
+        teams = [{"id": r["id"], "name": r["name"], "seed": r["seed"] or 0} for r in teams_rows]
         if not teams:
-            raise ValueError("No confirmed teams to distribute.")
+            raise ValueError("No confirmed teams to distribute. Please confirm team registrations first.")
 
-        # Group buckets
-        allocations = {g.name: [] for g in groups}
-        group_names = [g.name for g in groups]
-        num_g = len(group_names)
+        num_teams = len(teams)
+        existing_groups = self.get_groups()
+
+        # If auto_create_groups is True, or if no groups exist yet:
+        if auto_create_groups or not existing_groups:
+            limit = max(2, max_teams_per_group)
+            num_g = max(1, math.ceil(num_teams / limit))
+            group_names = [
+                f"Group {string.ascii_uppercase[i]}" if i < 26 else f"Group {i+1}"
+                for i in range(num_g)
+            ]
+        else:
+            group_names = [g.name for g in existing_groups]
+            num_g = len(group_names)
+
+        # Initialize group buckets
+        allocations = {gn: [] for gn in group_names}
+
+        # Calculate exact target capacities so all groups have <= max_teams_per_group
+        base_size = num_teams // num_g
+        remainder = num_teams % num_g
+        capacities = {gn: base_size + (1 if idx < remainder else 0) for idx, gn in enumerate(group_names)}
 
         if seed_aware:
             # Separate seeded (seed > 0) and unseeded
@@ -207,39 +226,72 @@ class TournamentManager:
                 random.shuffle(seeded)
                 random.shuffle(unseeded)
 
-            # Distribute seeded teams across groups (snake or round-robin)
+            # Distribute seeded teams across groups first (round robin)
             for idx, t in enumerate(seeded):
                 g_target = group_names[idx % num_g]
                 allocations[g_target].append(t)
 
-            # Distribute unseeded teams
-            # Balance the groups with least teams first
+            # Distribute unseeded teams into groups respecting their capacity
             for t in unseeded:
-                # Find group with fewest teams
-                min_len = min(len(allocations[gn]) for gn in group_names)
-                candidate_groups = [gn for gn in group_names if len(allocations[gn]) == min_len]
-                target_g = random.choice(candidate_groups) if randomize else candidate_groups[0]
+                available_groups = [gn for gn in group_names if len(allocations[gn]) < capacities[gn]]
+                if not available_groups:
+                    available_groups = group_names
+
+                min_len = min(len(allocations[gn]) for gn in available_groups)
+                tie_groups = [gn for gn in available_groups if len(allocations[gn]) == min_len]
+                target_g = random.choice(tie_groups) if randomize else tie_groups[0]
                 allocations[target_g].append(t)
         else:
             team_pool = list(teams)
             if randomize:
                 random.shuffle(team_pool)
 
-            for idx, t in enumerate(team_pool):
-                allocations[group_names[idx % num_g]].append(t)
+            for t in team_pool:
+                available_groups = [gn for gn in group_names if len(allocations[gn]) < capacities[gn]]
+                if not available_groups:
+                    available_groups = group_names
+
+                min_len = min(len(allocations[gn]) for gn in available_groups)
+                tie_groups = [gn for gn in available_groups if len(allocations[gn]) == min_len]
+                target_g = random.choice(tie_groups) if randomize else tie_groups[0]
+                allocations[target_g].append(t)
 
         return allocations
 
-    def apply_group_allocation(self, allocation: Dict[str, List[Dict[str, Any]]]) -> None:
-        """Apply confirmed group allocation to the database."""
-        # Find group IDs
-        groups = {g.name: g.id for g in self.get_groups()}
-
+    def apply_group_allocation(self, allocation: Dict[str, List[Dict[str, Any]]], clean_empty_groups: bool = False) -> None:
+        """
+        Apply confirmed group allocation to the database.
+        Automatically creates groups if they do not exist.
+        """
         with self.db.transaction() as conn:
             cursor = conn.cursor()
+
+            # Map existing groups
+            cursor.execute("SELECT id, name FROM groups;")
+            groups = {r["name"]: r["id"] for r in cursor.fetchall()}
+
+            cursor.execute("SELECT COALESCE(MAX(display_order), 0) AS m FROM groups;")
+            max_order_row = cursor.fetchone()
+            max_order = max_order_row["m"] if max_order_row else 0
+
+            # Ensure all groups in allocation exist
+            for group_name in allocation.keys():
+                if group_name not in groups:
+                    max_order += 1
+                    cursor.execute(
+                        "INSERT INTO groups (name, display_order) VALUES (?, ?);",
+                        (group_name, max_order)
+                    )
+                    groups[group_name] = cursor.lastrowid
+
+            # Assign teams to their designated group
             for group_name, team_list in allocation.items():
-                group_id = groups.get(group_name)
-                if not group_id:
-                    continue
+                group_id = groups[group_name]
                 for t in team_list:
                     cursor.execute("UPDATE teams SET group_id = ? WHERE id = ?;", (group_id, t["id"]))
+
+            if clean_empty_groups:
+                cursor.execute("""
+                    DELETE FROM groups
+                    WHERE id NOT IN (SELECT DISTINCT group_id FROM teams WHERE group_id IS NOT NULL);
+                """)

@@ -36,6 +36,7 @@ def get_public_tournament_summary() -> Dict[str, Any]:
     settings = db.get_all_settings()
 
     total_teams = db.execute_one("SELECT COUNT(*) AS c FROM teams WHERE status = 'Confirmed';")["c"]
+    total_groups = db.execute_one("SELECT COUNT(*) AS c FROM groups;")["c"]
     total_matches = db.execute_one("SELECT COUNT(*) AS c FROM matches;")["c"]
     completed_matches = db.execute_one("SELECT COUNT(*) AS c FROM matches WHERE status IN ('Completed', 'Walkover');")["c"]
     pending_matches = total_matches - completed_matches
@@ -76,8 +77,13 @@ def get_public_tournament_summary() -> Dict[str, Any]:
             "loss_points": int(settings.get("loss_points", "0")),
         },
         "default_venue": settings.get("default_venue", "Minaram Stadium"),
+        "team_count": total_teams,
+        "groups_count": total_groups,
+        "match_count": total_matches,
+        "completed_matches": completed_matches,
         "stats": {
             "teams_count": total_teams,
+            "groups_count": total_groups,
             "total_matches": total_matches,
             "completed_matches": completed_matches,
             "pending_matches": pending_matches,

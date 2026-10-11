@@ -52,7 +52,7 @@ class GroupsView(ctk.CTkScrollableFrame):
 
         ctk.CTkButton(
             btn_box,
-            text="⚡ Auto Distribute",
+            text="⚡ Auto Distribute (Max 4)",
             fg_color=theme.BG_CARD,
             border_color=theme.ACCENT_GREEN,
             border_width=1,
@@ -64,7 +64,7 @@ class GroupsView(ctk.CTkScrollableFrame):
 
         ctk.CTkButton(
             btn_box,
-            text="🎲 Randomize Draw",
+            text="🎲 Randomize Draw (Max 4)",
             fg_color=theme.ACCENT_GREEN,
             hover_color=theme.ACCENT_GREEN_HOVER,
             text_color=theme.TEXT_DARK,
@@ -244,7 +244,7 @@ class GroupsView(ctk.CTkScrollableFrame):
     # ----------------------------------------------------
     # Distribution Preview & Randomize Dialog
     # ----------------------------------------------------
-    def open_distribution_preview(self, randomize: bool = False):
+    def open_distribution_preview(self, randomize: bool = False, max_teams_per_group: int = 4):
         has_conflicts, _, _ = self.tourn_mgr.check_existing_fixtures_or_results()
         if has_conflicts:
             if not messagebox.askyesno(
@@ -254,19 +254,28 @@ class GroupsView(ctk.CTkScrollableFrame):
                 return
 
         try:
-            alloc = self.tourn_mgr.preview_team_distribution(randomize=randomize, seed_aware=True)
+            alloc = self.tourn_mgr.preview_team_distribution(
+                randomize=randomize,
+                seed_aware=True,
+                max_teams_per_group=max_teams_per_group,
+                auto_create_groups=True
+            )
         except Exception as e:
             messagebox.showerror("Cannot Distribute", str(e))
             return
 
-        mode_title = "Randomized Draw Preview" if randomize else "Auto Distribution Preview"
-        modal = BaseModal(self, title=mode_title, width=540, height=480)
+        total_teams = sum(len(tl) for tl in alloc.values())
+        num_g = len(alloc)
+        mode_title = "🎲 Randomized Auto Draw" if randomize else "⚡ Auto Distribution Preview"
+        modal = BaseModal(self, title=f"{mode_title} (Max {max_teams_per_group}/Group)", width=560, height=500)
 
         ctk.CTkLabel(
             modal.body_frame,
-            text="Review the proposed group assignments below. Click 'Apply Draw' to confirm.",
+            text=f"Auto-generated {num_g} groups for {total_teams} confirmed teams (max {max_teams_per_group} teams per group: {', '.join(alloc.keys())}).\nReview proposed assignments below and click 'Apply Draw & Create Groups' to confirm.",
             font=ctk.CTkFont(size=11),
-            text_color=theme.TEXT_MUTED
+            text_color=theme.TEXT_MUTED,
+            justify="left",
+            wraplength=500
         ).pack(anchor="w", pady=(0, 10))
 
         scroll = ctk.CTkScrollableFrame(modal.body_frame, fg_color="transparent", height=300)
@@ -287,14 +296,14 @@ class GroupsView(ctk.CTkScrollableFrame):
         act_row.pack(fill="x", pady=(12, 0))
 
         def apply_draw():
-            self.tourn_mgr.apply_group_allocation(alloc)
+            self.tourn_mgr.apply_group_allocation(alloc, clean_empty_groups=True)
             modal.destroy()
-            messagebox.showinfo("Success", "Group allocations applied successfully!")
+            messagebox.showinfo("Success", f"{num_g} groups generated and {total_teams} teams assigned successfully!")
             self.load_groups_view()
 
         ctk.CTkButton(
             act_row,
-            text="Apply Allocation",
+            text="Apply Draw & Create Groups",
             fg_color=theme.ACCENT_GREEN,
             hover_color=theme.ACCENT_GREEN_HOVER,
             text_color=theme.TEXT_DARK,
@@ -311,7 +320,7 @@ class GroupsView(ctk.CTkScrollableFrame):
                 border_width=1,
                 hover_color=theme.BG_CARD_HOVER,
                 text_color=theme.TEXT_PRIMARY,
-                command=lambda: [modal.destroy(), self.open_distribution_preview(randomize=True)]
+                command=lambda: [modal.destroy(), self.open_distribution_preview(randomize=True, max_teams_per_group=max_teams_per_group)]
             ).pack(side="right", padx=8)
 
         ctk.CTkButton(

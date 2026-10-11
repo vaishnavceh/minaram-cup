@@ -4,6 +4,7 @@ export interface PublicTournament {
   edition: string;
   status: string;
   team_count: number;
+  groups_count: number;
   match_count: number;
   completed_matches: number;
   group_stage_completed: boolean;

@@ -149,8 +149,9 @@ export const api = {
       name: raw.name || 'Minaram Cup',
       edition: raw.edition || '2026 Edition',
       status: raw.status || (raw.stats?.completed_matches > 0 ? 'IN PROGRESS' : 'GROUP STAGE'),
-      team_count: raw.stats?.teams_count ?? raw.team_count ?? 8,
-      match_count: raw.stats?.total_matches ?? raw.match_count ?? 15,
+      team_count: raw.stats?.teams_count ?? raw.team_count ?? 0,
+      groups_count: raw.stats?.groups_count ?? raw.groups_count ?? 0,
+      match_count: raw.stats?.total_matches ?? raw.match_count ?? 0,
       completed_matches: raw.stats?.completed_matches ?? raw.completed_matches ?? 0,
       group_stage_completed: Boolean(raw.group_stage_completed),
     };
