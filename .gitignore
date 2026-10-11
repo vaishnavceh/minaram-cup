@@ -42,3 +42,5 @@ Thumbs.db
 logs/minaram_cup.log
 data/cloud_sync_config.json
 backups/*.db
+*.db-wal
+*.db-shm

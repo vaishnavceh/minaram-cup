@@ -4,6 +4,8 @@ Protected with Bearer token authentication.
 Allows authorized administrators to manage registrations, teams, fixtures, and results.
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Body, status, File, UploadFile
@@ -14,6 +16,7 @@ from app.registration_service import RegistrationService
 from app.team_manager import TeamManager
 from app.tournament_manager import TournamentManager
 from app.fixture_generator import FixtureGenerator
+from app.knockout_manager import KnockoutManager
 from app.results_manager import ResultsManager
 from app.backup_service import BackupService
 from backend.auth import get_current_admin, create_access_token, ADMIN_USERNAME, ADMIN_PASSWORD
@@ -25,6 +28,7 @@ reg_svc = RegistrationService(db)
 team_mgr = TeamManager(db)
 tourn_mgr = TournamentManager(db)
 fix_gen = FixtureGenerator(db)
+ko_mgr = KnockoutManager(db)
 res_mgr = ResultsManager(db)
 backup_svc = BackupService(db)
 

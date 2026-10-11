@@ -4,6 +4,8 @@ Provides tournament summary, teams, fixtures, results, standings, and brackets.
 STRICT PRIVACY ENFORCEMENT: Never exposes participant phone numbers, notes, or private logs.
 """
 
+from __future__ import annotations
+
 import json
 from pathlib import Path
 from typing import Dict, Any, List, Optional

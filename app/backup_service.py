@@ -3,12 +3,14 @@ Backup and Restore management, data safety transactions,
 and sample data generator for Minaram Cup Tournament Management System.
 """
 
+from __future__ import annotations
+
 import shutil
 import sqlite3
 import logging
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 
 from app.database import Database
 
