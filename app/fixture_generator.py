@@ -89,7 +89,8 @@ class FixtureGenerator:
         double_round: bool = False,
         day_end_time: str = "20:00",
         end_date: str = "",
-        days_per_matchweek: int = 3
+        days_per_matchweek: int = 3,
+        target_matchweek: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """
         Generate balanced, round-interleaved fixtures for all groups with:
@@ -98,6 +99,7 @@ class FixtureGenerator:
         3. Matchweek timeline splitting (1 match per team every days_per_matchweek days, e.g. 3 days).
         4. Operating hours limit (matches strictly within daily kick-off window, never past midnight).
         5. Zero double-booking of teams in the same time slot.
+        6. Support for generating all matchweeks or isolating a specific target matchweek.
         """
         groups = self.db.execute_query("SELECT id, name FROM groups ORDER BY display_order ASC, name ASC;")
         if not groups:
@@ -168,9 +170,31 @@ class FixtureGenerator:
                 pass
 
         fixtures: List[Dict[str, Any]] = []
-        match_num = 1
 
-        for round_idx in range(max_rounds):
+        # Determine starting match number and rounds to schedule
+        if target_matchweek is not None and target_matchweek > 1:
+            existing = self.db.execute_one(
+                "SELECT COALESCE(MAX(match_number), 0) AS m FROM matches WHERE round_number < ?;",
+                (target_matchweek,)
+            )
+            if existing and existing["m"] > 0:
+                match_num = existing["m"] + 1
+            else:
+                prior_matches = 0
+                for r in range(target_matchweek - 1):
+                    for g_info in group_data.values():
+                        if r < len(g_info["rounds"]):
+                            prior_matches += len(g_info["rounds"][r])
+                match_num = prior_matches + 1
+            rounds_to_schedule = [target_matchweek - 1] if (target_matchweek - 1 < max_rounds) else []
+        elif target_matchweek == 1:
+            match_num = 1
+            rounds_to_schedule = [0]
+        else:
+            match_num = 1
+            rounds_to_schedule = list(range(max_rounds))
+
+        for round_idx in rounds_to_schedule:
             mw_number = round_idx + 1
             # Each matchweek is spaced out by days_per_matchweek (e.g. 3 days apart)
             mw_date = curr_date + timedelta(days=round_idx * days_per_matchweek)
@@ -250,7 +274,8 @@ class FixtureGenerator:
         double_round: bool = False,
         day_end_time: str = "20:00",
         end_date: str = "",
-        days_per_matchweek: int = 3
+        days_per_matchweek: int = 3,
+        target_matchweek: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """Generate proposed fixtures for a full league tournament with matchweek spacing, multi-pitch support and operating hours."""
         teams_rows = self.db.execute_query(
@@ -308,9 +333,27 @@ class FixtureGenerator:
                 pass
 
         fixtures: List[Dict[str, Any]] = []
-        match_num = 1
 
-        for round_idx, r_matches in enumerate(rounds, start=1):
+        if target_matchweek is not None and target_matchweek > 1:
+            existing = self.db.execute_one(
+                "SELECT COALESCE(MAX(match_number), 0) AS m FROM matches WHERE round_number < ?;",
+                (target_matchweek,)
+            )
+            if existing and existing["m"] > 0:
+                match_num = existing["m"] + 1
+            else:
+                prior_matches = sum(len(rounds[r]) for r in range(min(target_matchweek - 1, len(rounds))))
+                match_num = prior_matches + 1
+            rounds_indices = [target_matchweek] if (target_matchweek <= len(rounds)) else []
+        elif target_matchweek == 1:
+            match_num = 1
+            rounds_indices = [1]
+        else:
+            match_num = 1
+            rounds_indices = list(range(1, len(rounds) + 1))
+
+        for round_idx in rounds_indices:
+            r_matches = rounds[round_idx - 1]
             mw_date = curr_date + timedelta(days=(round_idx - 1) * days_per_matchweek)
             slot_dt = datetime.combine(mw_date, start_t)
             slot_end_dt = datetime.combine(mw_date, end_t)
@@ -362,16 +405,56 @@ class FixtureGenerator:
 
         return fixtures
 
+    def get_total_matchweeks(self, format_type: str = "Group Stage", double_round: bool = False) -> int:
+        """Calculate total number of matchweeks for the competition."""
+        if "League" in format_type:
+            teams_rows = self.db.execute_query("SELECT id FROM teams WHERE status = 'Confirmed';")
+            n = len(teams_rows)
+            if n < 2:
+                return 0
+            base_rounds = n - 1 if n % 2 == 0 else n
+            return base_rounds * 2 if double_round else base_rounds
+        else:
+            groups = self.db.execute_query("SELECT id FROM groups;")
+            max_teams = 0
+            for g in groups:
+                cnt = self.db.execute_one(
+                    "SELECT COUNT(*) AS c FROM teams WHERE group_id = ? AND status = 'Confirmed';",
+                    (g["id"],)
+                )["c"]
+                if cnt > max_teams:
+                    max_teams = cnt
+            if max_teams < 2:
+                num_groups = int(self.db.get_setting("num_groups", "2"))
+                total_teams = self.db.execute_one("SELECT COUNT(*) AS c FROM teams WHERE status = 'Confirmed';")["c"]
+                if total_teams >= 2 and num_groups > 0:
+                    per_group = max(2, (total_teams + num_groups - 1) // num_groups)
+                    return per_group - 1 if per_group % 2 == 0 else per_group
+                return 3
+            base_rounds = max_teams - 1 if max_teams % 2 == 0 else max_teams
+            return base_rounds * 2 if double_round else base_rounds
+
     # ----------------------------------------------------
     # Save Generated Fixtures
     # ----------------------------------------------------
-    def save_fixtures(self, fixtures: List[Dict[str, Any]], clear_existing: bool = False) -> int:
-        """Save a list of fixture dictionaries to database."""
+    def save_fixtures(
+        self,
+        fixtures: List[Dict[str, Any]],
+        clear_existing: bool = False,
+        clear_round: Optional[int] = None
+    ) -> int:
+        """
+        Save a list of fixture dictionaries to database.
+        Supports clearing all existing fixtures, or clearing only a specific round/matchweek.
+        """
         with self.db.transaction(action="fixtures_saved") as conn:
             cursor = conn.cursor()
             if clear_existing:
                 cursor.execute("DELETE FROM match_audit_log;")
                 cursor.execute("DELETE FROM matches;")
+            elif clear_round is not None:
+                cursor.execute("DELETE FROM matches WHERE round_number = ?;", (clear_round,))
+                cursor.execute("DELETE FROM match_audit_log WHERE match_id NOT IN (SELECT id FROM matches);")
 
             count = 0
             for f in fixtures:

@@ -387,3 +387,70 @@ def test_auto_backup_on_mutation_and_zero_data_loss(temp_db):
     backup_svc.flush()
     history_files = list(backup_svc.history_dir.glob("minaram_backup_*.db"))
     assert len(history_files) <= 5
+
+
+def test_selective_matchweek_generation_and_clearing(temp_db):
+    from app.fixture_generator import FixtureGenerator
+
+    tourn_mgr = TournamentManager(temp_db)
+    tm = TeamManager(temp_db)
+    fg = FixtureGenerator(temp_db)
+
+    # Create 2 groups of 4 teams
+    g1_id = tourn_mgr.create_group("Group A")
+    g2_id = tourn_mgr.create_group("Group B")
+
+    for i in range(1, 5):
+        tm.create_team(name=f"Team A{i}", group_id=g1_id)
+        tm.create_team(name=f"Team B{i}", group_id=g2_id)
+
+    # Verify total matchweeks calculation
+    assert fg.get_total_matchweeks("groups", double_round=False) == 3
+    assert fg.get_total_matchweeks("groups", double_round=True) == 6
+
+    # 1. Generate full schedule (3 matchweeks, 2 groups * 6 matches = 12 matches)
+    full_preview = fg.preview_group_fixtures(
+        start_date="2026-10-15",
+        start_time="09:00",
+        match_duration_mins=30,
+        venues=["Pitch 1", "Pitch 2"],
+        days_per_matchweek=3,
+        double_round=False
+    )
+    assert len(full_preview) == 12
+    saved_count = fg.save_fixtures(full_preview, clear_existing=True)
+    assert saved_count == 12
+
+    all_fixtures = fg.get_matches()
+    assert len(all_fixtures) == 12
+    rounds = {f.round_number for f in all_fixtures}
+    assert rounds == {1, 2, 3}
+
+    # 2. Generate ONLY Matchweek 2
+    mw2_preview = fg.preview_group_fixtures(
+        start_date="2026-10-15",
+        start_time="09:00",
+        match_duration_mins=30,
+        venues=["Pitch 1", "Pitch 2"],
+        days_per_matchweek=3,
+        double_round=False,
+        target_matchweek=2
+    )
+    # Each group has 2 matches per round -> 4 matches total for MW2
+    assert len(mw2_preview) == 4
+    for f in mw2_preview:
+        assert f["round_number"] == 2
+        assert f["scheduled_date"] == "2026-10-18"  # 2026-10-15 + 3 days
+
+    # 3. Save MW2 with clear_round=2 (should keep MW1 and MW3 untouched)
+    mw2_saved = fg.save_fixtures(mw2_preview, clear_existing=False, clear_round=2)
+    assert mw2_saved == 4
+
+    # Total in DB should still be 12 (4 in MW1, 4 in MW2, 4 in MW3)
+    updated_fixtures = fg.get_matches()
+    assert len(updated_fixtures) == 12
+    assert len([f for f in updated_fixtures if f.round_number == 1]) == 4
+    assert len([f for f in updated_fixtures if f.round_number == 2]) == 4
+    assert len([f for f in updated_fixtures if f.round_number == 3]) == 4
+
+

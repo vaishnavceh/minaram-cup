@@ -127,18 +127,29 @@ class BackupService:
             if hasattr(self, "_backup_queue"):
                 self._backup_queue.put(action)
 
-    def flush(self, timeout: float = 5.0) -> None:
-        """Block until all queued backups have finished writing to disk."""
+    def flush(self, timeout: float = 3.0) -> None:
+        """Block until all queued backups have finished writing to disk or timeout expires."""
         if hasattr(self, "_backup_queue"):
-            self._backup_queue.join()
+            deadline = time.time() + timeout
+            while getattr(self._backup_queue, "unfinished_tasks", 0) > 0 and time.time() < deadline:
+                time.sleep(0.02)
 
     def stop(self) -> None:
         """Cleanly terminate the worker thread and flush pending backups."""
+        self.flush(timeout=1.5)
         if hasattr(self, "_stop_event"):
             self._stop_event.set()
-        self.flush()
+        # Drain any leftover tasks in queue to prevent lingering unjoined items
+        if hasattr(self, "_backup_queue"):
+            while not self._backup_queue.empty():
+                try:
+                    self._backup_queue.get_nowait()
+                    self._backup_queue.task_done()
+                except (queue.Empty, ValueError):
+                    break
         if hasattr(self, "_worker_thread") and self._worker_thread.is_alive():
-            self._worker_thread.join(timeout=1.5)
+            self._worker_thread.join(timeout=1.0)
+
 
     # ----------------------------------------------------
     # Primary Auto-Backup Engine

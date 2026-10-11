@@ -299,18 +299,84 @@ class FixturesView(ctk.CTkScrollableFrame):
     # Fixture Generation Wizard Modal
     # ----------------------------------------------------
     def open_generate_wizard(self):
-        modal = BaseModal(self, title="Generate Fixtures Wizard", width=620, height=580)
+        modal = BaseModal(self, title="Generate Fixtures Wizard", width=680, height=670)
+        modal.resizable(True, True)
+        modal.minsize(620, 560)
 
-        ctk.CTkLabel(modal.body_frame, text="Tournament Format:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w", pady=(2, 2))
+        # ----------------------------------------------------
+        # Pinned Bottom Footer Bar (ALWAYS VISIBLE, NEVER CUT OFF)
+        # ----------------------------------------------------
+        footer_bar = ctk.CTkFrame(modal.body_frame, fg_color=theme.BG_CARD, height=54, corner_radius=8, border_color=theme.BORDER_COLOR, border_width=1)
+        footer_bar.pack(side="bottom", fill="x", pady=(8, 0))
+        footer_bar.pack_propagate(False)
+
+        footer_left = ctk.CTkFrame(footer_bar, fg_color="transparent")
+        footer_left.pack(side="left", padx=12, pady=8)
+
+        status_lbl = ctk.CTkLabel(footer_left, text="Ready to preview schedule", font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED)
+        status_lbl.pack(side="left", padx=(0, 10))
+
+        footer_right = ctk.CTkFrame(footer_bar, fg_color="transparent")
+        footer_right.pack(side="right", padx=12, pady=8)
+
+        # ----------------------------------------------------
+        # Scrollable Form Body
+        # ----------------------------------------------------
+        scroll_content = ctk.CTkScrollableFrame(modal.body_frame, fg_color="transparent")
+        scroll_content.pack(side="top", fill="both", expand=True, pady=(0, 4))
+
+        # 1. Tournament Format
+        ctk.CTkLabel(scroll_content, text="Tournament Format:", font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_SECONDARY).pack(anchor="w", pady=(0, 2))
         format_menu = ctk.CTkOptionMenu(
-            modal.body_frame,
-            values=["Group Stage (Round Robin within Groups)", "League (Single Round Robin)", "League (Double Round Robin)", "Knockout Bracket (From Group Qualifiers)"],
+            scroll_content,
+            values=[
+                "Group Stage (Round Robin within Groups)",
+                "League (Single Round Robin)",
+                "League (Double Round Robin)",
+                "Knockout Bracket (From Group Qualifiers)"
+            ],
             fg_color=theme.BG_INPUT
         )
-        format_menu.pack(fill="x", pady=(0, 8))
+        format_menu.pack(fill="x", pady=(0, 10))
 
-        # Row 1: Start Date and End Date
-        row1 = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
+        # 2. Matchweek Scope Selector Card
+        mw_card = ctk.CTkFrame(scroll_content, fg_color=theme.BG_INPUT, corner_radius=8, border_color=theme.BORDER_COLOR, border_width=1)
+        mw_card.pack(fill="x", pady=(0, 10))
+
+        mw_card_inner = ctk.CTkFrame(mw_card, fg_color="transparent")
+        mw_card_inner.pack(fill="x", padx=12, pady=10)
+
+        ctk.CTkLabel(
+            mw_card_inner,
+            text="🎯 Matchweek Selection (Generate All vs Specific Matchweek):",
+            font=ctk.CTkFont(size=11, weight="bold"),
+            text_color=theme.TEXT_PRIMARY
+        ).pack(anchor="w")
+
+        # Calculate total matchweeks
+        total_mw = self.fixture_gen.get_total_matchweeks("Group Stage") or 3
+        mw_options = ["All Matchweeks (Full Schedule)"] + [f"Matchweek {i} (Round {i}) Only" for i in range(1, total_mw + 1)]
+
+        matchweek_menu = ctk.CTkOptionMenu(
+            mw_card_inner,
+            values=mw_options,
+            fg_color=theme.BG_CARD,
+            button_color=theme.BORDER_COLOR,
+            button_hover_color=theme.BG_CARD_HOVER,
+            text_color=theme.TEXT_PRIMARY
+        )
+        matchweek_menu.pack(fill="x", pady=(4, 4))
+
+        mw_info_lbl = ctk.CTkLabel(
+            mw_card_inner,
+            text="All matchweeks will be generated sequentially across the tournament timeline.",
+            font=ctk.CTkFont(size=10),
+            text_color=theme.TEXT_MUTED
+        )
+        mw_info_lbl.pack(anchor="w")
+
+        # 3. Row 1: Start Date and End Date
+        row1 = ctk.CTkFrame(scroll_content, fg_color="transparent")
         row1.pack(fill="x", pady=(0, 8))
         row1.columnconfigure(0, weight=1)
         row1.columnconfigure(1, weight=1)
@@ -329,8 +395,8 @@ class FixturesView(ctk.CTkScrollableFrame):
         end_date_entry.insert(0, (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d"))
         end_date_entry.pack(fill="x")
 
-        # Row 2: Days per Matchweek & Match Duration
-        row2 = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
+        # 4. Row 2: Days per Matchweek & Match Duration
+        row2 = ctk.CTkFrame(scroll_content, fg_color="transparent")
         row2.pack(fill="x", pady=(0, 8))
         row2.columnconfigure(0, weight=1)
         row2.columnconfigure(1, weight=1)
@@ -349,8 +415,8 @@ class FixturesView(ctk.CTkScrollableFrame):
         dur_entry.insert(0, "30")
         dur_entry.pack(fill="x")
 
-        # Row 3: Daily Kick-off Window (Hours)
-        row3 = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
+        # 5. Row 3: Daily Kick-off Window (Hours)
+        row3 = ctk.CTkFrame(scroll_content, fg_color="transparent")
         row3.pack(fill="x", pady=(0, 8))
         row3.columnconfigure(0, weight=1)
         row3.columnconfigure(1, weight=1)
@@ -369,8 +435,8 @@ class FixturesView(ctk.CTkScrollableFrame):
         end_entry.insert(0, "20:00")
         end_entry.pack(fill="x")
 
-        # Row 4: Pitches
-        row4 = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
+        # 6. Row 4: Venues / Pitches
+        row4 = ctk.CTkFrame(scroll_content, fg_color="transparent")
         row4.pack(fill="x", pady=(0, 8))
 
         ctk.CTkLabel(row4, text="Venues / Pitches (comma-separated for simultaneous matches):", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
@@ -378,28 +444,84 @@ class FixturesView(ctk.CTkScrollableFrame):
         venue_entry.insert(0, "Minaram Pitch 1, Minaram Pitch 2")
         venue_entry.pack(fill="x")
 
+        # 7. Clear Scope Checkbox
         clear_check_var = ctk.BooleanVar(value=True)
-        ctk.CTkCheckBox(
-            modal.body_frame,
-            text="Clear existing fixtures before generating",
+        clear_check = ctk.CTkCheckBox(
+            scroll_content,
+            text="Clear all existing fixtures before generating",
             variable=clear_check_var,
             font=ctk.CTkFont(size=11),
             text_color=theme.TEXT_SECONDARY
-        ).pack(anchor="w", pady=(2, 8))
+        )
+        clear_check.pack(anchor="w", pady=(2, 8))
 
-        preview_box = ctk.CTkTextbox(modal.body_frame, height=120, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR, font=ctk.CTkFont(family="Consolas", size=10))
-        preview_box.pack(fill="both", expand=True, pady=(0, 10))
-        preview_box.insert("1.0", "Click 'Preview Schedule' to calculate Matchweek rounds and pairings...")
+        # Dynamic update when matchweek selection changes
+        def on_matchweek_changed(choice: str):
+            try:
+                s_d = datetime.strptime(date_entry.get().strip(), "%Y-%m-%d").date()
+            except Exception:
+                s_d = datetime.now().date()
+            try:
+                days_mw = int(mw_entry.get().strip() or "3")
+            except Exception:
+                days_mw = 3
+
+            if choice.startswith("Matchweek "):
+                try:
+                    mw_num = int(choice.split()[1])
+                    mw_d = s_d + timedelta(days=(mw_num - 1) * days_mw)
+                    mw_info_lbl.configure(
+                        text=f"📅 Scheduled Date: {mw_d.strftime('%Y-%m-%d')} • Generates and schedules Round {mw_num} fixtures only.",
+                        text_color="#38bdf8"
+                    )
+                    clear_check.configure(text=f"Replace existing Matchweek {mw_num} fixtures only (keeps other matchweeks safe)")
+                except Exception:
+                    pass
+            else:
+                mw_info_lbl.configure(
+                    text="All matchweeks will be generated sequentially across the tournament timeline.",
+                    text_color=theme.TEXT_MUTED
+                )
+                clear_check.configure(text="Clear all existing fixtures before generating")
+
+        matchweek_menu.configure(command=on_matchweek_changed)
+
+        def update_format_options(choice: str):
+            nonlocal mw_options
+            t_mw = self.fixture_gen.get_total_matchweeks(choice, double_round=("Double" in choice)) or 3
+            mw_options = ["All Matchweeks (Full Schedule)"] + [f"Matchweek {i} (Round {i}) Only" for i in range(1, t_mw + 1)]
+            matchweek_menu.configure(values=mw_options)
+            matchweek_menu.set(mw_options[0])
+            on_matchweek_changed(mw_options[0])
+
+        format_menu.configure(command=update_format_options)
+
+        # 8. Live Preview Box
+        ctk.CTkLabel(scroll_content, text="Schedule Preview & Matchups Breakdown:", font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_SECONDARY).pack(anchor="w", pady=(4, 2))
+        preview_box = ctk.CTkTextbox(scroll_content, height=140, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR, font=ctk.CTkFont(family="Consolas", size=10))
+        preview_box.pack(fill="x", pady=(0, 6))
+        preview_box.insert("1.0", "Click 'Preview Schedule' or 'Confirm & Save Fixtures' to calculate rounds, kickoff times, and pitches...")
 
         generated_fixtures: List[Dict[str, Any]] = []
 
-        def preview():
+        def get_target_matchweek_number() -> Optional[int]:
+            choice = matchweek_menu.get().strip()
+            if choice.startswith("Matchweek "):
+                try:
+                    return int(choice.split()[1])
+                except Exception:
+                    return None
+            return None
+
+        def preview() -> bool:
             nonlocal generated_fixtures
             fmt = format_menu.get()
             s_d = date_entry.get().strip()
             e_d = end_date_entry.get().strip()
             s_t = time_entry.get().strip() or "16:00"
             end_t = end_entry.get().strip() or "20:00"
+            target_mw = get_target_matchweek_number()
+
             try:
                 dur = int(dur_entry.get().strip() or "30")
             except ValueError:
@@ -411,6 +533,7 @@ class FixturesView(ctk.CTkScrollableFrame):
             venues = [v.strip() for v in venue_entry.get().split(",") if v.strip()] or ["Minaram Stadium"]
 
             preview_box.delete("1.0", "end")
+            status_lbl.configure(text="Generating preview...", text_color=theme.TEXT_MUTED)
             try:
                 if "Knockout" in fmt:
                     generated_fixtures = self.knockout_mgr.generate_bracket_from_group_qualifiers(
@@ -420,52 +543,115 @@ class FixturesView(ctk.CTkScrollableFrame):
                     double = ("Double" in fmt)
                     generated_fixtures = self.fixture_gen.preview_league_fixtures(
                         start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues,
-                        double_round=double, day_end_time=end_t, end_date=e_d, days_per_matchweek=days_mw
+                        double_round=double, day_end_time=end_t, end_date=e_d, days_per_matchweek=days_mw,
+                        target_matchweek=target_mw
                     )
                 else:
                     generated_fixtures = self.fixture_gen.preview_group_fixtures(
                         start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues,
-                        double_round=False, day_end_time=end_t, end_date=e_d, days_per_matchweek=days_mw
+                        double_round=False, day_end_time=end_t, end_date=e_d, days_per_matchweek=days_mw,
+                        target_matchweek=target_mw
                     )
+
+                if not generated_fixtures:
+                    preview_box.insert("1.0", "No fixtures could be generated. Please ensure teams and groups are confirmed.")
+                    status_lbl.configure(text="0 fixtures generated", text_color=theme.COLOR_DANGER)
+                    return False
 
                 # Group by Matchweek
                 mw_groups: Dict[int, List[Dict[str, Any]]] = {}
                 for f in generated_fixtures:
                     mw_groups.setdefault(f.get("round_number", 1), []).append(f)
 
-                txt = f"✓ Generated {len(generated_fixtures)} matches across {len(mw_groups)} Matchweeks:\n"
-                txt += f"  Interval: 1 match every {days_mw} days per squad\n"
-                for r_num, m_list in sorted(mw_groups.items()):
-                    d_str = m_list[0].get("scheduled_date", "")
-                    times = f"{m_list[0].get('scheduled_time', '')} to {m_list[-1].get('scheduled_time', '')}"
-                    txt += f"  • Matchweek {r_num}: {d_str} ({len(m_list)} matches, {times})\n"
+                if target_mw is not None:
+                    txt = f"✓ MATCHWEEK {target_mw} SCHEDULE READY: {len(generated_fixtures)} matches\n"
+                    mw_matches = mw_groups.get(target_mw, generated_fixtures)
+                    d_str = mw_matches[0].get("scheduled_date", "")
+                    times = f"{mw_matches[0].get('scheduled_time', '')} to {mw_matches[-1].get('scheduled_time', '')}"
+                    txt += f"  Date: {d_str} | Kickoff Window: {times}\n"
+                    txt += f"  Venues in parallel: {', '.join(venues)}\n\n"
+                    txt += "Official Match Pairings:\n"
+                    for f in mw_matches:
+                        txt += f"  • M#{f['match_number']} [{f.get('group_name', 'Group')}]: {f['home_team_name']} vs {f['away_team_name']} | {f['scheduled_time']} @ {f['venue']}\n"
+                else:
+                    txt = f"✓ FULL TOURNAMENT SCHEDULE READY: {len(generated_fixtures)} matches across {len(mw_groups)} Matchweeks\n"
+                    txt += f"  Timeline interval: 1 match every {days_mw} days per squad\n"
+                    for r_num, m_list in sorted(mw_groups.items()):
+                        d_str = m_list[0].get("scheduled_date", "")
+                        times = f"{m_list[0].get('scheduled_time', '')} to {m_list[-1].get('scheduled_time', '')}"
+                        txt += f"  • Matchweek {r_num}: {d_str} ({len(m_list)} matches, {times})\n"
 
-                txt += "\nSample Matchups:\n"
-                for f in generated_fixtures[:6]:
-                    txt += f"  M#{f['match_number']} [MW {f.get('round_number', 1)}]: {f['home_team_name']} vs {f['away_team_name']} | {f['scheduled_date']} {f['scheduled_time']} @ {f['venue']}\n"
-                if len(generated_fixtures) > 6:
-                    txt += f"  ... and {len(generated_fixtures) - 6} more matches.\n"
+                    txt += "\nSample Matchups:\n"
+                    for f in generated_fixtures[:8]:
+                        txt += f"  • M#{f['match_number']} [MW {f.get('round_number', 1)} - {f.get('group_name', '')}]: {f['home_team_name']} vs {f['away_team_name']} | {f['scheduled_date']} {f['scheduled_time']} @ {f['venue']}\n"
+                    if len(generated_fixtures) > 8:
+                        txt += f"  ... and {len(generated_fixtures) - 8} more matches.\n"
 
                 preview_box.insert("1.0", txt)
+                status_lbl.configure(text=f"✓ {len(generated_fixtures)} matches prepared", text_color=theme.ACCENT_GREEN)
+                return True
 
             except Exception as e:
                 preview_box.insert("1.0", f"Error generating preview: {str(e)}")
+                status_lbl.configure(text="Preview error", text_color=theme.COLOR_DANGER)
+                return False
 
         def save():
+            nonlocal generated_fixtures
             if not generated_fixtures:
-                messagebox.showerror("No Fixtures", "Please preview the schedule first before saving.")
-                return
+                ok = preview()
+                if not ok or not generated_fixtures:
+                    messagebox.showerror("No Fixtures", "Could not generate fixtures. Check that teams and groups are assigned.")
+                    return
 
-            saved_cnt = self.fixture_gen.save_fixtures(generated_fixtures, clear_existing=clear_check_var.get())
-            messagebox.showinfo("Saved", f"Successfully saved {saved_cnt} fixtures to tournament schedule!")
+            target_mw = get_target_matchweek_number()
+            if target_mw is not None:
+                # Selective matchweek save
+                clear_r = target_mw if clear_check_var.get() else None
+                saved_cnt = self.fixture_gen.save_fixtures(generated_fixtures, clear_existing=False, clear_round=clear_r)
+                messagebox.showinfo("Saved", f"Successfully saved {saved_cnt} fixtures for Matchweek {target_mw}!")
+            else:
+                # Full tournament schedule save
+                saved_cnt = self.fixture_gen.save_fixtures(generated_fixtures, clear_existing=clear_check_var.get())
+                messagebox.showinfo("Saved", f"Successfully saved {saved_cnt} fixtures to tournament schedule!")
+
             modal.destroy()
             self.refresh()
 
-        btn_row = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
-        btn_row.pack(fill="x")
+        # ----------------------------------------------------
+        # Attach Action Buttons to Pinned Footer Bar
+        # ----------------------------------------------------
+        ctk.CTkButton(
+            footer_left,
+            text="👁️ Preview Schedule",
+            fg_color="#0284c7",
+            hover_color="#0369a1",
+            text_color="#FFFFFF",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            height=34,
+            command=preview
+        ).pack(side="left")
 
-        ctk.CTkButton(btn_row, text="Preview Schedule", fg_color=theme.BG_CARD, border_color=theme.BORDER_COLOR, border_width=1, hover_color=theme.BG_CARD_HOVER, text_color=theme.TEXT_PRIMARY, command=preview).pack(side="left")
-        ctk.CTkButton(btn_row, text="Confirm & Save Schedule", fg_color=theme.ACCENT_GREEN, hover_color=theme.ACCENT_GREEN_HOVER, text_color=theme.TEXT_DARK, font=ctk.CTkFont(weight="bold"), command=save).pack(side="right")
+        ctk.CTkButton(
+            footer_right,
+            text="Cancel",
+            fg_color="transparent",
+            hover_color=theme.BG_CARD_HOVER,
+            text_color=theme.TEXT_SECONDARY,
+            height=34,
+            command=modal.destroy
+        ).pack(side="left", padx=(0, 8))
+
+        ctk.CTkButton(
+            footer_right,
+            text="⚡ Confirm & Save Fixtures",
+            fg_color=theme.ACCENT_GREEN,
+            hover_color=theme.ACCENT_GREEN_HOVER,
+            text_color=theme.TEXT_DARK,
+            font=ctk.CTkFont(size=12, weight="bold"),
+            height=34,
+            command=save
+        ).pack(side="left")
 
     # ----------------------------------------------------
     # Manual Add Fixture Modal
