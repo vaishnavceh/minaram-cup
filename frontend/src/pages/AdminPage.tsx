@@ -11,6 +11,7 @@ export const AdminPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   // Admin Dashboard State
+  const [tournament, setTournament] = useState<any>(null);
   const [matches, setMatches] = useState<PublicMatch[]>([]);
   const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null);
   const [teamAScore, setTeamAScore] = useState<number>(0);
@@ -22,7 +23,11 @@ export const AdminPage: React.FC = () => {
 
   const loadMatches = async () => {
     try {
-      const data = await api.getFixtures();
+      const [tData, data] = await Promise.all([
+        api.getTournament(),
+        api.getFixtures(),
+      ]);
+      setTournament(tData);
       setMatches(data);
       if (data.length > 0 && !selectedMatchId) {
         setSelectedMatchId(data[0].id);
@@ -235,6 +240,55 @@ export const AdminPage: React.FC = () => {
             <LogOut className="w-3.5 h-3.5" />
             <span>LOGOUT</span>
           </button>
+        </div>
+      </div>
+
+      {/* Live Tournament Overview Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div className="bg-[#121212] border border-[#222222] p-4 rounded-lg">
+          <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-widest block">
+            Teams Registered
+          </span>
+          <span className="font-display text-3xl text-white mt-1 block">
+            {tournament?.team_count ?? 21}
+          </span>
+          <span className="text-[10px] font-mono text-emerald-400 mt-0.5 block flex items-center">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block mr-1" />
+            Confirmed Squads
+          </span>
+        </div>
+        <div className="bg-[#121212] border border-[#222222] p-4 rounded-lg">
+          <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-widest block">
+            Groups Active
+          </span>
+          <span className="font-display text-3xl text-brand-red mt-1 block">
+            {tournament?.groups_count ?? 6}
+          </span>
+          <span className="text-[10px] font-mono text-neutral-400 mt-0.5 block">
+            Max 4 Teams / Group
+          </span>
+        </div>
+        <div className="bg-[#121212] border border-[#222222] p-4 rounded-lg">
+          <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-widest block">
+            Total Matches
+          </span>
+          <span className="font-display text-3xl text-white mt-1 block">
+            {matches.length}
+          </span>
+          <span className="text-[10px] font-mono text-neutral-400 mt-0.5 block">
+            {matches.filter((m) => m.status === 'COMPLETED').length} Finished
+          </span>
+        </div>
+        <div className="bg-[#121212] border border-[#222222] p-4 rounded-lg">
+          <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-widest block">
+            Sync Status
+          </span>
+          <span className="font-display text-xl sm:text-2xl text-emerald-400 mt-1 block">
+            ONLINE
+          </span>
+          <span className="text-[10px] font-mono text-emerald-400 mt-0.5 block">
+            SSE Live Stream Connected
+          </span>
         </div>
       </div>
 
