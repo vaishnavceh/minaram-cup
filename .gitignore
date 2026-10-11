@@ -43,6 +43,11 @@ Thumbs.db
 # Local logs and temp backups
 logs/minaram_cup.log
 data/cloud_sync_config.json
+data/backups/
 backups/*.db
+backups/history/
+backups/latest/
+backups/backups_manifest.json
+*.pre_pull_*.db
 *.db-wal
 *.db-shm

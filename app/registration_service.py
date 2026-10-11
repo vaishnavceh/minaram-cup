@@ -95,7 +95,7 @@ class RegistrationService:
 
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        with self.db.transaction() as conn:
+        with self.db.transaction(action="registrations_saved") as conn:
             cursor = conn.cursor()
             for idx, item in enumerate(items, 1):
                 name = item.get("name", "").strip()

@@ -42,7 +42,7 @@ class TournamentManager:
         )
 
     def update_settings(self, settings: TournamentSettings) -> None:
-        with self.db.transaction() as conn:
+        with self.db.transaction(action="settings_updated") as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('tournament_name', ?);", (settings.tournament_name,))
             cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('edition', ?);", (settings.edition,))
@@ -111,7 +111,7 @@ class TournamentManager:
         if matches_cnt > 0:
             return False, f"Cannot delete group: {matches_cnt} matches are scheduled for this group. Remove fixtures first."
 
-        with self.db.transaction() as conn:
+        with self.db.transaction(action="group_deleted") as conn:
             cursor = conn.cursor()
             cursor.execute("UPDATE teams SET group_id = NULL WHERE group_id = ?;", (group_id,))
             cursor.execute("DELETE FROM groups WHERE id = ?;", (group_id,))
@@ -263,7 +263,7 @@ class TournamentManager:
         Apply confirmed group allocation to the database.
         Automatically creates groups if they do not exist.
         """
-        with self.db.transaction() as conn:
+        with self.db.transaction(action="groups_allocated") as conn:
             cursor = conn.cursor()
 
             # Map existing groups

@@ -15,10 +15,62 @@ DEFAULT_DB_PATH = Path(__file__).resolve().parent.parent / "data" / "minaram_cup
 
 
 class Database:
-    def __init__(self, db_path: Optional[Path] = None):
+    def __init__(self, db_path: Optional[Path] = None, enable_auto_backup: bool = True):
         self.db_path = Path(db_path) if db_path else DEFAULT_DB_PATH
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        self._change_listeners: List[Any] = []
+        self._suppress_change_notifications: bool = True
+        self._in_transaction: bool = False
+        self._backup_service = None
+
         self.init_db()
+        self._suppress_change_notifications = False
+
+        if enable_auto_backup:
+            self.init_auto_backup()
+
+    def register_change_listener(self, listener) -> None:
+        """Register a callback to be notified when data modifications are committed."""
+        if listener not in self._change_listeners:
+            self._change_listeners.append(listener)
+
+    def unregister_change_listener(self, listener) -> None:
+        """Unregister an existing change listener callback."""
+        if listener in self._change_listeners:
+            self._change_listeners.remove(listener)
+
+    def notify_change(self, action: str = "change") -> None:
+        """Notify all registered change listeners of a database mutation."""
+        if self._suppress_change_notifications:
+            return
+        for listener in list(self._change_listeners):
+            try:
+                listener(action)
+            except Exception as e:
+                logger.error(f"Error in database change listener: {e}", exc_info=True)
+
+    def init_auto_backup(self) -> None:
+        """Initialize and link the automated zero-loss backup service."""
+        try:
+            from app.backup_service import BackupService
+            if not self._backup_service:
+                self._backup_service = BackupService(self, auto_backup=True)
+        except Exception as e:
+            logger.warning(f"Could not initialize auto backup on database: {e}")
+
+    def get_backup_service(self):
+        """Retrieve the linked backup service or initialize it."""
+        if not self._backup_service:
+            self.init_auto_backup()
+        return self._backup_service
+
+    def close(self) -> None:
+        """Close database and shutdown active backup workers."""
+        if self._backup_service:
+            try:
+                self._backup_service.stop()
+            except Exception:
+                pass
 
     def get_connection(self) -> sqlite3.Connection:
         """Create and configure a SQLite database connection."""
@@ -35,18 +87,27 @@ class Database:
         return conn
 
     @contextmanager
-    def transaction(self):
-        """Context manager for atomic database transactions with automatic rollback."""
+    def transaction(self, action: str = "change"):
+        """Context manager for atomic database transactions with automatic rollback and mutation notification."""
         conn = self.get_connection()
+        start_changes = conn.total_changes
+        was_in_tx = self._in_transaction
+        self._in_transaction = True
+        changes_occurred = False
         try:
             yield conn
             conn.commit()
+            changes_occurred = (conn.total_changes > start_changes)
         except Exception as e:
             conn.rollback()
             logger.error(f"Transaction rolled back due to error: {e}")
             raise
         finally:
+            self._in_transaction = was_in_tx
             conn.close()
+
+        if not was_in_tx and changes_occurred and not self._suppress_change_notifications:
+            self.notify_change(action)
 
     def execute_query(self, query: str, params: Tuple = ()) -> List[sqlite3.Row]:
         """Execute a read query and return all rows."""
@@ -62,16 +123,16 @@ class Database:
             cursor.execute(query, params)
             return cursor.fetchone()
 
-    def execute_non_query(self, query: str, params: Tuple = ()) -> int:
+    def execute_non_query(self, query: str, params: Tuple = (), action: str = "data_updated") -> int:
         """Execute an INSERT/UPDATE/DELETE query and return the lastrowid or rowcount."""
-        with self.transaction() as conn:
+        with self.transaction(action=action) as conn:
             cursor = conn.cursor()
             cursor.execute(query, params)
             return cursor.lastrowid
 
-    def execute_many(self, query: str, seq_of_params: List[Tuple]) -> int:
+    def execute_many(self, query: str, seq_of_params: List[Tuple], action: str = "batch_data_updated") -> int:
         """Execute batch operations in a single transaction."""
-        with self.transaction() as conn:
+        with self.transaction(action=action) as conn:
             cursor = conn.cursor()
             cursor.executemany(query, seq_of_params)
             return cursor.rowcount

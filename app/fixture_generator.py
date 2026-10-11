@@ -367,7 +367,7 @@ class FixtureGenerator:
     # ----------------------------------------------------
     def save_fixtures(self, fixtures: List[Dict[str, Any]], clear_existing: bool = False) -> int:
         """Save a list of fixture dictionaries to database."""
-        with self.db.transaction() as conn:
+        with self.db.transaction(action="fixtures_saved") as conn:
             cursor = conn.cursor()
             if clear_existing:
                 cursor.execute("DELETE FROM match_audit_log;")

@@ -3,6 +3,9 @@ Settings and administration interface: tournament rules, scoring points,
 tie-breakers, SQLite backup/restore, sample data generation, and clean reset.
 """
 
+import os
+import platform
+import subprocess
 import customtkinter as ctk
 from tkinter import messagebox
 from pathlib import Path
@@ -29,7 +32,7 @@ class SettingsView(ctk.CTkScrollableFrame):
         self.db = db
         self.on_settings_changed = on_settings_changed
         self.tourn_mgr = TournamentManager(db)
-        self.backup_service = BackupService(db)
+        self.backup_service = db.get_backup_service()
 
         self.build_ui()
 
@@ -237,11 +240,40 @@ class SettingsView(ctk.CTkScrollableFrame):
 
         b_hdr = ctk.CTkFrame(backup_card, fg_color="transparent")
         b_hdr.pack(fill="x", padx=16, pady=(14, 10))
-        ctk.CTkLabel(b_hdr, text="Database Safety & Backup Center", font=ctk.CTkFont(size=14, weight="bold"), text_color=theme.TEXT_PRIMARY).pack(side="left")
+
+        b_title_box = ctk.CTkFrame(b_hdr, fg_color="transparent")
+        b_title_box.pack(side="left")
+        ctk.CTkLabel(b_title_box, text="🛡️ Automated Zero-Loss Backup & Safety Center", font=ctk.CTkFont(size=14, weight="bold"), text_color=theme.TEXT_PRIMARY).pack(anchor="w")
+
+        # Top Action Buttons
+        b_actions = ctk.CTkFrame(b_hdr, fg_color="transparent")
+        b_actions.pack(side="right")
 
         ctk.CTkButton(
-            b_hdr,
-            text="💾 Backup Database Now",
+            b_actions,
+            text="📂 Open Backups Folder",
+            fg_color=theme.BG_INPUT,
+            hover_color=theme.BG_CARD_HOVER,
+            text_color=theme.TEXT_PRIMARY,
+            border_color=theme.BORDER_COLOR,
+            border_width=1,
+            font=ctk.CTkFont(size=11),
+            command=self.open_backups_folder
+        ).pack(side="right", padx=(6, 0))
+
+        ctk.CTkButton(
+            b_actions,
+            text="⚡ Restore Latest Snapshot",
+            fg_color="#0d9488",
+            hover_color="#0f766e",
+            text_color="#FFFFFF",
+            font=ctk.CTkFont(size=11, weight="bold"),
+            command=self.handle_restore_latest
+        ).pack(side="right", padx=(6, 0))
+
+        ctk.CTkButton(
+            b_actions,
+            text="💾 Backup Now",
             fg_color=theme.COLOR_INFO,
             hover_color=theme.COLOR_INFO_MUTED,
             text_color="#FFFFFF",
@@ -249,12 +281,25 @@ class SettingsView(ctk.CTkScrollableFrame):
             command=self.create_backup_now
         ).pack(side="right")
 
-        ctk.CTkLabel(
-            backup_card,
-            text="Atomic point-in-time SQLite backups stored safely in the project backups directory.",
-            font=ctk.CTkFont(size=11),
-            text_color=theme.TEXT_MUTED
-        ).pack(anchor="w", padx=16, pady=(0, 8))
+        # Live Auto-Backup Status Banner
+        self.backup_status_banner = ctk.CTkFrame(backup_card, fg_color=theme.BG_INPUT, corner_radius=8)
+        self.backup_status_banner.pack(fill="x", padx=16, pady=(0, 10))
+
+        stat_left = ctk.CTkFrame(self.backup_status_banner, fg_color="transparent")
+        stat_left.pack(side="left", padx=12, pady=10)
+
+        badge_row = ctk.CTkFrame(stat_left, fg_color="transparent")
+        badge_row.pack(anchor="w")
+        ctk.CTkLabel(badge_row, text="● CONTINUOUS PROTECTION ACTIVE", font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.ACCENT_GREEN).pack(side="left")
+        ctk.CTkLabel(badge_row, text="— Every mutation automatically saved", font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED).pack(side="left", padx=(6, 0))
+
+        self.backup_meta_lbl = ctk.CTkLabel(
+            stat_left,
+            text="Dual-tier backup: Atomic SQLite clone (.db) + Portable JSON snapshot (.json)",
+            font=ctk.CTkFont(size=10),
+            text_color=theme.TEXT_SECONDARY
+        )
+        self.backup_meta_lbl.pack(anchor="w", pady=(2, 0))
 
         # Backups List Container
         self.backups_container = ctk.CTkFrame(backup_card, fg_color="transparent")
@@ -384,10 +429,45 @@ class SettingsView(ctk.CTkScrollableFrame):
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
+    def open_backups_folder(self):
+        try:
+            folder = self.backup_service.backup_dir
+            if platform.system() == "Windows":
+                os.startfile(str(folder))
+            else:
+                subprocess.run(["xdg-open", str(folder)])
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not open backups folder: {e}")
+
+    def handle_restore_latest(self):
+        latest_db = self.backup_service.backup_dir / "latest" / "minaram_cup_latest.db"
+        if not latest_db.exists():
+            messagebox.showwarning("No Snapshot", "No latest backup snapshot was found.")
+            return
+
+        ConfirmDialog(
+            self,
+            title="Restore Latest Snapshot",
+            message=f"Are you sure you want to restore to the latest snapshot ({latest_db.name})?\nA safety backup will be created first.",
+            confirm_text="Restore Latest",
+            is_danger=True,
+            on_confirm=self._execute_restore_latest
+        )
+
+    def _execute_restore_latest(self):
+        ok, msg = self.backup_service.restore_from_latest()
+        if ok:
+            messagebox.showinfo("Restored", "Latest backup restored successfully! Reloading views.")
+            self.refresh()
+            if self.on_settings_changed:
+                self.on_settings_changed()
+        else:
+            messagebox.showerror("Restore Failed", msg)
+
     def create_backup_now(self):
         try:
             b_path = self.backup_service.create_backup(label="manual")
-            messagebox.showinfo("Backup Created", f"Live SQLite database backup saved to:\n{b_path.name}")
+            messagebox.showinfo("Backup Created", f"Live SQLite database and JSON state snapshot saved to:\n{b_path.name}")
             self.load_backups_list()
         except Exception as e:
             messagebox.showerror("Backup Failed", str(e))
@@ -396,33 +476,57 @@ class SettingsView(ctk.CTkScrollableFrame):
         for child in self.backups_container.winfo_children():
             child.destroy()
 
+        stats = self.backup_service.get_backup_stats()
+        self.backup_meta_lbl.configure(
+            text=f"Total Snapshots: {stats['total_backups']} • Latest: {stats['latest_file']} ({stats['latest_size_kb']} KB) • Last Backup: {stats['latest_time']}"
+        )
+
         backups = self.backup_service.list_backups()
         if not backups:
             ctk.CTkLabel(self.backups_container, text="No previous database backups found.", font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED).pack(anchor="w")
             return
 
-        for b in backups[:5]:
-            row = ctk.CTkFrame(self.backups_container, fg_color=theme.BG_INPUT, corner_radius=6)
+        for b in backups[:7]:
+            is_latest = b.get("is_latest", False)
+            row_bg = "#0f231c" if is_latest else theme.BG_INPUT
+            border_col = theme.ACCENT_GREEN if is_latest else theme.BORDER_COLOR
+
+            row = ctk.CTkFrame(self.backups_container, fg_color=row_bg, corner_radius=6, border_color=border_col, border_width=1 if is_latest else 0)
             row.pack(fill="x", pady=2)
 
             left = ctk.CTkFrame(row, fg_color="transparent")
             left.pack(side="left", padx=10, pady=6)
-            ctk.CTkLabel(left, text=b["filename"], font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_PRIMARY).pack(anchor="w")
-            ctk.CTkLabel(left, text=f"Date: {b['created_at']} • Size: {b['size_kb']} KB", font=ctk.CTkFont(size=10), text_color=theme.TEXT_MUTED).pack(anchor="w")
+
+            title_row = ctk.CTkFrame(left, fg_color="transparent")
+            title_row.pack(anchor="w")
+
+            if is_latest:
+                badge = ctk.CTkLabel(title_row, text="LATEST ACTIVE", font=ctk.CTkFont(size=9, weight="bold"), text_color=theme.ACCENT_GREEN, fg_color=theme.BG_CARD, corner_radius=4)
+                badge.pack(side="left", padx=(0, 6))
+
+            action_text = b.get("action", "Auto Change")
+            ctk.CTkLabel(title_row, text=f"[{action_text}]", font=ctk.CTkFont(size=10, weight="bold"), text_color="#38bdf8").pack(side="left", padx=(0, 6))
+            ctk.CTkLabel(title_row, text=b["filename"], font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_PRIMARY).pack(side="left")
+
+            json_info = " • +JSON State Snapshot" if b.get("has_json") else ""
+            ctk.CTkLabel(left, text=f"Saved: {b['created_at']} • Size: {b['size_kb']} KB{json_info}", font=ctk.CTkFont(size=10), text_color=theme.TEXT_MUTED).pack(anchor="w")
+
+            btn_box = ctk.CTkFrame(row, fg_color="transparent")
+            btn_box.pack(side="right", padx=10, pady=6)
 
             ctk.CTkButton(
-                row,
+                btn_box,
                 text="Restore",
                 width=64,
-                height=22,
-                fg_color=theme.BG_CARD,
+                height=24,
+                fg_color=theme.ACCENT_GREEN if is_latest else theme.BG_CARD,
+                hover_color=theme.ACCENT_GREEN_HOVER if is_latest else theme.BG_CARD_HOVER,
+                text_color=theme.TEXT_DARK if is_latest else theme.TEXT_PRIMARY,
                 border_color=theme.BORDER_COLOR,
                 border_width=1,
-                hover_color=theme.BG_CARD_HOVER,
-                text_color=theme.TEXT_PRIMARY,
-                font=ctk.CTkFont(size=10),
+                font=ctk.CTkFont(size=10, weight="bold" if is_latest else "normal"),
                 command=lambda b_path=b["path"]: self.handle_restore_backup(b_path)
-            ).pack(side="right", padx=10, pady=6)
+            ).pack(side="right")
 
     def handle_restore_backup(self, backup_path: str):
         ConfirmDialog(

@@ -30,6 +30,7 @@ def temp_db():
     db_path = Path(tmpdir) / "test_minaram.db"
     db = Database(db_path=db_path)
     yield db
+    db.close()
     gc.collect()
     shutil.rmtree(tmpdir, ignore_errors=True)
 
@@ -325,3 +326,64 @@ def test_standings_overrides_and_auto_reorder(temp_db):
     restored = sc.calculate_group_standings(g_id)
     assert restored[0].points == 0
     assert restored[0].has_override is False
+
+
+def test_auto_backup_on_mutation_and_zero_data_loss(temp_db):
+    import json
+    backup_svc = temp_db.get_backup_service()
+    assert backup_svc.auto_backup_enabled is True
+
+    # 1. Mutate settings -> triggers auto backup
+    temp_db.set_setting("tournament_name", "Minaram Champions League")
+    backup_svc.flush()
+
+    # Verify backups exist
+    backups = backup_svc.list_backups()
+    assert len(backups) >= 1
+
+    latest_db = backup_svc.latest_dir / "minaram_cup_latest.db"
+    latest_json = backup_svc.latest_dir / "minaram_cup_latest_state.json"
+    assert latest_db.exists()
+    assert latest_json.exists()
+
+    with open(latest_json, "r", encoding="utf-8") as f:
+        snapshot = json.load(f)
+    assert snapshot["settings"]["tournament_name"] == "Minaram Champions League"
+    assert "summary" in snapshot
+    assert "standings" in snapshot
+
+    # 2. Add team and record result -> triggers additional snapshot
+    tm = TeamManager(temp_db)
+    t1_id = tm.create_team(name="Apex FC", captain_name="Leader A", phone_number="9999999999")
+    t2_id = tm.create_team(name="Vortex FC", captain_name="Leader B", phone_number="8888888888")
+    backup_svc.flush()
+
+    # Verify updated JSON has teams
+    with open(latest_json, "r", encoding="utf-8") as f:
+        snapshot2 = json.load(f)
+    team_names = {t["name"] for t in snapshot2["teams"]}
+    assert "Apex FC" in team_names
+    assert "Vortex FC" in team_names
+
+    # 3. Test Restore from snapshot
+    saved_snapshot = Path(backups[0]["path"])
+    assert saved_snapshot.exists()
+
+    # Clear setting to simulate corruption/loss
+    temp_db._suppress_change_notifications = True
+    temp_db.set_setting("tournament_name", "Corrupted Or Lost")
+    temp_db._suppress_change_notifications = False
+    assert temp_db.get_setting("tournament_name") == "Corrupted Or Lost"
+
+    # Restore from saved snapshot
+    ok, msg = backup_svc.restore_backup(saved_snapshot)
+    assert ok is True
+    assert temp_db.get_setting("tournament_name") == "Minaram Champions League"
+
+    # 4. Test History Pruning
+    backup_svc.max_history = 5
+    for i in range(8):
+        backup_svc.create_auto_backup(action_label=f"test_prune_{i}")
+    backup_svc.flush()
+    history_files = list(backup_svc.history_dir.glob("minaram_backup_*.db"))
+    assert len(history_files) <= 5

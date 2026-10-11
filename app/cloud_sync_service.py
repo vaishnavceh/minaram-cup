@@ -252,6 +252,14 @@ def pull_database(base_url: Optional[str] = None,
             with open(DB_PATH, "wb") as f:
                 f.write(content)
 
+            # Automatically create atomic backup and state snapshot of newly pulled data
+            try:
+                from app.database import Database
+                db = Database()
+                db.get_backup_service().create_auto_backup(action_label="cloud_pull_sync")
+            except Exception as e:
+                logger.warning(f"Could not create post-pull backup snapshot: {e}")
+
             now_iso = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             save_cloud_config(url, user, pwd, last_sync_time=now_iso, last_sync_status="SUCCESS (PULL)")
             return True, f"Successfully downloaded latest database from cloud ({len(content)} bytes)!"

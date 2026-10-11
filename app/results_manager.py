@@ -80,8 +80,8 @@ class ResultsManager:
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         is_edit = (match["status"] in ("Completed", "Walkover"))
         action_name = "Result Edited" if is_edit else "Result Recorded"
-
-        with self.db.transaction() as conn:
+        action_label = "result_edited" if is_edit else "result_recorded"
+        with self.db.transaction(action=action_label) as conn:
             cursor = conn.cursor()
 
             # 1. Update Match Record
