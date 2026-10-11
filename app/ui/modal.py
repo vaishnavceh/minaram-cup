@@ -29,9 +29,23 @@ class BaseModal(ctk.CTkToplevel):
         except Exception:
             pass
 
-        self.transient(parent)
-        self.grab_set()
-        self.focus_force()
+        try:
+            top = parent.winfo_toplevel() if hasattr(parent, "winfo_toplevel") else parent
+            self.transient(top)
+        except Exception:
+            pass
+
+        try:
+            self.grab_set()
+        except Exception:
+            pass
+
+        try:
+            self.focus_force()
+        except Exception:
+            pass
+
+        self.protocol("WM_DELETE_WINDOW", self.destroy)
 
         # Modal Container Frame
         self.container = ctk.CTkFrame(
@@ -71,6 +85,13 @@ class BaseModal(ctk.CTkToplevel):
         # Content Frame
         self.body_frame = ctk.CTkFrame(self.container, fg_color="transparent")
         self.body_frame.pack(fill="both", expand=True, padx=20, pady=(0, 16))
+
+    def destroy(self):
+        try:
+            self.grab_release()
+        except Exception:
+            pass
+        super().destroy()
 
 
 class ConfirmDialog(BaseModal):
