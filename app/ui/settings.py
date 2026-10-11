@@ -13,6 +13,14 @@ from app.database import Database
 from app.models import TournamentSettings
 from app.tournament_manager import TournamentManager
 from app.backup_service import BackupService
+from app.cloud_sync_service import (
+    get_cloud_config,
+    save_cloud_config,
+    push_database,
+    pull_database,
+    DEFAULT_BACKEND_URL
+)
+from app.ui.cloud_sync_dialog import CloudSyncModal
 
 
 class SettingsView(ctk.CTkScrollableFrame):
@@ -142,7 +150,88 @@ class SettingsView(ctk.CTkScrollableFrame):
             command=self.save_settings
         ).pack(side="right")
 
-        # 2. Database Backup & Restore Card
+        # 2. Cloud Synchronization Card (Render API & Vercel)
+        cloud_card = ctk.CTkFrame(self.container, fg_color=theme.BG_CARD, corner_radius=10, border_color=theme.BORDER_COLOR, border_width=1)
+        cloud_card.pack(fill="x", pady=(0, 16))
+
+        c_hdr = ctk.CTkFrame(cloud_card, fg_color="transparent")
+        c_hdr.pack(fill="x", padx=16, pady=(14, 10))
+        ctk.CTkLabel(c_hdr, text="☁️ Cloud Synchronization & Public Web Deployment", font=ctk.CTkFont(size=14, weight="bold"), text_color=theme.TEXT_PRIMARY).pack(side="left")
+
+        ctk.CTkLabel(
+            cloud_card,
+            text="Link your local offline tournament system with your Render cloud backend.\nPushing your local database immediately updates live fixtures, standings, and results on your Vercel public website.",
+            font=ctk.CTkFont(size=11),
+            text_color=theme.TEXT_MUTED,
+            justify="left"
+        ).pack(anchor="w", padx=16, pady=(0, 10))
+
+        # URL and Password inputs
+        c_grid = ctk.CTkFrame(cloud_card, fg_color="transparent")
+        c_grid.pack(fill="x", padx=16, pady=(0, 10))
+        c_grid.columnconfigure(0, weight=2)
+        c_grid.columnconfigure(1, weight=1)
+
+        cu1 = ctk.CTkFrame(c_grid, fg_color="transparent")
+        cu1.grid(row=0, column=0, padx=4, sticky="ew")
+        ctk.CTkLabel(cu1, text="Render Backend API URL:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
+        self.cloud_url_entry = ctk.CTkEntry(cu1, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
+        self.cloud_url_entry.pack(fill="x", pady=(2, 0))
+
+        cu2 = ctk.CTkFrame(c_grid, fg_color="transparent")
+        cu2.grid(row=0, column=1, padx=4, sticky="ew")
+        ctk.CTkLabel(cu2, text="Admin Sync Password:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
+        self.cloud_pwd_entry = ctk.CTkEntry(cu2, show="•", fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
+        self.cloud_pwd_entry.pack(fill="x", pady=(2, 0))
+
+        # Cloud Status Row & Action Buttons
+        c_act = ctk.CTkFrame(cloud_card, fg_color="transparent")
+        c_act.pack(fill="x", padx=16, pady=(4, 14))
+
+        self.cloud_status_lbl = ctk.CTkLabel(
+            c_act,
+            text="Status: Ready to sync",
+            font=ctk.CTkFont(size=11),
+            text_color=theme.TEXT_SECONDARY
+        )
+        self.cloud_status_lbl.pack(side="left")
+
+        # Action Buttons
+        ctk.CTkButton(
+            c_act,
+            text="📥 Pull from Cloud",
+            fg_color=theme.BG_INPUT,
+            hover_color=theme.BG_CARD_HOVER,
+            text_color=theme.TEXT_SECONDARY,
+            border_color=theme.BORDER_COLOR,
+            border_width=1,
+            font=ctk.CTkFont(size=11),
+            command=self.handle_cloud_pull
+        ).pack(side="right", padx=(6, 0))
+
+        ctk.CTkButton(
+            c_act,
+            text="🚀 Push to Render Now",
+            fg_color="#0284c7",
+            hover_color="#0369a1",
+            text_color="#FFFFFF",
+            font=ctk.CTkFont(size=11, weight="bold"),
+            command=self.handle_cloud_push
+        ).pack(side="right", padx=(6, 0))
+
+        ctk.CTkButton(
+            c_act,
+            text="Save Cloud Config",
+            fg_color=theme.BG_CARD,
+            hover_color=theme.BG_CARD_HOVER,
+            border_color=theme.BORDER_COLOR,
+            border_width=1,
+            text_color=theme.TEXT_PRIMARY,
+            font=ctk.CTkFont(size=11),
+            command=self.save_cloud_config_values
+        ).pack(side="right")
+
+        # 3. Database Backup & Restore Card
         backup_card = ctk.CTkFrame(self.container, fg_color=theme.BG_CARD, corner_radius=10, border_color=theme.BORDER_COLOR, border_width=1)
         backup_card.pack(fill="x", pady=(0, 16))
 
@@ -246,6 +335,34 @@ class SettingsView(ctk.CTkScrollableFrame):
 
         self.venue_entry.delete(0, "end")
         self.venue_entry.insert(0, s.default_venue)
+
+        # Cloud settings
+        cfg = get_cloud_config()
+        self.cloud_url_entry.delete(0, "end")
+        self.cloud_url_entry.insert(0, cfg.get("backend_url", DEFAULT_BACKEND_URL))
+        self.cloud_pwd_entry.delete(0, "end")
+        self.cloud_pwd_entry.insert(0, cfg.get("admin_password", "minaram2026"))
+        last_t = cfg.get("last_sync_time") or "Never"
+        last_s = cfg.get("last_sync_status") or "Ready"
+        self.cloud_status_lbl.configure(text=f"Status: {last_s} • Last Synced: {last_t}")
+
+    def save_cloud_config_values(self):
+        url = self.cloud_url_entry.get().strip()
+        pwd = self.cloud_pwd_entry.get().strip()
+        if not url:
+            messagebox.showwarning("Missing URL", "Please enter a valid Render backend URL.")
+            return
+        if save_cloud_config(url, admin_password=pwd):
+            messagebox.showinfo("Saved", "Cloud configuration saved successfully!")
+            self.load_settings_values()
+        else:
+            messagebox.showerror("Error", "Could not save cloud configuration.")
+
+    def handle_cloud_push(self):
+        CloudSyncModal(self, on_sync_completed=self.refresh)
+
+    def handle_cloud_pull(self):
+        CloudSyncModal(self, on_sync_completed=self.refresh)
 
     def save_settings(self):
         try:

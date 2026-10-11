@@ -7,6 +7,8 @@ and seamless view switching in a unified desktop workspace.
 import customtkinter as ctk
 from tkinter import messagebox
 from typing import Dict, Any
+from pathlib import Path
+from PIL import Image
 
 from app.ui import theme
 from app.database import Database
@@ -36,6 +38,14 @@ class MainWindow(ctk.CTk):
         self.minsize(1040, 680)
         self.configure(fg_color=theme.BG_MAIN)
 
+        # Set official app icon
+        icon_path = Path(__file__).resolve().parent.parent.parent / "Logo" / "minaram_app_icon.ico"
+        if icon_path.exists():
+            try:
+                self.iconbitmap(str(icon_path))
+            except Exception:
+                pass
+
         self.current_section = "Dashboard"
         self.nav_buttons = {}
 
@@ -49,9 +59,19 @@ class MainWindow(ctk.CTk):
         self.sidebar.pack(side="left", fill="y")
         self.sidebar.pack_propagate(False)
 
-        # Brand Title
+        # Brand Header with Official Championship Crest
         brand_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
-        brand_frame.pack(fill="x", padx=16, pady=(18, 14))
+        brand_frame.pack(fill="x", padx=16, pady=(16, 12))
+
+        logo_path = Path(__file__).resolve().parent.parent.parent / "Logo" / "minaram_crest_master.png"
+        if logo_path.exists():
+            try:
+                pil_logo = Image.open(logo_path)
+                self.sidebar_logo_img = ctk.CTkImage(light_image=pil_logo, dark_image=pil_logo, size=(46, 46))
+                logo_lbl = ctk.CTkLabel(brand_frame, image=self.sidebar_logo_img, text="")
+                logo_lbl.pack(anchor="w", pady=(0, 6))
+            except Exception:
+                pass
 
         title_lbl = ctk.CTkLabel(
             brand_frame,
@@ -161,7 +181,19 @@ class MainWindow(ctk.CTk):
             font=ctk.CTkFont(size=12, weight="bold"),
             height=30,
             command=lambda: self.show_section("Registrations")
-        ).pack(side="left", padx=(0, 10))
+        ).pack(side="left", padx=(0, 8))
+
+        self.cloud_btn = ctk.CTkButton(
+            top_right,
+            text="☁️ Push to Render",
+            fg_color="#0284c7",
+            hover_color="#0369a1",
+            text_color="#FFFFFF",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            height=30,
+            command=self.open_cloud_sync
+        )
+        self.cloud_btn.pack(side="left", padx=(0, 10))
 
         self.tourn_badge = ctk.CTkLabel(
             top_right,
@@ -241,3 +273,14 @@ class MainWindow(ctk.CTk):
         # Refresh current view
         if self.current_section in self.views:
             self.views[self.current_section].refresh()
+
+    def open_cloud_sync(self):
+        """Open the interactive cloud push & pull dialog."""
+        from app.ui.cloud_sync_dialog import CloudSyncModal
+        CloudSyncModal(self, on_sync_completed=self.on_cloud_synced)
+
+    def on_cloud_synced(self):
+        """Callback when cloud sync successfully completes."""
+        if self.current_section in self.views:
+            self.views[self.current_section].refresh()
+

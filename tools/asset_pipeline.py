@@ -71,68 +71,135 @@ def enhance_photo(pil_img: Image.Image, sharpness_factor: float = 1.3, contrast_
 
 def extract_transparent_logos():
     """
-    Isolate and extract logo variants from 'Logo diffrent types.png'.
+    Extract and optimize official branding from 'Minaram Cup Championship Branding Set.png'
+    and fallback to 'Logo diffrent types.png'.
     Preserves exact anti-aliasing and native alpha transparency.
     """
-    sheet_path = LOGO_DIR / "Logo diffrent types.png"
-    if not sheet_path.exists():
-        logger.warning(f"Logo sheet not found at {sheet_path}")
-        return []
+    branding_set_path = LOGO_DIR / "Minaram Cup Championship Branding Set.png"
+    crest_master_path = LOGO_DIR / "minaram_crest_master.png"
+    horiz_path = LOGO_DIR / "minaram_horizontal_white.png"
+    badge_path = LOGO_DIR / "minaram_badge_compact.png"
 
-    sheet = Image.open(sheet_path).convert("RGBA")
-    w, h = sheet.size
-    half_w, half_h = w // 2, h // 2
+    # If the branding set is present, extract or load the segmented components
+    if branding_set_path.exists():
+        logger.info(f"Processing Championship Branding Set from {branding_set_path}...")
+        brand_img = Image.open(branding_set_path).convert("RGBA")
+        bw, bh = brand_img.size
 
-    # Bottom-right quadrant contains the pristine white logo variant
-    br_crop = sheet.crop((half_w, half_h, w, h))
-    alpha_box = br_crop.split()[-1].getbbox()
-    if alpha_box:
-        # Add a subtle 8px margin
-        pad = 8
-        tight_box = (
-            max(0, alpha_box[0] - pad),
-            max(0, alpha_box[1] - pad),
-            min(br_crop.width, alpha_box[2] + pad),
-            min(br_crop.height, alpha_box[3] + pad)
-        )
-        logo_white = br_crop.crop(tight_box)
+        # Segment 1: Master Crest (Left side: approx X:[50, 825], Y:[10, 775])
+        crest_crop = brand_img.crop((45, 10, min(835, bw), min(780, bh)))
+        crest_bbox = crest_crop.split()[-1].getbbox()
+        if crest_bbox:
+            pad = 6
+            c_box = (
+                max(0, crest_bbox[0] - pad),
+                max(0, crest_bbox[1] - pad),
+                min(crest_crop.width, crest_bbox[2] + pad),
+                min(crest_crop.height, crest_bbox[3] + pad)
+            )
+            master_crest = crest_crop.crop(c_box)
+        else:
+            master_crest = crest_crop
+
+        # Segment 2: Horizontal Wordmark (Top-right: X:[860, 1930], Y:[95, 390])
+        horiz_crop = brand_img.crop((855, 90, min(1935, bw), min(395, bh)))
+        horiz_bbox = horiz_crop.split()[-1].getbbox()
+        if horiz_bbox:
+            pad = 6
+            h_box = (
+                max(0, horiz_bbox[0] - pad),
+                max(0, horiz_bbox[1] - pad),
+                min(horiz_crop.width, horiz_bbox[2] + pad),
+                min(horiz_crop.height, horiz_bbox[3] + pad)
+            )
+            horiz_logo = horiz_crop.crop(h_box)
+        else:
+            horiz_logo = horiz_crop
+
+        # Segment 3: Compact Badge (Bottom-right: X:[1155, 1525], Y:[390, 760])
+        badge_crop = brand_img.crop((1150, 390, min(1530, bw), min(760, bh)))
+        badge_bbox = badge_crop.split()[-1].getbbox()
+        if badge_bbox:
+            pad = 6
+            b_box = (
+                max(0, badge_bbox[0] - pad),
+                max(0, badge_bbox[1] - pad),
+                min(badge_crop.width, badge_bbox[2] + pad),
+                min(badge_crop.height, badge_bbox[3] + pad)
+            )
+            compact_badge = badge_crop.crop(b_box)
+        else:
+            compact_badge = badge_crop
+
+        # Save extracted master pieces in Logo/
+        master_crest.save(crest_master_path, format="PNG", optimize=True)
+        horiz_logo.save(horiz_path, format="PNG", optimize=True)
+        compact_badge.save(badge_path, format="PNG", optimize=True)
+
+        logo_white = master_crest
     else:
-        logo_white = br_crop
+        # Fallback to sheet
+        sheet_path = LOGO_DIR / "Logo diffrent types.png"
+        sheet = Image.open(sheet_path).convert("RGBA")
+        w, h = sheet.size
+        br_crop = sheet.crop((w // 2, h // 2, w, h))
+        alpha_box = br_crop.split()[-1].getbbox()
+        logo_white = br_crop.crop(alpha_box) if alpha_box else br_crop
+        horiz_logo = logo_white
+        compact_badge = logo_white
 
-    # Bottom-left quadrant contains the dark emblem
-    bl_crop = sheet.crop((0, half_h, half_w, h))
-    alpha_box_bl = bl_crop.split()[-1].getbbox()
-    if alpha_box_bl:
-        pad = 8
-        tight_box_bl = (
-            max(0, alpha_box_bl[0] - pad),
-            max(0, alpha_box_bl[1] - pad),
-            min(bl_crop.width, alpha_box_bl[2] + pad),
-            min(bl_crop.height, alpha_box_bl[3] + pad)
-        )
-        logo_dark = bl_crop.crop(tight_box_bl)
-    else:
-        logo_dark = bl_crop
+    # Save to frontend public assets
+    p_crest = OUT_LOGOS_TRANSPARENT / "minaram_crest_master.png"
+    p_crest_root = OUT_LOGOS / "minaram_crest_master.png"
+    logo_white.save(p_crest, format="PNG", optimize=True)
+    logo_white.save(p_crest_root, format="PNG", optimize=True)
 
-    # Save transparent variants
+    # Primary white logo (used across navbar, footer, etc.)
     p_white = OUT_LOGOS_TRANSPARENT / "minaram_logo_white.png"
     p_white_root = OUT_LOGOS / "minaram_logo_white.png"
     logo_white.save(p_white, format="PNG", optimize=True)
     logo_white.save(p_white_root, format="PNG", optimize=True)
 
-    p_dark = OUT_LOGOS_TRANSPARENT / "minaram_logo_dark.png"
-    logo_dark.save(p_dark, format="PNG", optimize=True)
+    # Horizontal wordmark
+    p_horiz = OUT_LOGOS_TRANSPARENT / "minaram_horizontal_white.png"
+    p_horiz_root = OUT_LOGOS / "minaram_horizontal_white.png"
+    horiz_logo.save(p_horiz, format="PNG", optimize=True)
+    horiz_logo.save(p_horiz_root, format="PNG", optimize=True)
 
-    # Generate crisp website favicon (64x64 and 32x32)
+    # Compact Badge
+    p_badge = OUT_LOGOS_TRANSPARENT / "minaram_badge_compact.png"
+    p_badge_root = OUT_LOGOS / "minaram_badge_compact.png"
+    compact_badge.save(p_badge, format="PNG", optimize=True)
+    compact_badge.save(p_badge_root, format="PNG", optimize=True)
+
+    # Dark emblem fallback
+    sheet_path = LOGO_DIR / "Logo diffrent types.png"
+    if sheet_path.exists():
+        sheet = Image.open(sheet_path).convert("RGBA")
+        w, h = sheet.size
+        bl_crop = sheet.crop((0, h // 2, w // 2, h))
+        alpha_box_bl = bl_crop.split()[-1].getbbox()
+        logo_dark = bl_crop.crop(alpha_box_bl) if alpha_box_bl else bl_crop
+        p_dark = OUT_LOGOS_TRANSPARENT / "minaram_logo_dark.png"
+        logo_dark.save(p_dark, format="PNG", optimize=True)
+
+    # Generate crisp website favicon & desktop app icon
     favicon_img = logo_white.copy()
     favicon_img.thumbnail((64, 64), Image.Resampling.LANCZOS)
     p_favicon_png = PROJECT_ROOT / "frontend" / "public" / "favicon.png"
+    p_favicon_assets_png = PROJECT_ROOT / "frontend" / "public" / "assets" / "favicon.png"
     p_favicon_ico = PROJECT_ROOT / "frontend" / "public" / "favicon.ico"
-    favicon_img.save(p_favicon_png, format="PNG")
-    favicon_img.save(p_favicon_ico, format="ICO", sizes=[(32, 32), (64, 64)])
+    p_app_ico = LOGO_DIR / "minaram_app_icon.ico"
+    p_app_png = LOGO_DIR / "minaram_app_icon.png"
 
-    logger.info("Successfully extracted white and dark Minaram Cup logo variants and favicon.")
-    return [str(p_white), str(p_dark), str(p_favicon_png)]
+    favicon_img.save(p_favicon_png, format="PNG")
+    favicon_img.save(p_favicon_assets_png, format="PNG")
+    favicon_img.save(p_favicon_ico, format="ICO", sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
+    favicon_img.save(p_app_ico, format="ICO", sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
+    favicon_img.save(p_app_png, format="PNG")
+
+    logger.info("Successfully extracted official Minaram Cup Championship Branding Set variants and generated favicons/icons.")
+    return [str(p_crest), str(p_white), str(p_horiz), str(p_badge), str(p_favicon_png)]
 
 
 def process_akhadha_sponsor():

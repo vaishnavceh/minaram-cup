@@ -119,16 +119,16 @@ def api_health():
 # ----------------------------------------------------
 # SPA Frontend Serving & Fallback
 # ----------------------------------------------------
-if FRONTEND_DIST_DIR.exists():
-    from fastapi.responses import FileResponse
-    from fastapi import HTTPException
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi import HTTPException
 
-    @app.get("/{full_path:path}")
-    async def serve_spa_frontend(full_path: str):
-        # Never catch /api or /assets paths
-        if full_path.startswith("api") or full_path.startswith("assets"):
-            raise HTTPException(status_code=404, detail="Not Found")
+@app.get("/{full_path:path}")
+async def serve_spa_frontend(full_path: str):
+    # Never catch /api or /assets paths
+    if full_path.startswith("api") or full_path.startswith("assets"):
+        raise HTTPException(status_code=404, detail="Not Found")
 
+    if FRONTEND_DIST_DIR.exists():
         target_file = FRONTEND_DIST_DIR / full_path
         if full_path and target_file.is_file():
             return FileResponse(target_file)
@@ -137,4 +137,17 @@ if FRONTEND_DIST_DIR.exists():
         if index_file.is_file():
             return FileResponse(index_file)
 
-        raise HTTPException(status_code=404, detail="Frontend index.html not found")
+    return HTMLResponse(
+        content="""<!DOCTYPE html>
+<html>
+<head><title>MINARAM CUP — Backend API Active</title></head>
+<body style="font-family:sans-serif;background:#080808;color:#eee;display:flex;align-items:center;justify-content:center;height:90vh;margin:0;">
+  <div style="max-width:540px;background:#141414;border:1px solid #333;border-radius:12px;padding:32px;text-align:center;">
+    <h2 style="color:#22c55e;margin-top:0;">⚽ MINARAM CUP API ACTIVE</h2>
+    <p style="color:#aaa;">FastAPI tournament backend is running normally on Render.</p>
+    <p>To use the web dashboard, visit your Vercel public deployment or open <a href="/docs" style="color:#38bdf8;">Interactive API Docs (/docs)</a>.</p>
+    <p style="font-size:12px;color:#888;">Admin endpoints are mounted at <code style="color:#f59e0b;">/api/admin/...</code></p>
+  </div>
+</body>
+</html>"""
+    )
