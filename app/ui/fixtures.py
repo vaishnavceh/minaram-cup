@@ -334,13 +334,21 @@ class FixturesView(ctk.CTkScrollableFrame):
         dur_box.grid(row=0, column=0, sticky="ew", padx=(0, 4))
         ctk.CTkLabel(dur_box, text="Match Duration (Minutes):", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
         dur_entry = ctk.CTkEntry(dur_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
-        dur_entry.insert(0, "90")
+        dur_entry.insert(0, "30")
         dur_entry.pack(fill="x")
 
-        v_box = ctk.CTkFrame(row3, fg_color="transparent")
-        v_box.grid(row=0, column=1, sticky="ew", padx=(4, 0))
-        ctk.CTkLabel(v_box, text="Venues (comma-separated):", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
-        venue_entry = ctk.CTkEntry(v_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
+        end_box = ctk.CTkFrame(row3, fg_color="transparent")
+        end_box.grid(row=0, column=1, sticky="ew", padx=(4, 0))
+        ctk.CTkLabel(end_box, text="Daily Operating End Time:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
+        end_entry = ctk.CTkEntry(end_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
+        end_entry.insert(0, "19:00")
+        end_entry.pack(fill="x")
+
+        row4 = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
+        row4.pack(fill="x", pady=(0, 8))
+
+        ctk.CTkLabel(row4, text="Venues / Pitches (comma-separated for simultaneous matches):", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
+        venue_entry = ctk.CTkEntry(row4, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
         venue_entry.insert(0, "Minaram Pitch 1, Minaram Pitch 2")
         venue_entry.pack(fill="x")
 
@@ -364,10 +372,11 @@ class FixturesView(ctk.CTkScrollableFrame):
             fmt = format_menu.get()
             s_d = date_entry.get().strip()
             s_t = time_entry.get().strip()
+            end_t = end_entry.get().strip() or "19:00"
             try:
-                dur = int(dur_entry.get().strip() or "90")
+                dur = int(dur_entry.get().strip() or "30")
             except ValueError:
-                dur = 90
+                dur = 30
             venues = [v.strip() for v in venue_entry.get().split(",") if v.strip()] or ["Minaram Stadium"]
 
             preview_box.delete("1.0", "end")
@@ -379,11 +388,11 @@ class FixturesView(ctk.CTkScrollableFrame):
                 elif "League" in fmt:
                     double = ("Double" in fmt)
                     generated_fixtures = self.fixture_gen.preview_league_fixtures(
-                        start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues, double_round=double
+                        start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues, double_round=double, day_end_time=end_t
                     )
                 else:
                     generated_fixtures = self.fixture_gen.preview_group_fixtures(
-                        start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues, double_round=False
+                        start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues, double_round=False, day_end_time=end_t
                     )
 
                 txt = f"Generated {len(generated_fixtures)} matches successfully:\n\n"

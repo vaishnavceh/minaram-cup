@@ -241,3 +241,82 @@ def test_exports_and_backups(temp_db):
 
         success, r_msg = backup_svc.restore_backup(b_file)
         assert success is True
+
+
+def test_multi_pitch_interleaved_fixture_generation(temp_db):
+    tm = TournamentManager(temp_db)
+    team_mgr = TeamManager(temp_db)
+    fg = FixtureGenerator(temp_db)
+
+    # Create 2 groups of 4 teams each
+    g_a = tm.create_group("Group A")
+    g_b = tm.create_group("Group B")
+
+    for i in range(1, 5):
+        team_mgr.create_team(name=f"Team A{i}", group_id=g_a)
+        team_mgr.create_team(name=f"Team B{i}", group_id=g_b)
+
+    venues = ["Pitch 1", "Pitch 2"]
+    fixtures = fg.preview_group_fixtures(
+        start_date="2026-10-15",
+        start_time="09:00",
+        match_duration_mins=30,
+        venues=venues,
+        day_end_time="19:00"
+    )
+
+    # 4 teams in 2 groups = 6 matches per group = 12 total matches
+    assert len(fixtures) == 12
+
+    # Save and verify 0 conflicts
+    fg.save_fixtures(fixtures, clear_existing=True)
+    conflicts = fg.detect_conflicts()
+    assert len(conflicts) == 0
+
+    # Verify both pitches are used simultaneously at 09:00
+    m_0900 = [f for f in fixtures if f["scheduled_time"] == "09:00"]
+    assert len(m_0900) == 2
+    assert {m["venue"] for m in m_0900} == {"Pitch 1", "Pitch 2"}
+
+
+def test_standings_overrides_and_auto_reorder(temp_db):
+    tm = TournamentManager(temp_db)
+    team_mgr = TeamManager(temp_db)
+    sc = StandingsCalculator(temp_db)
+
+    g_id = tm.create_group("Group A")
+    t1 = team_mgr.create_team(name="Alpha", group_id=g_id)
+    t2 = team_mgr.create_team(name="Beta", group_id=g_id)
+    t3 = team_mgr.create_team(name="Gamma", group_id=g_id)
+
+    # Initial standings: all 0 pts
+    initial = sc.calculate_group_standings(g_id)
+    assert len(initial) == 3
+
+    # Set override for Gamma: give 9 pts, +5 GD
+    sc.set_team_override(
+        team_id=t3,
+        played=3,
+        won=3,
+        drawn=0,
+        lost=0,
+        goals_for=6,
+        goals_against=1,
+        points=9,
+        notes="Administrative qualification"
+    )
+
+    # Recalculate: Gamma must auto-reorder to Rank 1!
+    updated = sc.calculate_group_standings(g_id)
+    assert updated[0].team_id == t3
+    assert updated[0].rank == 1
+    assert updated[0].points == 9
+    assert updated[0].goal_difference == 5
+    assert updated[0].has_override is True
+    assert updated[0].is_qualified is True
+
+    # Clear override: reverts to natural rank
+    sc.clear_team_override(t3)
+    restored = sc.calculate_group_standings(g_id)
+    assert restored[0].points == 0
+    assert restored[0].has_override is False

@@ -19,6 +19,7 @@ from app.fixture_generator import FixtureGenerator
 from app.knockout_manager import KnockoutManager
 from app.results_manager import ResultsManager
 from app.backup_service import BackupService
+from app.standings import StandingsCalculator
 from backend.auth import get_current_admin, create_access_token, ADMIN_USERNAME, ADMIN_PASSWORD
 
 router = APIRouter(prefix="/api/admin", tags=["Admin Operations"])
@@ -30,6 +31,7 @@ tourn_mgr = TournamentManager(db)
 fix_gen = FixtureGenerator(db)
 ko_mgr = KnockoutManager(db)
 res_mgr = ResultsManager(db)
+stand_calc = StandingsCalculator(db)
 backup_svc = BackupService(db)
 
 
@@ -63,6 +65,18 @@ class ResultEntry(BaseModel):
     home_penalty: Optional[int] = None
     away_penalty: Optional[int] = None
     walkover_winner_id: Optional[int] = None
+    notes: Optional[str] = ""
+
+
+class StandingsOverrideRequest(BaseModel):
+    team_id: int
+    played: Optional[int] = None
+    won: Optional[int] = None
+    drawn: Optional[int] = None
+    lost: Optional[int] = None
+    goals_for: Optional[int] = None
+    goals_against: Optional[int] = None
+    points: Optional[int] = None
     notes: Optional[str] = ""
 
 
@@ -203,27 +217,31 @@ def distribute_groups_admin(randomize: bool = Body(False), admin: dict = Depends
 def generate_fixtures_admin(
     format_type: str = Body("Group Stage"),
     start_date: str = Body(""),
-    start_time: str = Body("10:00"),
-    duration_mins: int = Body(90),
-    venue: str = Body("Minaram Stadium"),
+    start_time: str = Body("09:00"),
+    duration_mins: int = Body(30),
+    day_end_time: str = Body("19:00"),
+    venue: str = Body("Minaram Pitch 1, Minaram Pitch 2"),
     clear_existing: bool = Body(True),
     admin: dict = Depends(get_current_admin)
 ):
     try:
+        venue_list = [v.strip() for v in venue.split(",") if v.strip()] or ["Minaram Stadium"]
         if "Knockout" in format_type:
             fixtures = ko_mgr.generate_bracket_from_group_qualifiers(
-                start_date=start_date, start_time=start_time, match_duration_mins=duration_mins, venue=venue
+                start_date=start_date, start_time=start_time, match_duration_mins=duration_mins, venue=venue_list[0]
             )
         elif "League" in format_type:
             fixtures = fix_gen.preview_league_fixtures(
-                start_date=start_date, start_time=start_time, match_duration_mins=duration_mins, venues=[venue]
+                start_date=start_date, start_time=start_time, match_duration_mins=duration_mins, venues=venue_list, day_end_time=day_end_time
             )
         else:
             fixtures = fix_gen.preview_group_fixtures(
-                start_date=start_date, start_time=start_time, match_duration_mins=duration_mins, venues=[venue]
+                start_date=start_date, start_time=start_time, match_duration_mins=duration_mins, venues=venue_list, day_end_time=day_end_time
             )
 
         saved_cnt = fix_gen.save_fixtures(fixtures, clear_existing=clear_existing)
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("fixtures_updated", {"count": saved_cnt})
         return {"status": "generated", "saved_count": saved_cnt}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -255,6 +273,48 @@ def reset_match_result_admin(match_id: int, reason: str = Body("Admin Reset"), a
     if not ok:
         raise HTTPException(status_code=400, detail=msg)
     return {"status": "reset", "message": msg}
+
+
+# ----------------------------------------------------
+# Standings & Points Table Overrides (Protected)
+# ----------------------------------------------------
+@router.get("/standings/overrides")
+def get_standings_overrides_admin(admin: dict = Depends(get_current_admin)):
+    return stand_calc.get_overrides()
+
+
+@router.post("/standings/overrides")
+def set_standings_override_admin(req: StandingsOverrideRequest, admin: dict = Depends(get_current_admin)):
+    stand_calc.set_team_override(
+        team_id=req.team_id,
+        played=req.played,
+        won=req.won,
+        drawn=req.drawn,
+        lost=req.lost,
+        goals_for=req.goals_for,
+        goals_against=req.goals_against,
+        points=req.points,
+        notes=req.notes or ""
+    )
+    from app.events import broadcaster
+    broadcaster.broadcast_from_thread("standings_updated", {"team_id": req.team_id})
+    return {"status": "saved", "message": f"Override applied for team #{req.team_id}. Standings auto-reordered."}
+
+
+@router.delete("/standings/overrides/{team_id}")
+def clear_team_override_admin(team_id: int, admin: dict = Depends(get_current_admin)):
+    stand_calc.clear_team_override(team_id)
+    from app.events import broadcaster
+    broadcaster.broadcast_from_thread("standings_updated", {"team_id": team_id})
+    return {"status": "cleared", "message": f"Override cleared for team #{team_id}."}
+
+
+@router.delete("/standings/overrides")
+def clear_all_standings_overrides_admin(admin: dict = Depends(get_current_admin)):
+    stand_calc.clear_all_overrides()
+    from app.events import broadcaster
+    broadcaster.broadcast_from_thread("standings_updated", {})
+    return {"status": "cleared", "message": "All standings overrides cleared."}
 
 
 # ----------------------------------------------------

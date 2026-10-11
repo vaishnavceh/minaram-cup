@@ -81,13 +81,18 @@ class FixtureGenerator:
     def preview_group_fixtures(
         self,
         start_date: str = "",
-        start_time: str = "10:00",
-        match_duration_mins: int = 90,
+        start_time: str = "09:00",
+        match_duration_mins: int = 30,
         venues: Optional[List[str]] = None,
-        double_round: bool = False
+        double_round: bool = False,
+        day_end_time: str = "19:00"
     ) -> List[Dict[str, Any]]:
         """
-        Generate proposed fixtures for all groups without saving to DB.
+        Generate balanced, round-interleaved fixtures for all groups with:
+        1. Multi-pitch simultaneous scheduling (pitches utilized concurrently).
+        2. Round-by-round interleaving across groups (all Round 1 matches before Round 2).
+        3. Operating hours limit (matches never spill past day_end_time, rolling into next day).
+        4. Zero double-booking of teams in the same time slot.
         """
         groups = self.db.execute_query("SELECT id, name FROM groups ORDER BY display_order ASC, name ASC;")
         if not groups:
@@ -95,16 +100,37 @@ class FixtureGenerator:
 
         if not venues:
             venues = [self.db.get_setting("default_venue", "Minaram Stadium")]
+        else:
+            cleaned_venues = []
+            for v in venues:
+                for sub in str(v).split(","):
+                    s = sub.strip()
+                    if s and s not in cleaned_venues:
+                        cleaned_venues.append(s)
+            venues = cleaned_venues or [self.db.get_setting("default_venue", "Minaram Stadium")]
 
         if not start_date:
             start_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
-        fixtures = []
-        match_num = 1
+        try:
+            curr_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+        except Exception:
+            curr_date = (datetime.now() + timedelta(days=1)).date()
 
-        curr_dt = datetime.strptime(f"{start_date} {start_time}", "%Y-%m-%d %H:%M")
-        venue_idx = 0
+        try:
+            start_t = datetime.strptime(start_time, "%H:%M").time()
+        except Exception:
+            start_t = datetime.strptime("09:00", "%H:%M").time()
 
+        try:
+            end_t = datetime.strptime(day_end_time, "%H:%M").time()
+        except Exception:
+            end_t = datetime.strptime("19:00", "%H:%M").time()
+
+        curr_dt = datetime.combine(curr_date, start_t)
+        day_end_dt = datetime.combine(curr_date, end_t)
+
+        group_data: Dict[int, Dict[str, Any]] = {}
         for g in groups:
             g_id = g["id"]
             g_name = g["name"]
@@ -113,34 +139,78 @@ class FixtureGenerator:
                 (g_id,)
             )
             teams = [{"id": r["id"], "name": r["name"]} for r in team_rows]
-            if len(teams) < 2:
-                continue
+            if len(teams) >= 2:
+                rounds = self.generate_round_robin_pairings(teams, double_round=double_round)
+                group_data[g_id] = {
+                    "name": g_name,
+                    "rounds": rounds
+                }
 
-            rounds = self.generate_round_robin_pairings(teams, double_round=double_round)
+        if not group_data:
+            return []
 
-            for round_idx, r_matches in enumerate(rounds, start=1):
-                for home, away in r_matches:
-                    v = venues[venue_idx % len(venues)]
-                    venue_idx += 1
+        max_rounds = max(len(g["rounds"]) for g in group_data.values())
+        fixtures: List[Dict[str, Any]] = []
+        match_num = 1
 
-                    fixtures.append({
-                        "match_number": match_num,
-                        "stage": "Group Stage",
-                        "group_id": g_id,
-                        "group_name": g_name,
-                        "round_number": round_idx,
-                        "bracket_slot": "",
-                        "home_team_id": home["id"],
-                        "away_team_id": away["id"],
-                        "home_team_name": home["name"],
-                        "away_team_name": away["name"],
-                        "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                        "scheduled_time": curr_dt.strftime("%H:%M"),
-                        "venue": v,
-                        "status": "Scheduled"
-                    })
-                    match_num += 1
-                    curr_dt += timedelta(minutes=match_duration_mins)
+        for round_idx in range(max_rounds):
+            # Gather all matches for this round across all groups (interleaving groups)
+            round_matches: List[Dict[str, Any]] = []
+            for g_id, g_info in group_data.items():
+                if round_idx < len(g_info["rounds"]):
+                    for home, away in g_info["rounds"][round_idx]:
+                        round_matches.append({
+                            "group_id": g_id,
+                            "group_name": g_info["name"],
+                            "round_number": round_idx + 1,
+                            "home": home,
+                            "away": away
+                        })
+
+            # Schedule this round across pitches
+            while round_matches:
+                # If current slot would finish past day_end_dt, advance to next day
+                if curr_dt + timedelta(minutes=match_duration_mins) > day_end_dt:
+                    curr_date += timedelta(days=1)
+                    curr_dt = datetime.combine(curr_date, start_t)
+                    day_end_dt = datetime.combine(curr_date, end_t)
+
+                teams_playing_in_slot = set()
+
+                for venue in venues:
+                    match_to_assign = None
+                    for candidate in round_matches:
+                        h_id = candidate["home"]["id"]
+                        a_id = candidate["away"]["id"]
+                        if h_id not in teams_playing_in_slot and a_id not in teams_playing_in_slot:
+                            match_to_assign = candidate
+                            break
+
+                    if match_to_assign is not None:
+                        round_matches.remove(match_to_assign)
+                        teams_playing_in_slot.add(match_to_assign["home"]["id"])
+                        teams_playing_in_slot.add(match_to_assign["away"]["id"])
+
+                        fixtures.append({
+                            "match_number": match_num,
+                            "stage": "Group Stage",
+                            "group_id": match_to_assign["group_id"],
+                            "group_name": match_to_assign["group_name"],
+                            "round_number": match_to_assign["round_number"],
+                            "bracket_slot": "",
+                            "home_team_id": match_to_assign["home"]["id"],
+                            "away_team_id": match_to_assign["away"]["id"],
+                            "home_team_name": match_to_assign["home"]["name"],
+                            "away_team_name": match_to_assign["away"]["name"],
+                            "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
+                            "scheduled_time": curr_dt.strftime("%H:%M"),
+                            "venue": venue,
+                            "status": "Scheduled"
+                        })
+                        match_num += 1
+
+                # Advance time slot by match duration
+                curr_dt += timedelta(minutes=match_duration_mins)
 
         return fixtures
 
@@ -150,12 +220,13 @@ class FixtureGenerator:
     def preview_league_fixtures(
         self,
         start_date: str = "",
-        start_time: str = "10:00",
-        match_duration_mins: int = 90,
+        start_time: str = "09:00",
+        match_duration_mins: int = 30,
         venues: Optional[List[str]] = None,
-        double_round: bool = False
+        double_round: bool = False,
+        day_end_time: str = "19:00"
     ) -> List[Dict[str, Any]]:
-        """Generate proposed fixtures for a full league tournament."""
+        """Generate proposed fixtures for a full league tournament with multi-pitch support and operating hours."""
         teams_rows = self.db.execute_query(
             "SELECT id, name FROM teams WHERE status = 'Confirmed' ORDER BY seed DESC, name ASC;"
         )
@@ -165,39 +236,83 @@ class FixtureGenerator:
 
         if not venues:
             venues = [self.db.get_setting("default_venue", "Minaram Stadium")]
+        else:
+            cleaned_venues = []
+            for v in venues:
+                for sub in str(v).split(","):
+                    s = sub.strip()
+                    if s and s not in cleaned_venues:
+                        cleaned_venues.append(s)
+            venues = cleaned_venues or [self.db.get_setting("default_venue", "Minaram Stadium")]
 
         if not start_date:
             start_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
-        rounds = self.generate_round_robin_pairings(teams, double_round=double_round)
+        try:
+            curr_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+        except Exception:
+            curr_date = (datetime.now() + timedelta(days=1)).date()
 
-        fixtures = []
+        try:
+            start_t = datetime.strptime(start_time, "%H:%M").time()
+        except Exception:
+            start_t = datetime.strptime("09:00", "%H:%M").time()
+
+        try:
+            end_t = datetime.strptime(day_end_time, "%H:%M").time()
+        except Exception:
+            end_t = datetime.strptime("19:00", "%H:%M").time()
+
+        curr_dt = datetime.combine(curr_date, start_t)
+        day_end_dt = datetime.combine(curr_date, end_t)
+
+        rounds = self.generate_round_robin_pairings(teams, double_round=double_round)
+        fixtures: List[Dict[str, Any]] = []
         match_num = 1
-        curr_dt = datetime.strptime(f"{start_date} {start_time}", "%Y-%m-%d %H:%M")
-        venue_idx = 0
 
         for round_idx, r_matches in enumerate(rounds, start=1):
-            for home, away in r_matches:
-                v = venues[venue_idx % len(venues)]
-                venue_idx += 1
+            round_matches = [{"home": h, "away": a, "round_number": round_idx} for h, a in r_matches]
 
-                fixtures.append({
-                    "match_number": match_num,
-                    "stage": "League",
-                    "group_id": None,
-                    "group_name": "League",
-                    "round_number": round_idx,
-                    "bracket_slot": "",
-                    "home_team_id": home["id"],
-                    "away_team_id": away["id"],
-                    "home_team_name": home["name"],
-                    "away_team_name": away["name"],
-                    "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                    "scheduled_time": curr_dt.strftime("%H:%M"),
-                    "venue": v,
-                    "status": "Scheduled"
-                })
-                match_num += 1
+            while round_matches:
+                if curr_dt + timedelta(minutes=match_duration_mins) > day_end_dt:
+                    curr_date += timedelta(days=1)
+                    curr_dt = datetime.combine(curr_date, start_t)
+                    day_end_dt = datetime.combine(curr_date, end_t)
+
+                teams_playing_in_slot = set()
+
+                for venue in venues:
+                    match_to_assign = None
+                    for candidate in round_matches:
+                        h_id = candidate["home"]["id"]
+                        a_id = candidate["away"]["id"]
+                        if h_id not in teams_playing_in_slot and a_id not in teams_playing_in_slot:
+                            match_to_assign = candidate
+                            break
+
+                    if match_to_assign is not None:
+                        round_matches.remove(match_to_assign)
+                        teams_playing_in_slot.add(match_to_assign["home"]["id"])
+                        teams_playing_in_slot.add(match_to_assign["away"]["id"])
+
+                        fixtures.append({
+                            "match_number": match_num,
+                            "stage": "League",
+                            "group_id": None,
+                            "group_name": "League",
+                            "round_number": match_to_assign["round_number"],
+                            "bracket_slot": "",
+                            "home_team_id": match_to_assign["home"]["id"],
+                            "away_team_id": match_to_assign["away"]["id"],
+                            "home_team_name": match_to_assign["home"]["name"],
+                            "away_team_name": match_to_assign["away"]["name"],
+                            "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
+                            "scheduled_time": curr_dt.strftime("%H:%M"),
+                            "venue": venue,
+                            "status": "Scheduled"
+                        })
+                        match_num += 1
+
                 curr_dt += timedelta(minutes=match_duration_mins)
 
         return fixtures
@@ -241,7 +356,7 @@ class FixtureGenerator:
     # ----------------------------------------------------
     # Conflict Detection
     # ----------------------------------------------------
-    def detect_conflicts(self) -> List[Dict[str, Any]]:
+    def detect_conflicts(self, duration_mins: Optional[int] = None) -> List[Dict[str, Any]]:
         """
         Detect scheduling conflicts:
         1. Team playing two matches on the same date with conflicting times.
@@ -250,7 +365,13 @@ class FixtureGenerator:
         matches = self.get_matches()
         conflicts = []
 
-        duration = int(self.db.get_setting("match_duration_minutes", "90"))
+        if duration_mins is not None:
+            duration = duration_mins
+        else:
+            try:
+                duration = int(self.db.get_setting("match_duration_minutes", "30"))
+            except ValueError:
+                duration = 30
 
         # Venue time conflicts
         venue_slots: Dict[Tuple[str, str, str], List[Match]] = {}

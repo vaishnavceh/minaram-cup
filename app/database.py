@@ -189,6 +189,22 @@ class Database:
             """)
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_audit_match ON match_audit_log(match_id);")
 
+            # 8. Standings Overrides Table (Points table manual edits)
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS standings_overrides (
+                team_id INTEGER PRIMARY KEY REFERENCES teams(id) ON DELETE CASCADE,
+                played INTEGER DEFAULT NULL,
+                won INTEGER DEFAULT NULL,
+                drawn INTEGER DEFAULT NULL,
+                lost INTEGER DEFAULT NULL,
+                goals_for INTEGER DEFAULT NULL,
+                goals_against INTEGER DEFAULT NULL,
+                points INTEGER DEFAULT NULL,
+                notes TEXT DEFAULT '',
+                updated_at TEXT NOT NULL
+            );
+            """)
+
             # Default Settings Insertion
             default_settings = {
                 "tournament_name": "Minaram Cup",
@@ -200,7 +216,7 @@ class Database:
                 "loss_points": "0",
                 "num_groups": "2",
                 "qualifiers_per_group": "2",
-                "match_duration_minutes": "90",
+                "match_duration_minutes": "30",
                 "default_venue": "Minaram Stadium",
                 "tie_breakers": "points,goal_difference,goals_for,head_to_head,won",
                 "theme": "dark"

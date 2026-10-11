@@ -152,6 +152,8 @@ class StandingRow:
     form: List[str] = field(default_factory=list)  # e.g. ['W', 'D', 'W']
     is_qualified: bool = False
     rank: int = 1
+    has_override: bool = False
+    override_notes: str = ""
 
 
 @dataclass

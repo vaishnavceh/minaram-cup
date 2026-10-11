@@ -36,7 +36,11 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
             {match.stage}
           </span>
           {match.group_name && (
-            <span className="text-neutral-400">· Group {match.group_name}</span>
+            <span className="text-neutral-400">
+              · {match.group_name.trim().toLowerCase().startsWith('group')
+                  ? match.group_name.trim()
+                  : `Group ${match.group_name.trim()}`}
+            </span>
           )}
           {match.match_number && (
             <span className="text-neutral-400">· M#{match.match_number}</span>

@@ -26,12 +26,49 @@ export const FixturesPage: React.FC = () => {
     loadFixtures();
   }, []);
 
+  const normalizeStageKey = (s?: string | null): string => {
+    if (!s) return '';
+    return s.toUpperCase().replace(/[\s-]+/g, '_').trim();
+  };
+
+  const normalizeGroupKey = (g?: string | null): string => {
+    if (!g) return '';
+    return g.toUpperCase().replace(/^GROUP\s*/i, '').trim();
+  };
+
+  const availableGroups = React.useMemo(() => {
+    const set = new Set<string>();
+    fixtures.forEach((m) => {
+      if (m.group_name) {
+        const clean = normalizeGroupKey(m.group_name);
+        if (clean) set.add(clean);
+      }
+    });
+    const sorted = Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+    return ['ALL', ...sorted];
+  }, [fixtures]);
+
+  const stages = [
+    { key: 'ALL', label: 'ALL STAGES' },
+    { key: 'GROUP_STAGE', label: 'GROUP STAGE' },
+    { key: 'QUARTER_FINAL', label: 'QUARTER-FINAL' },
+    { key: 'SEMI_FINAL', label: 'SEMI-FINAL' },
+    { key: 'FINAL', label: 'FINAL' },
+  ];
+
   const filteredMatches = fixtures.filter((m) => {
-    if (selectedStage !== 'ALL' && m.stage !== selectedStage) {
-      return false;
+    if (selectedStage !== 'ALL') {
+      const stageKey = normalizeStageKey(m.stage);
+      if (stageKey !== selectedStage) {
+        return false;
+      }
     }
-    if (selectedGroup !== 'ALL' && m.group_name !== selectedGroup) {
-      return false;
+    if (selectedGroup !== 'ALL') {
+      const matchGrp = normalizeGroupKey(m.group_name);
+      const selGrp = normalizeGroupKey(selectedGroup);
+      if (matchGrp !== selGrp) {
+        return false;
+      }
     }
     if (searchTerm.trim()) {
       const query = searchTerm.toLowerCase();
@@ -44,8 +81,12 @@ export const FixturesPage: React.FC = () => {
     return true;
   });
 
-  const stages = ['ALL', 'GROUP_STAGE', 'QUARTER_FINAL', 'SEMI_FINAL', 'FINAL'];
-  const groups = ['ALL', 'A', 'B', 'C', 'D'];
+  const sortedMatches = [...filteredMatches].sort((a, b) => {
+    if (a.match_number && b.match_number) {
+      return a.match_number - b.match_number;
+    }
+    return (a.scheduled_time || '').localeCompare(b.scheduled_time || '');
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -74,15 +115,15 @@ export const FixturesPage: React.FC = () => {
             </span>
             {stages.map((st) => (
               <button
-                key={st}
-                onClick={() => setSelectedStage(st)}
+                key={st.key}
+                onClick={() => setSelectedStage(st.key)}
                 className={`px-3 py-1 rounded text-xs font-mono uppercase transition-colors ${
-                  selectedStage === st
+                  selectedStage === st.key
                     ? 'bg-brand-red text-white font-bold'
                     : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-neutral-800'
                 }`}
               >
-                {st.replace('_', ' ')}
+                {st.label}
               </button>
             ))}
           </div>
@@ -102,9 +143,9 @@ export const FixturesPage: React.FC = () => {
 
         {/* Group Filter (when stage is ALL or GROUP_STAGE) */}
         {(selectedStage === 'ALL' || selectedStage === 'GROUP_STAGE') && (
-          <div className="flex items-center space-x-2 pt-2 border-t border-neutral-800/60">
+          <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-neutral-800/60">
             <span className="text-xs font-mono text-neutral-400 mr-2">GROUP:</span>
-            {groups.map((grp) => (
+            {availableGroups.map((grp) => (
               <button
                 key={grp}
                 onClick={() => setSelectedGroup(grp)}
@@ -126,9 +167,9 @@ export const FixturesPage: React.FC = () => {
         <div className="text-center py-20 font-mono text-sm text-neutral-500">
           Loading fixtures...
         </div>
-      ) : filteredMatches.length > 0 ? (
+      ) : sortedMatches.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {filteredMatches.map((match) => (
+          {sortedMatches.map((match) => (
             <MatchCard key={match.id} match={match} />
           ))}
         </div>

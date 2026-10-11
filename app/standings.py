@@ -7,6 +7,7 @@ goals for, head-to-head, wins), and group qualification flagging.
 import logging
 from typing import List, Dict, Any, Optional, Tuple
 from functools import cmp_to_key
+from datetime import datetime
 
 from app.database import Database
 from app.models import StandingRow
@@ -145,10 +146,38 @@ class StandingsCalculator:
                 h2h[(h_id, a_id)]["points"] += draw_pts
                 h2h[(a_id, h_id)]["points"] += draw_pts
 
-        for s in stats.values():
+        # Apply manual standings overrides if configured
+        try:
+            override_rows = self.db.execute_query(
+                "SELECT team_id, played, won, drawn, lost, goals_for, goals_against, points, notes FROM standings_overrides;"
+            )
+            overrides = {r["team_id"]: dict(r) for r in override_rows}
+        except Exception:
+            overrides = {}
+
+        for team_id, s in stats.items():
+            if team_id in overrides:
+                ov = overrides[team_id]
+                if ov["played"] is not None:
+                    s["played"] = int(ov["played"])
+                if ov["won"] is not None:
+                    s["won"] = int(ov["won"])
+                if ov["drawn"] is not None:
+                    s["drawn"] = int(ov["drawn"])
+                if ov["lost"] is not None:
+                    s["lost"] = int(ov["lost"])
+                if ov["goals_for"] is not None:
+                    s["goals_for"] = int(ov["goals_for"])
+                if ov["goals_against"] is not None:
+                    s["goals_against"] = int(ov["goals_against"])
+                if ov["points"] is not None:
+                    s["points"] = int(ov["points"])
+                s["has_override"] = True
+                s["override_notes"] = ov.get("notes") or ""
+
             s["goal_difference"] = s["goals_for"] - s["goals_against"]
 
-        # Sorting comparator with tie-breakers
+        # Sorting comparator with tie-breakers (Auto-reorders table on its own)
         def compare_teams(a: Dict[str, Any], b: Dict[str, Any]) -> int:
             for tb in tie_breakers:
                 if tb == "points":
@@ -195,7 +224,9 @@ class StandingsCalculator:
                 points=s["points"],
                 form=s["form"][-5:],
                 is_qualified=is_qual,
-                rank=idx
+                rank=idx,
+                has_override=s.get("has_override", False),
+                override_notes=s.get("override_notes", "")
             ))
 
         return results
@@ -207,3 +238,61 @@ class StandingsCalculator:
         for g in groups:
             res[g["name"]] = self.calculate_group_standings(group_id=g["id"])
         return res
+
+    # ----------------------------------------------------
+    # Points Table Manual Override Management
+    # ----------------------------------------------------
+    def get_overrides(self) -> Dict[int, Dict[str, Any]]:
+        """Retrieve all active standings overrides indexed by team_id."""
+        try:
+            rows = self.db.execute_query("SELECT * FROM standings_overrides;")
+            return {r["team_id"]: dict(r) for r in rows}
+        except Exception as e:
+            logger.error(f"Error fetching standings overrides: {e}")
+            return {}
+
+    def set_team_override(
+        self,
+        team_id: int,
+        played: Optional[int] = None,
+        won: Optional[int] = None,
+        drawn: Optional[int] = None,
+        lost: Optional[int] = None,
+        goals_for: Optional[int] = None,
+        goals_against: Optional[int] = None,
+        points: Optional[int] = None,
+        notes: str = ""
+    ) -> None:
+        """Insert or update manual stats override for a team."""
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.db.execute_non_query("""
+            INSERT INTO standings_overrides (
+                team_id, played, won, drawn, lost, goals_for, goals_against, points, notes, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(team_id) DO UPDATE SET
+                played = excluded.played,
+                won = excluded.won,
+                drawn = excluded.drawn,
+                lost = excluded.lost,
+                goals_for = excluded.goals_for,
+                goals_against = excluded.goals_against,
+                points = excluded.points,
+                notes = excluded.notes,
+                updated_at = excluded.updated_at;
+        """, (team_id, played, won, drawn, lost, goals_for, goals_against, points, notes, now_str))
+
+    def clear_team_override(self, team_id: int) -> None:
+        """Clear manual override for a specific team."""
+        self.db.execute_non_query("DELETE FROM standings_overrides WHERE team_id = ?;", (team_id,))
+
+    def clear_group_overrides(self, group_id: Optional[int] = None) -> None:
+        """Clear manual overrides for an entire group or all teams."""
+        if group_id is not None:
+            self.db.execute_non_query("""
+                DELETE FROM standings_overrides
+                WHERE team_id IN (SELECT id FROM teams WHERE group_id = ?);
+            """, (group_id,))
+        else:
+            self.db.execute_non_query("DELETE FROM standings_overrides;")
+
+    clear_all_overrides = clear_group_overrides
