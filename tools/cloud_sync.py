@@ -42,6 +42,15 @@ def push_to_cloud(base_url: str, username: str = "admin", password: str = "minar
         print(f"[ERROR] Failed to authenticate with cloud backend: {e}")
         sys.exit(1)
 
+    # Ensure all WAL changes are flushed into minaram_cup.db
+    try:
+        import sqlite3
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+        conn.close()
+    except Exception:
+        pass
+
     print("[2/3] Uploading local SQLite database to Render...")
     boundary = "----MinaramCupBoundary7MA4YWxkTrZu0gW"
     
