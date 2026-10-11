@@ -1,0 +1,426 @@
+"""
+Fixture scheduling, round-robin generation, knockout bracket creation,
+and scheduling conflict detection.
+"""
+
+import logging
+from typing import List, Dict, Any, Optional, Tuple
+from datetime import datetime, timedelta
+
+from app.database import Database
+from app.models import Match
+
+logger = logging.getLogger("minaram_cup.fixture_generator")
+
+
+class FixtureGenerator:
+    def __init__(self, db: Database):
+        self.db = db
+
+    # ----------------------------------------------------
+    # Round-Robin Algorithm (Berger / Circle Method)
+    # ----------------------------------------------------
+    @staticmethod
+    def generate_round_robin_pairings(teams: List[Dict[str, Any]], double_round: bool = False) -> List[List[Tuple[Dict[str, Any], Dict[str, Any]]]]:
+        """
+        Generate round-robin rounds using the Circle Method.
+        Handles odd numbers of teams by inserting a BYE dummy team.
+        Returns a list of rounds, where each round is a list of (home_team, away_team) tuples.
+        """
+        team_list = list(teams)
+        if len(team_list) < 2:
+            return []
+
+        # If odd, add dummy BYE team
+        has_bye = (len(team_list) % 2 != 0)
+        if has_bye:
+            team_list.append({"id": None, "name": "BYE"})
+
+        n = len(team_list)
+        rounds_count = n - 1
+        half = n // 2
+
+        all_rounds = []
+        indices = list(range(n))
+
+        for r in range(rounds_count):
+            round_matches = []
+            for i in range(half):
+                t1_idx = indices[i]
+                t2_idx = indices[n - 1 - i]
+                t1 = team_list[t1_idx]
+                t2 = team_list[t2_idx]
+
+                # Don't schedule match if one team is BYE
+                if t1["id"] is None or t2["id"] is None:
+                    continue
+
+                # Alternate home/away based on round to keep balance
+                if (r + i) % 2 == 0:
+                    round_matches.append((t1, t2))
+                else:
+                    round_matches.append((t2, t1))
+
+            all_rounds.append(round_matches)
+
+            # Rotate indices, fixing the first element
+            indices = [indices[0]] + [indices[-1]] + indices[1:-1]
+
+        if double_round:
+            second_leg_rounds = []
+            for r_matches in all_rounds:
+                inverted = [(away, home) for (home, away) in r_matches]
+                second_leg_rounds.append(inverted)
+            all_rounds.extend(second_leg_rounds)
+
+        return all_rounds
+
+    # ----------------------------------------------------
+    # Generate Group Stage Fixtures
+    # ----------------------------------------------------
+    def preview_group_fixtures(
+        self,
+        start_date: str = "",
+        start_time: str = "10:00",
+        match_duration_mins: int = 90,
+        venues: Optional[List[str]] = None,
+        double_round: bool = False
+    ) -> List[Dict[str, Any]]:
+        """
+        Generate proposed fixtures for all groups without saving to DB.
+        """
+        groups = self.db.execute_query("SELECT id, name FROM groups ORDER BY display_order ASC, name ASC;")
+        if not groups:
+            raise ValueError("No groups found. Please create groups and assign teams first.")
+
+        if not venues:
+            venues = [self.db.get_setting("default_venue", "Minaram Stadium")]
+
+        if not start_date:
+            start_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+
+        fixtures = []
+        match_num = 1
+
+        curr_dt = datetime.strptime(f"{start_date} {start_time}", "%Y-%m-%d %H:%M")
+        venue_idx = 0
+
+        for g in groups:
+            g_id = g["id"]
+            g_name = g["name"]
+            team_rows = self.db.execute_query(
+                "SELECT id, name FROM teams WHERE group_id = ? AND status = 'Confirmed' ORDER BY seed DESC, name ASC;",
+                (g_id,)
+            )
+            teams = [{"id": r["id"], "name": r["name"]} for r in team_rows]
+            if len(teams) < 2:
+                continue
+
+            rounds = self.generate_round_robin_pairings(teams, double_round=double_round)
+
+            for round_idx, r_matches in enumerate(rounds, start=1):
+                for home, away in r_matches:
+                    v = venues[venue_idx % len(venues)]
+                    venue_idx += 1
+
+                    fixtures.append({
+                        "match_number": match_num,
+                        "stage": "Group Stage",
+                        "group_id": g_id,
+                        "group_name": g_name,
+                        "round_number": round_idx,
+                        "bracket_slot": "",
+                        "home_team_id": home["id"],
+                        "away_team_id": away["id"],
+                        "home_team_name": home["name"],
+                        "away_team_name": away["name"],
+                        "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
+                        "scheduled_time": curr_dt.strftime("%H:%M"),
+                        "venue": v,
+                        "status": "Scheduled"
+                    })
+                    match_num += 1
+                    curr_dt += timedelta(minutes=match_duration_mins)
+
+        return fixtures
+
+    # ----------------------------------------------------
+    # Generate League Fixtures (Single or Double Round Robin)
+    # ----------------------------------------------------
+    def preview_league_fixtures(
+        self,
+        start_date: str = "",
+        start_time: str = "10:00",
+        match_duration_mins: int = 90,
+        venues: Optional[List[str]] = None,
+        double_round: bool = False
+    ) -> List[Dict[str, Any]]:
+        """Generate proposed fixtures for a full league tournament."""
+        teams_rows = self.db.execute_query(
+            "SELECT id, name FROM teams WHERE status = 'Confirmed' ORDER BY seed DESC, name ASC;"
+        )
+        teams = [{"id": r["id"], "name": r["name"]} for r in teams_rows]
+        if len(teams) < 2:
+            raise ValueError("Need at least 2 confirmed teams to generate league fixtures.")
+
+        if not venues:
+            venues = [self.db.get_setting("default_venue", "Minaram Stadium")]
+
+        if not start_date:
+            start_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+
+        rounds = self.generate_round_robin_pairings(teams, double_round=double_round)
+
+        fixtures = []
+        match_num = 1
+        curr_dt = datetime.strptime(f"{start_date} {start_time}", "%Y-%m-%d %H:%M")
+        venue_idx = 0
+
+        for round_idx, r_matches in enumerate(rounds, start=1):
+            for home, away in r_matches:
+                v = venues[venue_idx % len(venues)]
+                venue_idx += 1
+
+                fixtures.append({
+                    "match_number": match_num,
+                    "stage": "League",
+                    "group_id": None,
+                    "group_name": "League",
+                    "round_number": round_idx,
+                    "bracket_slot": "",
+                    "home_team_id": home["id"],
+                    "away_team_id": away["id"],
+                    "home_team_name": home["name"],
+                    "away_team_name": away["name"],
+                    "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
+                    "scheduled_time": curr_dt.strftime("%H:%M"),
+                    "venue": v,
+                    "status": "Scheduled"
+                })
+                match_num += 1
+                curr_dt += timedelta(minutes=match_duration_mins)
+
+        return fixtures
+
+    # ----------------------------------------------------
+    # Save Generated Fixtures
+    # ----------------------------------------------------
+    def save_fixtures(self, fixtures: List[Dict[str, Any]], clear_existing: bool = False) -> int:
+        """Save a list of fixture dictionaries to database."""
+        with self.db.transaction() as conn:
+            cursor = conn.cursor()
+            if clear_existing:
+                cursor.execute("DELETE FROM match_audit_log;")
+                cursor.execute("DELETE FROM matches;")
+
+            count = 0
+            for f in fixtures:
+                cursor.execute("""
+                    INSERT INTO matches (
+                        match_number, stage, group_id, round_number, bracket_slot,
+                        home_team_id, away_team_id, scheduled_date, scheduled_time,
+                        venue, status, notes
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Scheduled', ?);
+                """, (
+                    f["match_number"],
+                    f["stage"],
+                    f.get("group_id"),
+                    f.get("round_number", 1),
+                    f.get("bracket_slot", ""),
+                    f["home_team_id"],
+                    f["away_team_id"],
+                    f.get("scheduled_date", ""),
+                    f.get("scheduled_time", ""),
+                    f.get("venue", "Minaram Stadium"),
+                    f.get("notes", "")
+                ))
+                count += 1
+
+        return count
+
+    # ----------------------------------------------------
+    # Conflict Detection
+    # ----------------------------------------------------
+    def detect_conflicts(self) -> List[Dict[str, Any]]:
+        """
+        Detect scheduling conflicts:
+        1. Team playing two matches on the same date with conflicting times.
+        2. Venue booked for multiple matches at the exact same date & time.
+        """
+        matches = self.get_matches()
+        conflicts = []
+
+        duration = int(self.db.get_setting("match_duration_minutes", "90"))
+
+        # Venue time conflicts
+        venue_slots: Dict[Tuple[str, str, str], List[Match]] = {}
+        for m in matches:
+            if m.scheduled_date and m.scheduled_time and m.venue:
+                key = (m.venue, m.scheduled_date, m.scheduled_time)
+                venue_slots.setdefault(key, []).append(m)
+
+        for (v, dt, tm), m_list in venue_slots.items():
+            if len(m_list) > 1:
+                conflicts.append({
+                    "type": "Venue Double Booking",
+                    "severity": "High",
+                    "details": f"Venue '{v}' is scheduled for {len(m_list)} matches at {dt} {tm}",
+                    "match_ids": [m.id for m in m_list],
+                    "match_numbers": [m.match_number for m in m_list]
+                })
+
+        # Team conflict: same team scheduled for 2 matches within match_duration of each other
+        team_matches: Dict[int, List[Match]] = {}
+        for m in matches:
+            if m.home_team_id:
+                team_matches.setdefault(m.home_team_id, []).append(m)
+            if m.away_team_id:
+                team_matches.setdefault(m.away_team_id, []).append(m)
+
+        for team_id, m_list in team_matches.items():
+            # Check pairwise
+            for i in range(len(m_list)):
+                for j in range(i + 1, len(m_list)):
+                    m1 = m_list[i]
+                    m2 = m_list[j]
+                    if m1.scheduled_date == m2.scheduled_date and m1.scheduled_date:
+                        try:
+                            t1 = datetime.strptime(f"{m1.scheduled_date} {m1.scheduled_time}", "%Y-%m-%d %H:%M")
+                            t2 = datetime.strptime(f"{m2.scheduled_date} {m2.scheduled_time}", "%Y-%m-%d %H:%M")
+                            diff = abs((t1 - t2).total_seconds()) / 60.0
+                            if diff < duration:
+                                conflicts.append({
+                                    "type": "Team Schedule Overlap",
+                                    "severity": "Critical",
+                                    "details": f"Team (ID #{team_id}) is scheduled for Match #{m1.match_number} ({m1.scheduled_time}) and Match #{m2.match_number} ({m2.scheduled_time}) only {int(diff)} mins apart",
+                                    "match_ids": [m1.id, m2.id],
+                                    "match_numbers": [m1.match_number, m2.match_number]
+                                })
+                        except Exception:
+                            pass
+
+        return conflicts
+
+    # ----------------------------------------------------
+    # Queries & Updates
+    # ----------------------------------------------------
+    def get_matches(
+        self,
+        stage: Optional[str] = None,
+        group_id: Optional[int] = None,
+        status: Optional[str] = None,
+        date: Optional[str] = None
+    ) -> List[Match]:
+        query = """
+            SELECT m.id, m.match_number, m.stage, m.group_id, g.name AS group_name,
+                   m.round_number, m.bracket_slot,
+                   m.home_team_id, ht.name AS home_name,
+                   m.away_team_id, at.name AS away_name,
+                   m.scheduled_date, m.scheduled_time, m.venue,
+                   m.home_score, m.away_score, m.home_penalty, m.away_penalty,
+                   m.status, m.winner_team_id, wt.name AS winner_name,
+                   m.notes, m.completed_at
+            FROM matches m
+            LEFT JOIN groups g ON m.group_id = g.id
+            LEFT JOIN teams ht ON m.home_team_id = ht.id
+            LEFT JOIN teams at ON m.away_team_id = at.id
+            LEFT JOIN teams wt ON m.winner_team_id = wt.id
+            WHERE 1=1
+        """
+        params = []
+        if stage and stage != "All":
+            query += " AND m.stage = ?"
+            params.append(stage)
+        if group_id is not None:
+            query += " AND m.group_id = ?"
+            params.append(group_id)
+        if status and status != "All":
+            query += " AND m.status = ?"
+            params.append(status)
+        if date and date.strip():
+            query += " AND m.scheduled_date = ?"
+            params.append(date.strip())
+
+        query += " ORDER BY m.stage ASC, m.round_number ASC, m.match_number ASC;"
+
+        rows = self.db.execute_query(query, tuple(params))
+        return [
+            Match(
+                id=r["id"],
+                match_number=r["match_number"],
+                stage=r["stage"],
+                group_id=r["group_id"],
+                group_name=r["group_name"],
+                round_number=r["round_number"],
+                bracket_slot=r["bracket_slot"] or "",
+                home_team_id=r["home_team_id"],
+                away_team_id=r["away_team_id"],
+                home_team_name=r["home_name"] or "TBD",
+                away_team_name=r["away_name"] or "TBD",
+                scheduled_date=r["scheduled_date"] or "",
+                scheduled_time=r["scheduled_time"] or "",
+                venue=r["venue"] or "",
+                home_score=r["home_score"],
+                away_score=r["away_score"],
+                home_penalty=r["home_penalty"],
+                away_penalty=r["away_penalty"],
+                status=r["status"],
+                winner_team_id=r["winner_team_id"],
+                winner_team_name=r["winner_name"],
+                notes=r["notes"] or "",
+                completed_at=r["completed_at"] or ""
+            )
+            for r in rows
+        ]
+
+    def add_manual_match(
+        self,
+        home_team_id: int,
+        away_team_id: int,
+        stage: str = "Group Stage",
+        group_id: Optional[int] = None,
+        round_number: int = 1,
+        scheduled_date: str = "",
+        scheduled_time: str = "",
+        venue: str = "Minaram Stadium",
+        notes: str = ""
+    ) -> int:
+        if home_team_id == away_team_id:
+            raise ValueError("A team cannot play against itself.")
+
+        max_num = self.db.execute_one("SELECT MAX(match_number) AS m FROM matches;")["m"] or 0
+        match_id = self.db.execute_non_query("""
+            INSERT INTO matches (
+                match_number, stage, group_id, round_number,
+                home_team_id, away_team_id, scheduled_date, scheduled_time, venue, status, notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Scheduled', ?);
+        """, (
+            max_num + 1, stage, group_id, round_number,
+            home_team_id, away_team_id, scheduled_date, scheduled_time, venue, notes
+        ))
+        return match_id
+
+    def update_match_schedule(
+        self,
+        match_id: int,
+        scheduled_date: str,
+        scheduled_time: str,
+        venue: str,
+        status: Optional[str] = None
+    ) -> None:
+        if status:
+            self.db.execute_non_query("""
+                UPDATE matches SET scheduled_date = ?, scheduled_time = ?, venue = ?, status = ?
+                WHERE id = ?;
+            """, (scheduled_date, scheduled_time, venue, status, match_id))
+        else:
+            self.db.execute_non_query("""
+                UPDATE matches SET scheduled_date = ?, scheduled_time = ?, venue = ?
+                WHERE id = ?;
+            """, (scheduled_date, scheduled_time, venue, match_id))
+
+    def delete_match(self, match_id: int) -> None:
+        with self.db.transaction() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM match_audit_log WHERE match_id = ?;", (match_id,))
+            cursor.execute("DELETE FROM matches WHERE id = ?;", (match_id,))

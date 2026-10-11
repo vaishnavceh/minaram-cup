@@ -1,0 +1,407 @@
+import React, { useState, useEffect } from 'react';
+import { api } from '../api';
+import { PublicMatch } from '../types';
+import { Lock, LogOut, CheckCircle, RefreshCw, AlertCircle, Trophy, Save } from 'lucide-react';
+
+export const AdminPage: React.FC = () => {
+  const [token, setToken] = useState<string | null>(localStorage.getItem('minaram_admin_token'));
+  const [username, setUsername] = useState('admin');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // Admin Dashboard State
+  const [matches, setMatches] = useState<PublicMatch[]>([]);
+  const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null);
+  const [teamAScore, setTeamAScore] = useState<number>(0);
+  const [teamBScore, setTeamBScore] = useState<number>(0);
+  const [penaltyA, setPenaltyA] = useState<string>('');
+  const [penaltyB, setPenaltyB] = useState<string>('');
+  const [actionSuccess, setActionSuccess] = useState<string>('');
+  const [actionError, setActionError] = useState<string>('');
+
+  const loadMatches = async () => {
+    try {
+      const data = await api.getFixtures();
+      setMatches(data);
+      if (data.length > 0 && !selectedMatchId) {
+        setSelectedMatchId(data[0].id);
+        setTeamAScore(data[0].team_a_score ?? 0);
+        setTeamBScore(data[0].team_b_score ?? 0);
+      }
+    } catch (err) {
+      console.error('Failed to load matches for admin', err);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      loadMatches();
+    }
+  }, [token]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.append('username', username);
+      params.append('password', password);
+      const res = await api.adminLogin(params);
+      localStorage.setItem('minaram_admin_token', res.access_token);
+      setToken(res.access_token);
+    } catch (err: any) {
+      setLoginError(err.message || 'Invalid credentials');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('minaram_admin_token');
+    setToken(null);
+  };
+
+  const selectedMatch = matches.find((m) => m.id === selectedMatchId);
+
+  const handleSelectMatch = (mId: number) => {
+    setSelectedMatchId(mId);
+    const m = matches.find((match) => match.id === mId);
+    if (m) {
+      setTeamAScore(m.team_a_score ?? 0);
+      setTeamBScore(m.team_b_score ?? 0);
+      setPenaltyA(m.penalty_a !== null ? String(m.penalty_a) : '');
+      setPenaltyB(m.penalty_b !== null ? String(m.penalty_b) : '');
+    }
+    setActionSuccess('');
+    setActionError('');
+  };
+
+  const handleRecordResult = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token || !selectedMatchId) return;
+    setActionError('');
+    setActionSuccess('');
+    setLoading(true);
+    try {
+      const payload: any = {
+        team_a_score: teamAScore,
+        team_b_score: teamBScore,
+      };
+      if (penaltyA !== '' && penaltyB !== '') {
+        payload.penalty_a = parseInt(penaltyA, 10);
+        payload.penalty_b = parseInt(penaltyB, 10);
+      }
+      await api.adminRecordResult(selectedMatchId, payload, token);
+      setActionSuccess(`Match #${selectedMatchId} result recorded successfully! Broadcast sent to live feed.`);
+      await loadMatches();
+    } catch (err: any) {
+      setActionError(err.message || 'Failed to record result');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetResult = async () => {
+    if (!token || !selectedMatchId) return;
+    if (!window.confirm('Reset this match to scheduled?')) return;
+    setActionError('');
+    setActionSuccess('');
+    setLoading(true);
+    try {
+      await api.adminResetResult(selectedMatchId, token);
+      setActionSuccess(`Match #${selectedMatchId} result reset to SCHEDULED.`);
+      await loadMatches();
+    } catch (err: any) {
+      setActionError(err.message || 'Failed to reset match');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAdvanceStage = async () => {
+    if (!token) return;
+    if (!window.confirm('Advance tournament to next stage? If Group Stage is completed, Quarter-Finals will be generated.')) return;
+    setActionError('');
+    setActionSuccess('');
+    setLoading(true);
+    try {
+      const res = await api.adminAdvanceStage(token);
+      setActionSuccess(res.message || 'Tournament stage advanced successfully!');
+      await loadMatches();
+    } catch (err: any) {
+      setActionError(err.message || 'Failed to advance stage');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // If not authenticated, show Login Dialog
+  if (!token) {
+    return (
+      <div className="min-h-[75vh] flex items-center justify-center px-4">
+        <div className="w-full max-w-md bg-[#121212] border border-[#222222] rounded-xl p-8 shadow-2xl">
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="w-10 h-10 rounded-full bg-brand-red/20 border border-brand-red flex items-center justify-center text-brand-red">
+              <Lock className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="font-display text-2xl text-white tracking-wide">ADMIN PORTAL</h2>
+              <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-widest">
+                Minaram Cup Officials
+              </span>
+            </div>
+          </div>
+
+          {loginError && (
+            <div className="mb-4 p-3 rounded bg-rose-950/40 border border-rose-800 text-xs font-mono text-rose-300 flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{loginError}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-xs font-mono text-neutral-400 uppercase mb-1">
+                Admin Username
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="w-full px-3 py-2 bg-black/60 border border-neutral-800 rounded text-sm text-white focus:outline-none focus:border-brand-red font-mono"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono text-neutral-400 uppercase mb-1">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                className="w-full px-3 py-2 bg-black/60 border border-neutral-800 rounded text-sm text-white focus:outline-none focus:border-brand-red font-mono"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2.5 rounded bg-brand-red hover:bg-brand-red-bright text-white font-display text-base tracking-wider uppercase transition-colors shadow-glow-red mt-2"
+            >
+              {loading ? 'AUTHENTICATING...' : 'SIGN IN'}
+            </button>
+          </form>
+
+          <p className="mt-6 text-[11px] font-mono text-neutral-400 text-center">
+            Authorized tournament desk administrators only.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Admin Dashboard
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Admin Top Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#222222] mb-8 gap-4">
+        <div>
+          <span className="text-xs font-mono text-emerald-400 tracking-widest uppercase">
+            AUTHENTICATED SESSION
+          </span>
+          <h1 className="font-display text-4xl text-white tracking-wider">
+            ADMINISTRATOR CONTROLS
+          </h1>
+        </div>
+
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={handleAdvanceStage}
+            className="px-4 py-2 bg-neutral-900 border border-neutral-700 hover:border-brand-gold text-xs font-mono text-brand-gold rounded transition-colors flex items-center space-x-1.5"
+          >
+            <Trophy className="w-3.5 h-3.5" />
+            <span>ADVANCE STAGE</span>
+          </button>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-neutral-900 border border-neutral-700 hover:border-neutral-500 text-xs font-mono text-neutral-300 rounded transition-colors flex items-center space-x-1.5"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>LOGOUT</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Notifications */}
+      {actionSuccess && (
+        <div className="mb-6 p-4 rounded-lg bg-emerald-950/40 border border-emerald-800 text-xs font-mono text-emerald-300 flex items-center space-x-2">
+          <CheckCircle className="w-4 h-4 shrink-0" />
+          <span>{actionSuccess}</span>
+        </div>
+      )}
+      {actionError && (
+        <div className="mb-6 p-4 rounded-lg bg-rose-950/40 border border-rose-800 text-xs font-mono text-rose-300 flex items-center space-x-2">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>{actionError}</span>
+        </div>
+      )}
+
+      {/* Match Management Form */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Match Selector List */}
+        <div className="bg-[#121212] border border-[#222222] rounded-lg p-4 max-h-[600px] overflow-y-auto">
+          <h3 className="font-display text-lg text-white mb-3">SELECT MATCH</h3>
+          <div className="space-y-2">
+            {matches.map((m) => {
+              const selected = m.id === selectedMatchId;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => handleSelectMatch(m.id)}
+                  className={`w-full text-left p-2.5 rounded text-xs font-mono transition-colors border ${
+                    selected
+                      ? 'bg-neutral-800 border-brand-red text-white'
+                      : 'bg-black/40 border-neutral-800 text-neutral-400 hover:text-white'
+                  }`}
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-bold text-[10px] text-neutral-400">{m.stage}</span>
+                    <span className={m.status === 'COMPLETED' ? 'text-emerald-400' : 'text-neutral-400'}>
+                      {m.status}
+                    </span>
+                  </div>
+                  <div className="truncate font-semibold text-white">
+                    {m.team_a_name || 'TBD'} vs {m.team_b_name || 'TBD'}
+                  </div>
+                  {m.status === 'COMPLETED' && (
+                    <div className="text-[10px] text-neutral-400 mt-0.5">
+                      Score: {m.team_a_score} - {m.team_b_score}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Score Recording Form */}
+        <div className="lg:col-span-2 bg-[#121212] border border-[#222222] rounded-lg p-6 sm:p-8">
+          {selectedMatch ? (
+            <form onSubmit={handleRecordResult} className="space-y-6">
+              <div className="pb-4 border-b border-[#222222]">
+                <span className="text-xs font-mono text-brand-red uppercase font-bold">
+                  MATCH #{selectedMatch.match_number || selectedMatch.id} · {selectedMatch.stage}
+                </span>
+                <h2 className="font-display text-3xl text-white mt-1">
+                  {selectedMatch.team_a_name || 'TBD'} vs {selectedMatch.team_b_name || 'TBD'}
+                </h2>
+                <div className="text-xs font-mono text-neutral-400 mt-1">
+                  Status: <strong className="text-white">{selectedMatch.status}</strong>
+                </div>
+              </div>
+
+              {/* Score Input Fields */}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-black/50 p-4 rounded-lg border border-neutral-800 text-center">
+                  <label className="block text-xs font-mono text-neutral-400 mb-2 truncate">
+                    {selectedMatch.team_a_name || 'Team A'} Score
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="99"
+                    value={teamAScore}
+                    onChange={(e) => setTeamAScore(parseInt(e.target.value, 10) || 0)}
+                    className="w-24 text-center font-display text-4xl bg-neutral-900 border border-neutral-700 rounded py-2 text-white tabular-nums focus:border-brand-red focus:outline-none"
+                  />
+                </div>
+
+                <div className="bg-black/50 p-4 rounded-lg border border-neutral-800 text-center">
+                  <label className="block text-xs font-mono text-neutral-400 mb-2 truncate">
+                    {selectedMatch.team_b_name || 'Team B'} Score
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="99"
+                    value={teamBScore}
+                    onChange={(e) => setTeamBScore(parseInt(e.target.value, 10) || 0)}
+                    className="w-24 text-center font-display text-4xl bg-neutral-900 border border-neutral-700 rounded py-2 text-white tabular-nums focus:border-brand-red focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Optional Penalty Shootout */}
+              <div className="p-4 bg-black/40 rounded-lg border border-neutral-800 space-y-3">
+                <span className="text-xs font-mono text-neutral-400 uppercase block font-semibold">
+                  Penalty Shootout (Optional - for tied knockout matches)
+                </span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-mono text-neutral-400 mb-1">
+                      {selectedMatch.team_a_name || 'Team A'} Penalties
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={penaltyA}
+                      onChange={(e) => setPenaltyA(e.target.value)}
+                      placeholder="e.g. 5"
+                      className="w-full px-3 py-1.5 bg-neutral-900 border border-neutral-700 rounded text-xs font-mono text-white focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-mono text-neutral-400 mb-1">
+                      {selectedMatch.team_b_name || 'Team B'} Penalties
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={penaltyB}
+                      onChange={(e) => setPenaltyB(e.target.value)}
+                      placeholder="e.g. 4"
+                      className="w-full px-3 py-1.5 bg-neutral-900 border border-neutral-700 rounded text-xs font-mono text-white focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-6 py-2.5 bg-brand-red hover:bg-brand-red-bright text-white font-display text-lg tracking-wider rounded transition-colors flex items-center space-x-2 shadow-glow-red"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>RECORD SCORE & BROADCAST</span>
+                </button>
+
+                {selectedMatch.status === 'COMPLETED' && (
+                  <button
+                    type="button"
+                    onClick={handleResetResult}
+                    disabled={loading}
+                    className="px-4 py-2.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 text-xs font-mono rounded transition-colors"
+                  >
+                    RESET MATCH TO SCHEDULED
+                  </button>
+                )}
+              </div>
+            </form>
+          ) : (
+            <div className="text-center py-20 font-mono text-sm text-neutral-400">
+              Select a match from the list to enter or modify its score.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

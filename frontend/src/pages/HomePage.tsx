@@ -1,0 +1,285 @@
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { api } from '../api';
+import { PublicTournament, PublicMatch, PublicGroupStandings } from '../types';
+import { MatchCard } from '../components/MatchCard';
+import { StandingsTable } from '../components/StandingsTable';
+import { Ticker } from '../components/Ticker';
+import { Trophy, Swords, Calendar, BarChart3, ArrowRight, ShieldAlert, Sparkles } from 'lucide-react';
+
+export const HomePage: React.FC = () => {
+  const [tournament, setTournament] = useState<PublicTournament | null>(null);
+  const [recentMatches, setRecentMatches] = useState<PublicMatch[]>([]);
+  const [upcomingMatches, setUpcomingMatches] = useState<PublicMatch[]>([]);
+  const [standings, setStandings] = useState<PublicGroupStandings[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadData = async () => {
+    try {
+      const [tData, rData, fData, sData] = await Promise.all([
+        api.getTournament(),
+        api.getResults(6),
+        api.getFixtures(),
+        api.getStandings(),
+      ]);
+      setTournament(tData);
+      setRecentMatches(Array.isArray(rData) ? rData : []);
+      const fixturesList = Array.isArray(fData) ? fData : [];
+      const upcoming = fixturesList.filter((m) => m.status === 'SCHEDULED');
+      setUpcomingMatches(upcoming.length > 0 ? upcoming.slice(0, 4) : fixturesList.slice(0, 4));
+      setStandings(Array.isArray(sData) ? sData : []);
+    } catch (err) {
+      console.error('Failed to load homepage tournament data', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+    // Auto-refresh every 15s as backup to SSE
+    const interval = setInterval(loadData, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden border-b border-[#222222]">
+        {/* Background Image with Dark Vignette */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/assets/backgrounds/bg_stadium_cinematic.webp"
+            alt="Cinematic Stadium Background"
+            className="w-full h-full object-cover object-center filter brightness-50 contrast-125 scale-105 transition-transform duration-1000"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/70 to-[#080808]/50" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#080808_90%)]" />
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center flex flex-col items-center">
+          {/* Badge */}
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-black/70 border border-brand-red/60 text-xs font-mono text-neutral-300 mb-6 backdrop-blur-md shadow-glow-red">
+            <span className="w-2 h-2 rounded-full bg-brand-red animate-ping" />
+            <span className="tracking-widest uppercase text-white font-bold">
+              {tournament ? `${tournament.name} · ${tournament.edition}` : 'MINARAM CUP · EDITION 1'}
+            </span>
+          </div>
+
+          {/* Massive Display Title */}
+          <h1 className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight text-white uppercase leading-[0.9] drop-shadow-2xl">
+            THE DIGITAL <br />
+            <span className="text-stroke-red text-transparent hover:text-brand-red transition-colors duration-300">
+              ARENA
+            </span>{' '}
+            OF CHAMPIONS
+          </h1>
+
+          <p className="mt-6 max-w-2xl text-neutral-300 text-sm sm:text-base md:text-lg font-normal leading-relaxed drop-shadow">
+            Experience the pinnacle of college eFootball. 16 elite squads battling through 4 groups
+            and high-voltage knockout stages for eternal glory at TKM College of Engineering.
+          </p>
+
+          {/* Key Stat Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-10 w-full max-w-3xl">
+            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center">
+              <span className="block font-display text-3xl sm:text-4xl text-white tabular-nums">
+                {tournament?.team_count || 16}
+              </span>
+              <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
+                Squads
+              </span>
+            </div>
+            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center">
+              <span className="block font-display text-3xl sm:text-4xl text-white tabular-nums">
+                {tournament?.match_count || 31}
+              </span>
+              <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
+                Total Matches
+              </span>
+            </div>
+            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center">
+              <span className="block font-display text-3xl sm:text-4xl text-brand-red tabular-nums">
+                {tournament?.completed_matches || 0}
+              </span>
+              <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
+                Completed
+              </span>
+            </div>
+            <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center">
+              <span className="block font-display text-3xl sm:text-4xl text-emerald-400 tabular-nums">
+                {tournament?.status || 'GROUP_STAGE'}
+              </span>
+              <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
+                Current Stage
+              </span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
+            <Link
+              to="/fixtures"
+              className="px-6 py-3 rounded bg-brand-red hover:bg-brand-red-bright text-white font-display text-lg tracking-wider transition-all shadow-glow-red flex items-center space-x-2"
+            >
+              <span>EXPLORE FIXTURES</span>
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              to="/standings"
+              className="px-6 py-3 rounded bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700 text-white font-display text-lg tracking-wider transition-all flex items-center space-x-2"
+            >
+              <span>GROUP STANDINGS</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Live Ticker Bar */}
+      <Ticker recentMatches={recentMatches} upcomingMatches={upcomingMatches} />
+
+      {/* Main Content Layout */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
+        {/* Next Matches & Recent Results Split Grid */}
+        <section>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            {/* Upcoming Fixtures */}
+            <div>
+              <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#222222]">
+                <div className="flex items-center space-x-2.5">
+                  <Calendar className="w-5 h-5 text-brand-red" />
+                  <h2 className="font-display text-2xl tracking-wider text-white">UPCOMING CLASHES</h2>
+                </div>
+                <Link to="/fixtures" className="text-xs font-mono text-neutral-400 hover:text-white flex items-center space-x-1">
+                  <span>VIEW ALL</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              {upcomingMatches.length > 0 ? (
+                <div className="space-y-4">
+                  {upcomingMatches.map((m) => (
+                    <MatchCard key={m.id} match={m} />
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 bg-[#121212] border border-[#222222] rounded-lg text-center text-neutral-400 text-sm">
+                  No pending scheduled matches at this time.
+                </div>
+              )}
+            </div>
+
+            {/* Recent Results */}
+            <div>
+              <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#222222]">
+                <div className="flex items-center space-x-2.5">
+                  <Trophy className="w-5 h-5 text-brand-red" />
+                  <h2 className="font-display text-2xl tracking-wider text-white">LATEST RESULTS</h2>
+                </div>
+                <Link to="/results" className="text-xs font-mono text-neutral-400 hover:text-white flex items-center space-x-1">
+                  <span>FULL RESULTS</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              {recentMatches.length > 0 ? (
+                <div className="space-y-4">
+                  {recentMatches.slice(0, 4).map((m) => (
+                    <MatchCard key={m.id} match={m} />
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 bg-[#121212] border border-[#222222] rounded-lg text-center text-neutral-400 text-sm">
+                  Tournament matches will appear here as results are recorded.
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Editorial Poster Feature: Ronaldo Focus */}
+        <section className="relative rounded-2xl overflow-hidden border border-[#262626] bg-[#0c0c0c] min-h-[400px] flex items-center">
+          <div className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 opacity-35 lg:opacity-60 pointer-events-none">
+            <img
+              src="/assets/backgrounds/bg_ronaldo_07.webp"
+              alt="Cristiano Ronaldo Iconic Number 7"
+              className="w-full h-full object-cover object-top filter grayscale contrast-150"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0c] via-[#0c0c0c]/80 to-transparent" />
+          </div>
+
+          <div className="relative z-10 p-8 sm:p-12 lg:p-16 max-w-2xl">
+            <div className="inline-block px-3 py-1 bg-brand-red text-white text-[11px] font-mono tracking-widest uppercase mb-4">
+              EDITORIAL FOCUS
+            </div>
+            <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[0.95]">
+              TACTICS OVER TALK. <br />
+              PRECISION UNDER PRESSURE.
+            </h2>
+            <p className="mt-4 text-neutral-400 text-sm sm:text-base leading-relaxed">
+              In eFootball, a millisecond decides the line between triumph and heartbreak.
+              From high-pressing 4-3-3 formations to disciplined defensive counters, every Minaram Cup
+              competitor is tested under relentless campus competition.
+            </p>
+            <div className="mt-6">
+              <Link
+                to="/rules"
+                className="inline-flex items-center space-x-2 text-sm font-mono uppercase tracking-widest text-brand-red hover:text-white transition-colors"
+              >
+                <span>Read the Competition Rulebook</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Group Standings Snapshot */}
+        <section>
+          <div className="flex items-center justify-between mb-8 pb-3 border-b border-[#222222]">
+            <div>
+              <h2 className="font-display text-3xl tracking-wider text-white">GROUP STAGE STANDINGS</h2>
+              <p className="text-xs font-mono text-neutral-400 mt-1 uppercase">
+                Real-time points table and qualification tracker
+              </p>
+            </div>
+            <Link
+              to="/standings"
+              className="px-4 py-2 rounded bg-neutral-900 border border-neutral-700 hover:border-neutral-500 text-xs font-mono text-neutral-300 hover:text-white transition-colors"
+            >
+              ALL GROUPS
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {(Array.isArray(standings) ? standings : []).slice(0, 4).map((g) => (
+              <StandingsTable key={g.group_name} groupData={g} />
+            ))}
+          </div>
+        </section>
+
+        {/* Official Sponsor Section */}
+        <section className="bg-gradient-to-b from-[#111111] to-[#080808] border border-[#222222] rounded-xl p-8 sm:p-12 text-center">
+          <div className="max-w-2xl mx-auto space-y-4">
+            <span className="text-xs font-mono tracking-widest text-brand-gold uppercase flex items-center justify-center space-x-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>PRESENTING SPONSOR</span>
+              <Sparkles className="w-3.5 h-3.5" />
+            </span>
+            <div className="py-4 flex justify-center">
+              <img
+                src="/assets/logos/transparent/akhadha_sponsor_transparent.png"
+                alt="AKHADHA Sponsor Emblem"
+                className="h-24 sm:h-28 w-auto object-contain filter drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+              />
+            </div>
+            <h3 className="font-display text-3xl text-white tracking-wider">AKHADHA</h3>
+            <p className="text-sm text-neutral-400">
+              Fueling student esports and competitive spirit at TKM College of Engineering.
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+};

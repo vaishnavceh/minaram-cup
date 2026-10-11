@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #080808;
+    color: #F5F5F5;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Force tabular numbers in scoreboards, standings, and stat counters */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0d0d;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B3121B;
+}
+
+/* Custom Editorial Aesthetics */
+.editorial-grid-bg {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.clip-slanted {
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 0% 100%);
+}
+
+.clip-badge {
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+
+.text-stroke-red {
+  -webkit-text-stroke: 1.5px #B3121B;
+  color: transparent;
+}
+
+.text-stroke-white {
+  -webkit-text-stroke: 1px rgba(245, 245, 245, 0.4);
+  color: transparent;
+}

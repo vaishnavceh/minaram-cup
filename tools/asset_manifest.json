@@ -1,0 +1,154 @@
+{
+  "project": "MINARAM CUP — ELITE ESPORTS PLATFORM",
+  "version": "2.0.0",
+  "status": "Enhanced & Optimized",
+  "logos": {
+    "white_emblem": "/assets/logos/transparent/minaram_logo_white.png",
+    "dark_emblem": "/assets/logos/transparent/minaram_logo_dark.png",
+    "sponsor_akhadha": "/assets/logos/transparent/akhadha_sponsor_transparent.png",
+    "sponsor_clean": "/assets/logos/akhadha_sponsor_clean.jpg",
+    "favicon": "/favicon.png"
+  },
+  "backgrounds": [
+    {
+      "original_filename": "07.jpg",
+      "slug": "bg_ronaldo_07",
+      "description": "Cristiano Ronaldo dramatic spotlight profile (3:2)",
+      "original_dimensions": [
+        735,
+        490
+      ],
+      "aspect_ratio": 1.5,
+      "quality_assessment": "Medium resolution, slightly soft - enhanced with bilateral sharpening",
+      "enhancement_applied": "Bilateral filter artifact reduction + unsharp mask + tonal leveling",
+      "background_removal": "Preserved full photographic wallpaper for rich atmospheric background",
+      "intended_placement": "Homepage featured action panel & results backdrop",
+      "outputs": {
+        "desktop_webp": "/assets/backgrounds/bg_ronaldo_07.webp",
+        "desktop_jpg": "/assets/backgrounds/bg_ronaldo_07.jpg",
+        "mobile_webp": "/assets/backgrounds/mobile/bg_ronaldo_07_mobile.webp",
+        "thumbnail": "/assets/thumbnails/bg_ronaldo_07_thumb.webp"
+      }
+    },
+    {
+      "original_filename": "Leomessi wallpaper ✨.jpg",
+      "slug": "bg_messi_portrait",
+      "description": "Lionel Messi monochrome studio wallpaper (9:16)",
+      "original_dimensions": [
+        736,
+        1308
+      ],
+      "aspect_ratio": 0.56,
+      "quality_assessment": "Good resolution, enhanced with tonal curve & unsharp mask",
+      "enhancement_applied": "Bilateral filter artifact reduction + unsharp mask + tonal leveling",
+      "background_removal": "Preserved full photographic wallpaper for rich atmospheric background",
+      "intended_placement": "Player showcase editorial panel & mobile hero",
+      "outputs": {
+        "desktop_webp": "/assets/backgrounds/bg_messi_portrait.webp",
+        "desktop_jpg": "/assets/backgrounds/bg_messi_portrait.jpg",
+        "mobile_webp": "/assets/backgrounds/mobile/bg_messi_portrait_mobile.webp",
+        "thumbnail": "/assets/thumbnails/bg_messi_portrait_thumb.webp"
+      }
+    },
+    {
+      "original_filename": "389420699052302337.jpg",
+      "slug": "bg_stadium_cinematic",
+      "description": "Widescreen cinematic pitch and night stadium floodlights (16:9)",
+      "original_dimensions": [
+        736,
+        414
+      ],
+      "aspect_ratio": 1.78,
+      "quality_assessment": "Medium resolution, slightly soft - enhanced with bilateral sharpening",
+      "enhancement_applied": "Bilateral filter artifact reduction + unsharp mask + tonal leveling",
+      "background_removal": "Preserved full photographic wallpaper for rich atmospheric background",
+      "intended_placement": "Primary Homepage Hero Background",
+      "outputs": {
+        "desktop_webp": "/assets/backgrounds/bg_stadium_cinematic.webp",
+        "desktop_jpg": "/assets/backgrounds/bg_stadium_cinematic.jpg",
+        "mobile_webp": "/assets/backgrounds/mobile/bg_stadium_cinematic_mobile.webp",
+        "thumbnail": "/assets/thumbnails/bg_stadium_cinematic_thumb.webp"
+      }
+    },
+    {
+      "original_filename": "626000416992730335.jpg",
+      "slug": "bg_match_action",
+      "description": "Intense football pitch action and floodlit duel (3:2)",
+      "original_dimensions": [
+        736,
+        491
+      ],
+      "aspect_ratio": 1.5,
+      "quality_assessment": "Medium resolution, slightly soft - enhanced with bilateral sharpening",
+      "enhancement_applied": "Bilateral filter artifact reduction + unsharp mask + tonal leveling",
+      "background_removal": "Preserved full photographic wallpaper for rich atmospheric background",
+      "intended_placement": "Fixtures & Tournament Schedule page backdrop",
+      "outputs": {
+        "desktop_webp": "/assets/backgrounds/bg_match_action.webp",
+        "desktop_jpg": "/assets/backgrounds/bg_match_action.jpg",
+        "mobile_webp": "/assets/backgrounds/mobile/bg_match_action_mobile.webp",
+        "thumbnail": "/assets/thumbnails/bg_match_action_thumb.webp"
+      }
+    },
+    {
+      "original_filename": "🤝.jpg",
+      "slug": "bg_rivalry_handshake",
+      "description": "Football handshake between rivals (16:9 respect & fair play)",
+      "original_dimensions": [
+        735,
+        411
+      ],
+      "aspect_ratio": 1.79,
+      "quality_assessment": "Medium resolution, slightly soft - enhanced with bilateral sharpening",
+      "enhancement_applied": "Bilateral filter artifact reduction + unsharp mask + tonal leveling",
+      "background_removal": "Preserved full photographic wallpaper for rich atmospheric background",
+      "intended_placement": "About / Fair Play & Rules section background",
+      "outputs": {
+        "desktop_webp": "/assets/backgrounds/bg_rivalry_handshake.webp",
+        "desktop_jpg": "/assets/backgrounds/bg_rivalry_handshake.jpg",
+        "mobile_webp": "/assets/backgrounds/mobile/bg_rivalry_handshake_mobile.webp",
+        "thumbnail": "/assets/thumbnails/bg_rivalry_handshake_thumb.webp"
+      }
+    },
+    {
+      "original_filename": "2462974793505365.jpg",
+      "slug": "bg_player_portrait_1",
+      "description": "Vertical footballer wallpaper (9:16 portrait)",
+      "original_dimensions": [
+        736,
+        1308
+      ],
+      "aspect_ratio": 0.56,
+      "quality_assessment": "Good resolution, enhanced with tonal curve & unsharp mask",
+      "enhancement_applied": "Bilateral filter artifact reduction + unsharp mask + tonal leveling",
+      "background_removal": "Preserved full photographic wallpaper for rich atmospheric background",
+      "intended_placement": "Teams directory banner & editorial sidebar",
+      "outputs": {
+        "desktop_webp": "/assets/backgrounds/bg_player_portrait_1.webp",
+        "desktop_jpg": "/assets/backgrounds/bg_player_portrait_1.jpg",
+        "mobile_webp": "/assets/backgrounds/mobile/bg_player_portrait_1_mobile.webp",
+        "thumbnail": "/assets/thumbnails/bg_player_portrait_1_thumb.webp"
+      }
+    },
+    {
+      "original_filename": "46373071159563432.jpg",
+      "slug": "bg_player_portrait_2",
+      "description": "Vertical action wallpaper (9:16 portrait)",
+      "original_dimensions": [
+        720,
+        1456
+      ],
+      "aspect_ratio": 0.49,
+      "quality_assessment": "Good resolution, enhanced with tonal curve & unsharp mask",
+      "enhancement_applied": "Bilateral filter artifact reduction + unsharp mask + tonal leveling",
+      "background_removal": "Preserved full photographic wallpaper for rich atmospheric background",
+      "intended_placement": "Standings and Points Table backdrop",
+      "outputs": {
+        "desktop_webp": "/assets/backgrounds/bg_player_portrait_2.webp",
+        "desktop_jpg": "/assets/backgrounds/bg_player_portrait_2.jpg",
+        "mobile_webp": "/assets/backgrounds/mobile/bg_player_portrait_2_mobile.webp",
+        "thumbnail": "/assets/thumbnails/bg_player_portrait_2_thumb.webp"
+      }
+    }
+  ]
+}
