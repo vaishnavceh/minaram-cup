@@ -625,6 +625,11 @@ class BackupService:
             cursor.execute("DELETE FROM groups;")
             cursor.execute("DELETE FROM registrations;")
             cursor.execute("DELETE FROM standings_overrides;")
+            cursor.execute(
+                "DELETE FROM sqlite_sequence WHERE name IN "
+                "('matches', 'match_audit_log', 'registration_team_map', 'teams', 'groups', 'registrations', 'standings_overrides');"
+            )
+
 
     def generate_sample_tournament(self) -> None:
         """
