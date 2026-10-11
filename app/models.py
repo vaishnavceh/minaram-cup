@@ -93,6 +93,10 @@ class Match:
     away_team_id: Optional[int] = None
     home_team_name: str = "TBD"
     away_team_name: str = "TBD"
+    home_captain: str = ""
+    home_phone: str = ""
+    away_captain: str = ""
+    away_phone: str = ""
     scheduled_date: str = ""
     scheduled_time: str = ""
     venue: str = "Main Pitch"

@@ -187,7 +187,7 @@ def get_public_groups() -> List[Dict[str, Any]]:
 
 @router.get("/fixtures")
 def get_public_fixtures(stage: Optional[str] = None, group_id: Optional[int] = None) -> List[Dict[str, Any]]:
-    """Retrieve public tournament fixtures and schedule."""
+    """Retrieve public tournament fixtures, schedule, and team coordinator contacts."""
     matches = fix_gen.get_matches(stage=stage, group_id=group_id)
     return [
         {
@@ -201,6 +201,10 @@ def get_public_fixtures(stage: Optional[str] = None, group_id: Optional[int] = N
             "away_team_id": m.away_team_id,
             "home_team_name": m.home_team_name,
             "away_team_name": m.away_team_name,
+            "home_captain": m.home_captain,
+            "home_phone": m.home_phone,
+            "away_captain": m.away_captain,
+            "away_phone": m.away_phone,
             "scheduled_date": m.scheduled_date,
             "scheduled_time": m.scheduled_time,
             "venue": m.venue,
@@ -228,6 +232,10 @@ def get_public_results() -> List[Dict[str, Any]]:
             "group_name": m.group_name,
             "home_team_name": m.home_team_name,
             "away_team_name": m.away_team_name,
+            "home_captain": m.home_captain,
+            "home_phone": m.home_phone,
+            "away_captain": m.away_captain,
+            "away_phone": m.away_phone,
             "home_score": m.home_score,
             "away_score": m.away_score,
             "home_penalty": m.home_penalty,

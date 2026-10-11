@@ -1,6 +1,6 @@
 import React from 'react';
 import { PublicMatch } from '../types';
-import { Calendar, MapPin, Trophy, Swords } from 'lucide-react';
+import { Calendar, MapPin, Trophy, Swords, Phone, User } from 'lucide-react';
 
 interface MatchCardProps {
   match: PublicMatch;
@@ -133,6 +133,49 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
           </div>
         </div>
       </div>
+
+      {/* Coordinator Contacts for Both Sides */}
+      {(match.team_a_phone || match.team_b_phone || match.team_a_captain || match.team_b_captain) && (
+        <div className="px-4 py-2 bg-[#0d0d0d] border-t border-[#1a1a1a] flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
+          {/* Team A Contact */}
+          <div className="flex items-center space-x-1.5 text-neutral-400 min-w-0">
+            <User className="w-3 h-3 text-neutral-500 shrink-0" />
+            <span className="truncate text-neutral-300 font-medium max-w-[120px] sm:max-w-[140px]" title={match.team_a_captain || 'Captain'}>
+              {match.team_a_captain || 'Captain'}
+            </span>
+            {match.team_a_phone && (
+              <a
+                href={`tel:${match.team_a_phone}`}
+                className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-brand-red font-bold hover:text-white transition-colors"
+                title={`Call ${match.team_a_captain || match.team_a_name || 'Team A'}`}
+              >
+                <Phone className="w-2.5 h-2.5 shrink-0" />
+                <span>{match.team_a_phone}</span>
+              </a>
+            )}
+          </div>
+
+          <div className="hidden sm:block text-neutral-700">|</div>
+
+          {/* Team B Contact */}
+          <div className="flex items-center space-x-1.5 text-neutral-400 min-w-0 justify-end ml-auto">
+            {match.team_b_phone && (
+              <a
+                href={`tel:${match.team_b_phone}`}
+                className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-brand-red font-bold hover:text-white transition-colors"
+                title={`Call ${match.team_b_captain || match.team_b_name || 'Team B'}`}
+              >
+                <Phone className="w-2.5 h-2.5 shrink-0" />
+                <span>{match.team_b_phone}</span>
+              </a>
+            )}
+            <span className="truncate text-neutral-300 font-medium max-w-[120px] sm:max-w-[140px] text-right" title={match.team_b_captain || 'Captain'}>
+              {match.team_b_captain || 'Captain'}
+            </span>
+            <User className="w-3 h-3 text-neutral-500 shrink-0" />
+          </div>
+        </div>
+      )}
 
       {/* Footer Info: Pitch & Time */}
       {!compact && (

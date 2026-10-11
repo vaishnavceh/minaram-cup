@@ -39,6 +39,10 @@ export interface PublicMatch {
   team_b_id?: number | null;
   team_a_name?: string | null;
   team_b_name?: string | null;
+  team_a_captain?: string | null;
+  team_a_phone?: string | null;
+  team_b_captain?: string | null;
+  team_b_phone?: string | null;
   team_a_score?: number | null;
   team_b_score?: number | null;
   penalty_a?: number | null;
