@@ -9,6 +9,7 @@ export const FixturesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedStage, setSelectedStage] = useState<string>('ALL');
   const [selectedGroup, setSelectedGroup] = useState<string>('ALL');
+  const [selectedMatchweek, setSelectedMatchweek] = useState<string>('ALL');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const loadFixtures = async () => {
@@ -48,6 +49,17 @@ export const FixturesPage: React.FC = () => {
     return ['ALL', ...sorted];
   }, [fixtures]);
 
+  const availableMatchweeks = React.useMemo(() => {
+    const set = new Set<number>();
+    fixtures.forEach((m) => {
+      if (m.round_number && m.round_number > 0) {
+        set.add(m.round_number);
+      }
+    });
+    const sorted = Array.from(set).sort((a, b) => a - b);
+    return ['ALL', ...sorted.map(String)];
+  }, [fixtures]);
+
   const stages = [
     { key: 'ALL', label: 'ALL STAGES' },
     { key: 'GROUP_STAGE', label: 'GROUP STAGE' },
@@ -60,6 +72,11 @@ export const FixturesPage: React.FC = () => {
     if (selectedStage !== 'ALL') {
       const stageKey = normalizeStageKey(m.stage);
       if (stageKey !== selectedStage) {
+        return false;
+      }
+    }
+    if (selectedMatchweek !== 'ALL') {
+      if (String(m.round_number) !== selectedMatchweek) {
         return false;
       }
     }
@@ -140,6 +157,26 @@ export const FixturesPage: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Matchweek Filter */}
+        {availableMatchweeks.length > 2 && (
+          <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-neutral-800/60">
+            <span className="text-xs font-mono text-neutral-400 mr-2">MATCHWEEK:</span>
+            {availableMatchweeks.map((mw) => (
+              <button
+                key={mw}
+                onClick={() => setSelectedMatchweek(mw)}
+                className={`px-2.5 py-0.5 rounded text-xs font-mono transition-colors ${
+                  selectedMatchweek === mw
+                    ? 'bg-brand-red text-white font-bold'
+                    : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-neutral-800'
+                }`}
+              >
+                {mw === 'ALL' ? 'ALL MATCHWEEKS' : `MW ${mw}`}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Group Filter (when stage is ALL or GROUP_STAGE) */}
         {(selectedStage === 'ALL' || selectedStage === 'GROUP_STAGE') && (

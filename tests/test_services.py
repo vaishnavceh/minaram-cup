@@ -273,8 +273,13 @@ def test_multi_pitch_interleaved_fixture_generation(temp_db):
     conflicts = fg.detect_conflicts()
     assert len(conflicts) == 0
 
-    # Verify both pitches are used simultaneously at 09:00
-    m_0900 = [f for f in fixtures if f["scheduled_time"] == "09:00"]
+    # Verify 3 distinct matchweek dates (1 match per 3 days)
+    matchweek_dates = sorted(list({f["scheduled_date"] for f in fixtures}))
+    assert len(matchweek_dates) == 3
+    assert matchweek_dates == ["2026-10-15", "2026-10-18", "2026-10-21"]
+
+    # Verify both pitches are used simultaneously at 09:00 on Day 1
+    m_0900 = [f for f in fixtures if f["scheduled_date"] == "2026-10-15" and f["scheduled_time"] == "09:00"]
     assert len(m_0900) == 2
     assert {m["venue"] for m in m_0900} == {"Pitch 1", "Pitch 2"}
 

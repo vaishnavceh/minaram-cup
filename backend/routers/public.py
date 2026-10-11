@@ -211,7 +211,8 @@ def get_public_fixtures(stage: Optional[str] = None, group_id: Optional[int] = N
             "home_score": m.home_score,
             "away_score": m.away_score,
             "status": m.status,
-            "winner_team_name": m.winner_team_name
+            "winner_team_name": m.winner_team_name,
+            "notes": m.notes
         }
         for m in matches
     ]
@@ -243,6 +244,7 @@ def get_public_results() -> List[Dict[str, Any]]:
             "score_display": m.score_display,
             "status": m.status,
             "winner_team_name": m.winner_team_name,
+            "notes": m.notes,
             "completed_at": m.completed_at
         }
         for m in all_results

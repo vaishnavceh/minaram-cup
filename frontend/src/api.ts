@@ -63,9 +63,11 @@ export function normalizeMatch(m: any): PublicMatch {
     penalty_b: m.away_penalty ?? m.penalty_b ?? null,
     status: status,
     scheduled_time: sched,
+    scheduled_date: date || null,
     pitch: m.venue || m.pitch || 'Minaram Pitch 1',
     winner_id: m.winner_team_id ?? m.winner_id ?? null,
     winner_name: m.winner_team_name ?? m.winner_name ?? null,
+    notes: m.notes || null,
   };
 }
 

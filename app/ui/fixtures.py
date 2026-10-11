@@ -295,8 +295,11 @@ class FixturesView(ctk.CTkScrollableFrame):
     # ----------------------------------------------------
     # Fixture Generation Wizard Modal
     # ----------------------------------------------------
+    # ----------------------------------------------------
+    # Fixture Generation Wizard Modal
+    # ----------------------------------------------------
     def open_generate_wizard(self):
-        modal = BaseModal(self, title="Generate Fixtures Wizard", width=580, height=520)
+        modal = BaseModal(self, title="Generate Fixtures Wizard", width=620, height=580)
 
         ctk.CTkLabel(modal.body_frame, text="Tournament Format:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w", pady=(2, 2))
         format_menu = ctk.CTkOptionMenu(
@@ -306,44 +309,67 @@ class FixturesView(ctk.CTkScrollableFrame):
         )
         format_menu.pack(fill="x", pady=(0, 8))
 
+        # Row 1: Start Date and End Date
+        row1 = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
+        row1.pack(fill="x", pady=(0, 8))
+        row1.columnconfigure(0, weight=1)
+        row1.columnconfigure(1, weight=1)
+
+        d_box = ctk.CTkFrame(row1, fg_color="transparent")
+        d_box.grid(row=0, column=0, sticky="ew", padx=(0, 4))
+        ctk.CTkLabel(d_box, text="Tournament Start Date (YYYY-MM-DD):", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
+        date_entry = ctk.CTkEntry(d_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
+        date_entry.insert(0, (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"))
+        date_entry.pack(fill="x")
+
+        end_d_box = ctk.CTkFrame(row1, fg_color="transparent")
+        end_d_box.grid(row=0, column=1, sticky="ew", padx=(4, 0))
+        ctk.CTkLabel(end_d_box, text="Ending Date (Optional / Auto-calculated):", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
+        end_date_entry = ctk.CTkEntry(end_d_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
+        end_date_entry.insert(0, (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d"))
+        end_date_entry.pack(fill="x")
+
+        # Row 2: Days per Matchweek & Match Duration
         row2 = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
         row2.pack(fill="x", pady=(0, 8))
         row2.columnconfigure(0, weight=1)
         row2.columnconfigure(1, weight=1)
 
-        d_box = ctk.CTkFrame(row2, fg_color="transparent")
-        d_box.grid(row=0, column=0, sticky="ew", padx=(0, 4))
-        ctk.CTkLabel(d_box, text="Start Date (YYYY-MM-DD):", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
-        date_entry = ctk.CTkEntry(d_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
-        date_entry.insert(0, (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"))
-        date_entry.pack(fill="x")
+        mw_box = ctk.CTkFrame(row2, fg_color="transparent")
+        mw_box.grid(row=0, column=0, sticky="ew", padx=(0, 4))
+        ctk.CTkLabel(mw_box, text="Days per Matchweek (Interval, e.g. 3):", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
+        mw_entry = ctk.CTkEntry(mw_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
+        mw_entry.insert(0, "3")
+        mw_entry.pack(fill="x")
 
-        t_box = ctk.CTkFrame(row2, fg_color="transparent")
-        t_box.grid(row=0, column=1, sticky="ew", padx=(4, 0))
-        ctk.CTkLabel(t_box, text="First Match Kick-off Time:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
-        time_entry = ctk.CTkEntry(t_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
-        time_entry.insert(0, "09:00")
-        time_entry.pack(fill="x")
-
-        row3 = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
-        row3.pack(fill="x", pady=(0, 8))
-        row3.columnconfigure(0, weight=1)
-        row3.columnconfigure(1, weight=1)
-
-        dur_box = ctk.CTkFrame(row3, fg_color="transparent")
-        dur_box.grid(row=0, column=0, sticky="ew", padx=(0, 4))
+        dur_box = ctk.CTkFrame(row2, fg_color="transparent")
+        dur_box.grid(row=0, column=1, sticky="ew", padx=(4, 0))
         ctk.CTkLabel(dur_box, text="Match Duration (Minutes):", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
         dur_entry = ctk.CTkEntry(dur_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
         dur_entry.insert(0, "30")
         dur_entry.pack(fill="x")
 
+        # Row 3: Daily Kick-off Window (Hours)
+        row3 = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
+        row3.pack(fill="x", pady=(0, 8))
+        row3.columnconfigure(0, weight=1)
+        row3.columnconfigure(1, weight=1)
+
+        t_box = ctk.CTkFrame(row3, fg_color="transparent")
+        t_box.grid(row=0, column=0, sticky="ew", padx=(0, 4))
+        ctk.CTkLabel(t_box, text="Daily Match Kick-off Time:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
+        time_entry = ctk.CTkEntry(t_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
+        time_entry.insert(0, "16:00")
+        time_entry.pack(fill="x")
+
         end_box = ctk.CTkFrame(row3, fg_color="transparent")
         end_box.grid(row=0, column=1, sticky="ew", padx=(4, 0))
         ctk.CTkLabel(end_box, text="Daily Operating End Time:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
         end_entry = ctk.CTkEntry(end_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
-        end_entry.insert(0, "19:00")
+        end_entry.insert(0, "20:00")
         end_entry.pack(fill="x")
 
+        # Row 4: Pitches
         row4 = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
         row4.pack(fill="x", pady=(0, 8))
 
@@ -359,11 +385,11 @@ class FixturesView(ctk.CTkScrollableFrame):
             variable=clear_check_var,
             font=ctk.CTkFont(size=11),
             text_color=theme.TEXT_SECONDARY
-        ).pack(anchor="w", pady=(4, 10))
+        ).pack(anchor="w", pady=(2, 8))
 
         preview_box = ctk.CTkTextbox(modal.body_frame, height=120, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR, font=ctk.CTkFont(family="Consolas", size=10))
         preview_box.pack(fill="both", expand=True, pady=(0, 10))
-        preview_box.insert("1.0", "Click 'Preview Schedule' to calculate rounds and Berger table pairings...")
+        preview_box.insert("1.0", "Click 'Preview Schedule' to calculate Matchweek rounds and pairings...")
 
         generated_fixtures: List[Dict[str, Any]] = []
 
@@ -371,12 +397,17 @@ class FixturesView(ctk.CTkScrollableFrame):
             nonlocal generated_fixtures
             fmt = format_menu.get()
             s_d = date_entry.get().strip()
-            s_t = time_entry.get().strip()
-            end_t = end_entry.get().strip() or "19:00"
+            e_d = end_date_entry.get().strip()
+            s_t = time_entry.get().strip() or "16:00"
+            end_t = end_entry.get().strip() or "20:00"
             try:
                 dur = int(dur_entry.get().strip() or "30")
             except ValueError:
                 dur = 30
+            try:
+                days_mw = int(mw_entry.get().strip() or "3")
+            except ValueError:
+                days_mw = 3
             venues = [v.strip() for v in venue_entry.get().split(",") if v.strip()] or ["Minaram Stadium"]
 
             preview_box.delete("1.0", "end")
@@ -388,18 +419,33 @@ class FixturesView(ctk.CTkScrollableFrame):
                 elif "League" in fmt:
                     double = ("Double" in fmt)
                     generated_fixtures = self.fixture_gen.preview_league_fixtures(
-                        start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues, double_round=double, day_end_time=end_t
+                        start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues,
+                        double_round=double, day_end_time=end_t, end_date=e_d, days_per_matchweek=days_mw
                     )
                 else:
                     generated_fixtures = self.fixture_gen.preview_group_fixtures(
-                        start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues, double_round=False, day_end_time=end_t
+                        start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues,
+                        double_round=False, day_end_time=end_t, end_date=e_d, days_per_matchweek=days_mw
                     )
 
-                txt = f"Generated {len(generated_fixtures)} matches successfully:\n\n"
-                for f in generated_fixtures[:8]:
-                    txt += f"Match #{f['match_number']} ({f['stage']}): {f['home_team_name']} vs {f['away_team_name']} | {f['scheduled_date']} {f['scheduled_time']} @ {f['venue']}\n"
-                if len(generated_fixtures) > 8:
-                    txt += f"... and {len(generated_fixtures) - 8} more matches."
+                # Group by Matchweek
+                mw_groups: Dict[int, List[Dict[str, Any]]] = {}
+                for f in generated_fixtures:
+                    mw_groups.setdefault(f.get("round_number", 1), []).append(f)
+
+                txt = f"✓ Generated {len(generated_fixtures)} matches across {len(mw_groups)} Matchweeks:\n"
+                txt += f"  Interval: 1 match every {days_mw} days per squad\n"
+                for r_num, m_list in sorted(mw_groups.items()):
+                    d_str = m_list[0].get("scheduled_date", "")
+                    times = f"{m_list[0].get('scheduled_time', '')} to {m_list[-1].get('scheduled_time', '')}"
+                    txt += f"  • Matchweek {r_num}: {d_str} ({len(m_list)} matches, {times})\n"
+
+                txt += "\nSample Matchups:\n"
+                for f in generated_fixtures[:6]:
+                    txt += f"  M#{f['match_number']} [MW {f.get('round_number', 1)}]: {f['home_team_name']} vs {f['away_team_name']} | {f['scheduled_date']} {f['scheduled_time']} @ {f['venue']}\n"
+                if len(generated_fixtures) > 6:
+                    txt += f"  ... and {len(generated_fixtures) - 6} more matches.\n"
+
                 preview_box.insert("1.0", txt)
 
             except Exception as e:

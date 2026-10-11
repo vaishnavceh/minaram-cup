@@ -32,6 +32,11 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
       {/* Header Info */}
       <div className="px-4 py-2.5 bg-black/40 border-b border-[#1c1c1c] flex items-center justify-between text-xs font-mono">
         <div className="flex items-center space-x-2 text-neutral-400">
+          {match.round_number ? (
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-neutral-900 text-brand-red border border-brand-red/40 tracking-wider">
+              MW {match.round_number}
+            </span>
+          ) : null}
           <span className="font-bold uppercase tracking-wider text-neutral-300">
             {match.stage}
           </span>

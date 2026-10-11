@@ -217,9 +217,11 @@ def distribute_groups_admin(randomize: bool = Body(False), admin: dict = Depends
 def generate_fixtures_admin(
     format_type: str = Body("Group Stage"),
     start_date: str = Body(""),
-    start_time: str = Body("09:00"),
+    end_date: str = Body(""),
+    days_per_matchweek: int = Body(3),
+    start_time: str = Body("16:00"),
     duration_mins: int = Body(30),
-    day_end_time: str = Body("19:00"),
+    day_end_time: str = Body("20:00"),
     venue: str = Body("Minaram Pitch 1, Minaram Pitch 2"),
     clear_existing: bool = Body(True),
     admin: dict = Depends(get_current_admin)
@@ -232,11 +234,13 @@ def generate_fixtures_admin(
             )
         elif "League" in format_type:
             fixtures = fix_gen.preview_league_fixtures(
-                start_date=start_date, start_time=start_time, match_duration_mins=duration_mins, venues=venue_list, day_end_time=day_end_time
+                start_date=start_date, start_time=start_time, match_duration_mins=duration_mins,
+                venues=venue_list, day_end_time=day_end_time, end_date=end_date, days_per_matchweek=days_per_matchweek
             )
         else:
             fixtures = fix_gen.preview_group_fixtures(
-                start_date=start_date, start_time=start_time, match_duration_mins=duration_mins, venues=venue_list, day_end_time=day_end_time
+                start_date=start_date, start_time=start_time, match_duration_mins=duration_mins,
+                venues=venue_list, day_end_time=day_end_time, end_date=end_date, days_per_matchweek=days_per_matchweek
             )
 
         saved_cnt = fix_gen.save_fixtures(fixtures, clear_existing=clear_existing)

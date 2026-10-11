@@ -49,9 +49,11 @@ export interface PublicMatch {
   penalty_b?: number | null;
   status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
   scheduled_time?: string | null;
+  scheduled_date?: string | null;
   pitch?: string | null;
   winner_id?: number | null;
   winner_name?: string | null;
+  notes?: string | null;
 }
 
 export interface GroupStandingRow {

@@ -78,21 +78,26 @@ class FixtureGenerator:
     # ----------------------------------------------------
     # Generate Group Stage Fixtures
     # ----------------------------------------------------
+    # Generate Group Stage Fixtures
+    # ----------------------------------------------------
     def preview_group_fixtures(
         self,
         start_date: str = "",
-        start_time: str = "09:00",
+        start_time: str = "16:00",
         match_duration_mins: int = 30,
         venues: Optional[List[str]] = None,
         double_round: bool = False,
-        day_end_time: str = "19:00"
+        day_end_time: str = "20:00",
+        end_date: str = "",
+        days_per_matchweek: int = 3
     ) -> List[Dict[str, Any]]:
         """
         Generate balanced, round-interleaved fixtures for all groups with:
         1. Multi-pitch simultaneous scheduling (pitches utilized concurrently).
         2. Round-by-round interleaving across groups (all Round 1 matches before Round 2).
-        3. Operating hours limit (matches never spill past day_end_time, rolling into next day).
-        4. Zero double-booking of teams in the same time slot.
+        3. Matchweek timeline splitting (1 match per team every days_per_matchweek days, e.g. 3 days).
+        4. Operating hours limit (matches strictly within daily kick-off window, never past midnight).
+        5. Zero double-booking of teams in the same time slot.
         """
         groups = self.db.execute_query("SELECT id, name FROM groups ORDER BY display_order ASC, name ASC;")
         if not groups:
@@ -120,15 +125,12 @@ class FixtureGenerator:
         try:
             start_t = datetime.strptime(start_time, "%H:%M").time()
         except Exception:
-            start_t = datetime.strptime("09:00", "%H:%M").time()
+            start_t = datetime.strptime("16:00", "%H:%M").time()
 
         try:
             end_t = datetime.strptime(day_end_time, "%H:%M").time()
         except Exception:
-            end_t = datetime.strptime("19:00", "%H:%M").time()
-
-        curr_dt = datetime.combine(curr_date, start_t)
-        day_end_dt = datetime.combine(curr_date, end_t)
+            end_t = datetime.strptime("20:00", "%H:%M").time()
 
         group_data: Dict[int, Dict[str, Any]] = {}
         for g in groups:
@@ -150,10 +152,31 @@ class FixtureGenerator:
             return []
 
         max_rounds = max(len(g["rounds"]) for g in group_data.values())
+
+        if days_per_matchweek < 1:
+            days_per_matchweek = 3
+
+        if end_date:
+            try:
+                target_end = datetime.strptime(end_date, "%Y-%m-%d").date()
+                if target_end > curr_date and max_rounds > 1:
+                    span_days = (target_end - curr_date).days
+                    auto_interval = max(1, span_days // (max_rounds - 1))
+                    if days_per_matchweek == 3 and auto_interval != 3:
+                        days_per_matchweek = auto_interval
+            except Exception:
+                pass
+
         fixtures: List[Dict[str, Any]] = []
         match_num = 1
 
         for round_idx in range(max_rounds):
+            mw_number = round_idx + 1
+            # Each matchweek is spaced out by days_per_matchweek (e.g. 3 days apart)
+            mw_date = curr_date + timedelta(days=round_idx * days_per_matchweek)
+            slot_dt = datetime.combine(mw_date, start_t)
+            slot_end_dt = datetime.combine(mw_date, end_t)
+
             # Gather all matches for this round across all groups (interleaving groups)
             round_matches: List[Dict[str, Any]] = []
             for g_id, g_info in group_data.items():
@@ -162,18 +185,18 @@ class FixtureGenerator:
                         round_matches.append({
                             "group_id": g_id,
                             "group_name": g_info["name"],
-                            "round_number": round_idx + 1,
+                            "round_number": mw_number,
                             "home": home,
                             "away": away
                         })
 
             # Schedule this round across pitches
             while round_matches:
-                # If current slot would finish past day_end_dt, advance to next day
-                if curr_dt + timedelta(minutes=match_duration_mins) > day_end_dt:
-                    curr_date += timedelta(days=1)
-                    curr_dt = datetime.combine(curr_date, start_t)
-                    day_end_dt = datetime.combine(curr_date, end_t)
+                # If current slot would finish past operating hours, advance to next day within matchday window
+                if slot_dt + timedelta(minutes=match_duration_mins) > slot_end_dt:
+                    mw_date += timedelta(days=1)
+                    slot_dt = datetime.combine(mw_date, start_t)
+                    slot_end_dt = datetime.combine(mw_date, end_t)
 
                 teams_playing_in_slot = set()
 
@@ -196,21 +219,22 @@ class FixtureGenerator:
                             "stage": "Group Stage",
                             "group_id": match_to_assign["group_id"],
                             "group_name": match_to_assign["group_name"],
-                            "round_number": match_to_assign["round_number"],
+                            "round_number": mw_number,
                             "bracket_slot": "",
                             "home_team_id": match_to_assign["home"]["id"],
                             "away_team_id": match_to_assign["away"]["id"],
                             "home_team_name": match_to_assign["home"]["name"],
                             "away_team_name": match_to_assign["away"]["name"],
-                            "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                            "scheduled_time": curr_dt.strftime("%H:%M"),
+                            "scheduled_date": slot_dt.strftime("%Y-%m-%d"),
+                            "scheduled_time": slot_dt.strftime("%H:%M"),
                             "venue": venue,
-                            "status": "Scheduled"
+                            "status": "Scheduled",
+                            "notes": f"Matchweek {mw_number}"
                         })
                         match_num += 1
 
                 # Advance time slot by match duration
-                curr_dt += timedelta(minutes=match_duration_mins)
+                slot_dt += timedelta(minutes=match_duration_mins)
 
         return fixtures
 
@@ -220,13 +244,15 @@ class FixtureGenerator:
     def preview_league_fixtures(
         self,
         start_date: str = "",
-        start_time: str = "09:00",
+        start_time: str = "16:00",
         match_duration_mins: int = 30,
         venues: Optional[List[str]] = None,
         double_round: bool = False,
-        day_end_time: str = "19:00"
+        day_end_time: str = "20:00",
+        end_date: str = "",
+        days_per_matchweek: int = 3
     ) -> List[Dict[str, Any]]:
-        """Generate proposed fixtures for a full league tournament with multi-pitch support and operating hours."""
+        """Generate proposed fixtures for a full league tournament with matchweek spacing, multi-pitch support and operating hours."""
         teams_rows = self.db.execute_query(
             "SELECT id, name FROM teams WHERE status = 'Confirmed' ORDER BY seed DESC, name ASC;"
         )
@@ -256,28 +282,46 @@ class FixtureGenerator:
         try:
             start_t = datetime.strptime(start_time, "%H:%M").time()
         except Exception:
-            start_t = datetime.strptime("09:00", "%H:%M").time()
+            start_t = datetime.strptime("16:00", "%H:%M").time()
 
         try:
             end_t = datetime.strptime(day_end_time, "%H:%M").time()
         except Exception:
-            end_t = datetime.strptime("19:00", "%H:%M").time()
-
-        curr_dt = datetime.combine(curr_date, start_t)
-        day_end_dt = datetime.combine(curr_date, end_t)
+            end_t = datetime.strptime("20:00", "%H:%M").time()
 
         rounds = self.generate_round_robin_pairings(teams, double_round=double_round)
+        if not rounds:
+            return []
+
+        if days_per_matchweek < 1:
+            days_per_matchweek = 3
+
+        if end_date:
+            try:
+                target_end = datetime.strptime(end_date, "%Y-%m-%d").date()
+                if target_end > curr_date and len(rounds) > 1:
+                    span_days = (target_end - curr_date).days
+                    auto_interval = max(1, span_days // (len(rounds) - 1))
+                    if days_per_matchweek == 3 and auto_interval != 3:
+                        days_per_matchweek = auto_interval
+            except Exception:
+                pass
+
         fixtures: List[Dict[str, Any]] = []
         match_num = 1
 
         for round_idx, r_matches in enumerate(rounds, start=1):
+            mw_date = curr_date + timedelta(days=(round_idx - 1) * days_per_matchweek)
+            slot_dt = datetime.combine(mw_date, start_t)
+            slot_end_dt = datetime.combine(mw_date, end_t)
+
             round_matches = [{"home": h, "away": a, "round_number": round_idx} for h, a in r_matches]
 
             while round_matches:
-                if curr_dt + timedelta(minutes=match_duration_mins) > day_end_dt:
-                    curr_date += timedelta(days=1)
-                    curr_dt = datetime.combine(curr_date, start_t)
-                    day_end_dt = datetime.combine(curr_date, end_t)
+                if slot_dt + timedelta(minutes=match_duration_mins) > slot_end_dt:
+                    mw_date += timedelta(days=1)
+                    slot_dt = datetime.combine(mw_date, start_t)
+                    slot_end_dt = datetime.combine(mw_date, end_t)
 
                 teams_playing_in_slot = set()
 
@@ -306,14 +350,15 @@ class FixtureGenerator:
                             "away_team_id": match_to_assign["away"]["id"],
                             "home_team_name": match_to_assign["home"]["name"],
                             "away_team_name": match_to_assign["away"]["name"],
-                            "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                            "scheduled_time": curr_dt.strftime("%H:%M"),
+                            "scheduled_date": slot_dt.strftime("%Y-%m-%d"),
+                            "scheduled_time": slot_dt.strftime("%H:%M"),
                             "venue": venue,
-                            "status": "Scheduled"
+                            "status": "Scheduled",
+                            "notes": f"Matchweek {round_idx}"
                         })
                         match_num += 1
 
-                curr_dt += timedelta(minutes=match_duration_mins)
+                slot_dt += timedelta(minutes=match_duration_mins)
 
         return fixtures
 
