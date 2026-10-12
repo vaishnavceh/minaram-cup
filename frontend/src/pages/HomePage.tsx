@@ -6,6 +6,32 @@ import { MatchCard } from '../components/MatchCard';
 import { StandingsTable } from '../components/StandingsTable';
 import { Ticker } from '../components/Ticker';
 import { Trophy, Swords, Calendar, BarChart3, ArrowRight, ShieldAlert, Sparkles } from 'lucide-react';
+import { REGISTRATION_DEADLINE, PRIZE_POOL, TOTAL_PRIZE_POOL } from '../constants';
+
+interface CountdownTime {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  isClosed: boolean;
+}
+
+const getCountdownTime = (targetIso: string): CountdownTime => {
+  const targetMs = new Date(targetIso).getTime();
+  const diff = targetMs - Date.now();
+
+  if (diff <= 0 || isNaN(targetMs)) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0, isClosed: true };
+  }
+
+  return {
+    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+    isClosed: false,
+  };
+};
 
 export const HomePage: React.FC = () => {
   const [tournament, setTournament] = useState<PublicTournament | null>(null);
@@ -13,6 +39,17 @@ export const HomePage: React.FC = () => {
   const [upcomingMatches, setUpcomingMatches] = useState<PublicMatch[]>([]);
   const [standings, setStandings] = useState<PublicGroupStandings[]>([]);
   const [loading, setLoading] = useState(true);
+  const [countdown, setCountdown] = useState<CountdownTime>(() => getCountdownTime(REGISTRATION_DEADLINE));
+
+  useEffect(() => {
+    const tick = () => {
+      setCountdown(getCountdownTime(REGISTRATION_DEADLINE));
+    };
+
+    tick();
+    const timer = setInterval(tick, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const loadData = async () => {
     try {
@@ -134,6 +171,87 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
+          {/* Registration Deadline & Countdown Banner */}
+          <div
+            className={`w-full max-w-3xl mt-5 p-3.5 sm:px-6 sm:py-3.5 rounded-lg border backdrop-blur-md transition-all duration-300 shadow-lg ${
+              countdown.isClosed
+                ? 'bg-black/60 border-neutral-800/80 text-neutral-400'
+                : 'bg-black/70 border-neutral-800 hover:border-brand-red/50'
+            }`}
+          >
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6 text-center sm:text-left">
+              {/* Left Column: Monospace Label & Large Condensed Date */}
+              <div className="flex flex-col items-center sm:items-start">
+                <div className="flex items-center space-x-1.5 text-[11px] font-mono uppercase tracking-widest">
+                  {countdown.isClosed ? (
+                    <>
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-red" />
+                      <span className="text-neutral-400 font-semibold">REGISTRATION CLOSED</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-neutral-300 font-semibold">REGISTRATION CLOSES</span>
+                    </>
+                  )}
+                </div>
+                <div className="font-display text-2xl sm:text-3xl text-white tracking-wide leading-none mt-1">
+                  TUE, 13 OCT · 6:00 PM
+                </div>
+              </div>
+
+              {/* Right Column: Live Countdown or Closed State */}
+              {countdown.isClosed ? (
+                <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded bg-neutral-900/80 border border-neutral-800 text-neutral-400 text-xs font-mono tracking-wider uppercase">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-red" />
+                  <span>REGISTRATION CLOSED</span>
+                </div>
+              ) : (
+                <div
+                  className="flex items-center space-x-1 sm:space-x-1.5"
+                  aria-live="off"
+                  aria-label="Registration countdown"
+                >
+                  <div className="flex flex-col items-center min-w-[44px] sm:min-w-[50px] bg-neutral-950/80 border border-neutral-800 rounded px-1.5 py-1">
+                    <span className="font-display text-xl sm:text-2xl text-white tabular-nums leading-none">
+                      {String(countdown.days).padStart(2, '0')}
+                    </span>
+                    <span className="text-[9px] font-mono tracking-wider text-neutral-400 uppercase mt-0.5">
+                      DAYS
+                    </span>
+                  </div>
+                  <span className="font-display text-lg text-neutral-600 pb-2.5">:</span>
+                  <div className="flex flex-col items-center min-w-[44px] sm:min-w-[50px] bg-neutral-950/80 border border-neutral-800 rounded px-1.5 py-1">
+                    <span className="font-display text-xl sm:text-2xl text-white tabular-nums leading-none">
+                      {String(countdown.hours).padStart(2, '0')}
+                    </span>
+                    <span className="text-[9px] font-mono tracking-wider text-neutral-400 uppercase mt-0.5">
+                      HRS
+                    </span>
+                  </div>
+                  <span className="font-display text-lg text-neutral-600 pb-2.5">:</span>
+                  <div className="flex flex-col items-center min-w-[44px] sm:min-w-[50px] bg-neutral-950/80 border border-neutral-800 rounded px-1.5 py-1">
+                    <span className="font-display text-xl sm:text-2xl text-white tabular-nums leading-none">
+                      {String(countdown.minutes).padStart(2, '0')}
+                    </span>
+                    <span className="text-[9px] font-mono tracking-wider text-neutral-400 uppercase mt-0.5">
+                      MIN
+                    </span>
+                  </div>
+                  <span className="font-display text-lg text-neutral-600 pb-2.5">:</span>
+                  <div className="flex flex-col items-center min-w-[44px] sm:min-w-[50px] bg-neutral-950/80 border border-neutral-800 rounded px-1.5 py-1">
+                    <span className="font-display text-xl sm:text-2xl text-brand-red tabular-nums leading-none">
+                      {String(countdown.seconds).padStart(2, '0')}
+                    </span>
+                    <span className="text-[9px] font-mono tracking-wider text-neutral-400 uppercase mt-0.5">
+                      SEC
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
             <Link
@@ -158,6 +276,105 @@ export const HomePage: React.FC = () => {
 
       {/* Main Content Layout */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
+        {/* Prize Pool Section */}
+        <section id="prize-pool" className="relative">
+          <div className="flex flex-col items-center text-center mb-8">
+            <span className="text-xs font-mono uppercase tracking-widest text-brand-red mb-1">
+              REWARDS
+            </span>
+            <h2 className="font-display text-4xl sm:text-5xl text-white tracking-wider">
+              PRIZE POOL
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 items-stretch max-w-5xl mx-auto">
+            {PRIZE_POOL.map((tier) => {
+              const isWinner = tier.featured;
+              return (
+                <div
+                  key={tier.id}
+                  className={`relative flex flex-col justify-between rounded-xl transition-all duration-300 ${
+                    isWinner
+                      ? 'bg-gradient-to-b from-[#181012] via-[#120e10] to-[#0c0c0c] border-2 border-brand-red shadow-glow-red p-6 sm:p-7 order-first md:order-none'
+                      : 'bg-[#101010] border border-neutral-800 hover:border-neutral-700 p-5 sm:p-6'
+                  }`}
+                >
+                  {/* Position Badge & Marker */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span
+                      className={`text-[11px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded ${
+                        isWinner
+                          ? 'bg-brand-red/20 text-brand-red border border-brand-red/40 font-bold'
+                          : 'bg-neutral-800/80 text-neutral-400 border border-neutral-700/60'
+                      }`}
+                    >
+                      {tier.label} PLACE
+                    </span>
+                    <span
+                      className={`font-display text-3xl ${
+                        isWinner ? 'text-brand-red font-bold' : 'text-neutral-500'
+                      }`}
+                    >
+                      {tier.place}
+                    </span>
+                  </div>
+
+                  {/* Title & Amount */}
+                  <div className="my-2">
+                    <h3
+                      className={`font-display tracking-wider uppercase ${
+                        isWinner ? 'text-2xl text-white font-bold' : 'text-xl text-neutral-300'
+                      }`}
+                    >
+                      {tier.title}
+                    </h3>
+                    <div className="mt-2 flex items-baseline space-x-1.5">
+                      <span
+                        className={`font-sans font-bold leading-none ${
+                          isWinner ? 'text-3xl sm:text-4xl text-brand-red' : 'text-2xl sm:text-3xl text-neutral-400'
+                        }`}
+                      >
+                        ₹
+                      </span>
+                      <span
+                        className={`font-display tracking-tight text-white tabular-nums leading-none ${
+                          isWinner ? 'text-5xl sm:text-6xl font-bold' : 'text-4xl sm:text-5xl'
+                        }`}
+                      >
+                        {tier.amount}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Minimal Footer Accent */}
+                  <div
+                    className={`mt-5 pt-3 border-t text-[11px] font-mono uppercase tracking-widest flex items-center justify-between ${
+                      isWinner
+                        ? 'border-brand-red/30 text-neutral-300'
+                        : 'border-neutral-800 text-neutral-500'
+                    }`}
+                  >
+                    <span>{tier.label} PRIZE</span>
+                    {isWinner && (
+                      <span className="flex items-center space-x-1.5 text-brand-red font-semibold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-brand-red" />
+                        <span>CHAMPION</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Total Prize Pool Footer */}
+          <div className="mt-6 text-center">
+            <p className="text-xs font-mono tracking-widest text-neutral-400 uppercase">
+              TOTAL PRIZE POOL <span className="font-sans font-semibold text-neutral-300">₹</span>{TOTAL_PRIZE_POOL}
+            </p>
+          </div>
+        </section>
+
         {/* Next Matches & Recent Results Split Grid */}
         <section>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
