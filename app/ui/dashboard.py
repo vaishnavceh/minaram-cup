@@ -10,10 +10,11 @@ from app.standings import StandingsCalculator
 
 
 class DashboardView(ctk.CTkScrollableFrame):
-    def __init__(self, parent, db: Database, navigate_callback):
+    def __init__(self, parent, db: Database, navigate_callback, on_cloud_sync=None):
         super().__init__(parent, fg_color="transparent")
         self.db = db
         self.navigate = navigate_callback
+        self.on_cloud_sync = on_cloud_sync
         self.standings_calc = StandingsCalculator(db)
 
         self.render_dashboard()
@@ -49,13 +50,13 @@ class DashboardView(ctk.CTkScrollableFrame):
         ctk.CTkLabel(
             title_box,
             text=f"{t_name} Overview",
-            font=ctk.CTkFont(size=22, weight="bold"),
+            font=theme.get_font(22, "bold"),
             text_color=theme.TEXT_PRIMARY
         ).pack(anchor="w")
         ctk.CTkLabel(
             title_box,
             text=f"Edition: {t_edition} • Live Database Metrics",
-            font=ctk.CTkFont(size=12),
+            font=theme.get_font(12),
             text_color=theme.TEXT_MUTED
         ).pack(anchor="w")
 
@@ -63,13 +64,25 @@ class DashboardView(ctk.CTkScrollableFrame):
         actions_box = ctk.CTkFrame(top_row, fg_color="transparent")
         actions_box.pack(side="right")
 
+        if self.on_cloud_sync:
+            ctk.CTkButton(
+                actions_box,
+                text="🚀 Push to Render",
+                fg_color="#0284c7",
+                hover_color="#0369a1",
+                text_color="#FFFFFF",
+                font=theme.get_font(12, "bold"),
+                height=32,
+                command=self.on_cloud_sync
+            ).pack(side="left", padx=4)
+
         ctk.CTkButton(
             actions_box,
             text="+ Register Team",
             fg_color=theme.ACCENT_GREEN,
             hover_color=theme.ACCENT_GREEN_HOVER,
             text_color=theme.TEXT_DARK,
-            font=ctk.CTkFont(size=12, weight="bold"),
+            font=theme.get_font(12, "bold"),
             height=32,
             command=lambda: self.navigate("Registrations")
         ).pack(side="left", padx=4)
@@ -83,6 +96,7 @@ class DashboardView(ctk.CTkScrollableFrame):
             hover_color=theme.BG_CARD_HOVER,
             text_color=theme.TEXT_PRIMARY,
             height=32,
+            font=theme.get_font(11),
             command=lambda: self.navigate("Fixtures")
         ).pack(side="left", padx=4)
 
@@ -95,8 +109,47 @@ class DashboardView(ctk.CTkScrollableFrame):
             hover_color=theme.BG_CARD_HOVER,
             text_color=theme.TEXT_PRIMARY,
             height=32,
+            font=theme.get_font(11),
             command=lambda: self.navigate("Results")
         ).pack(side="left", padx=4)
+
+        # Cloud Sync Status & Action Banner
+        from app.cloud_sync_service import get_cloud_config
+        cfg = get_cloud_config()
+        last_sync = cfg.get("last_sync_time") or "Never synced yet"
+        cloud_url = cfg.get("backend_url", "https://minaram-cup-api.onrender.com")
+
+        cloud_banner = ctk.CTkFrame(self, fg_color=theme.BG_CARD, corner_radius=10, border_color="#0284c7", border_width=1)
+        cloud_banner.pack(fill="x", padx=16, pady=(0, 16))
+
+        cb_left = ctk.CTkFrame(cloud_banner, fg_color="transparent")
+        cb_left.pack(side="left", padx=16, pady=10)
+
+        ctk.CTkLabel(
+            cb_left,
+            text="☁️ Render Cloud API & Live Website Synchronization",
+            font=theme.get_font(13, "bold"),
+            text_color=theme.TEXT_PRIMARY
+        ).pack(anchor="w")
+
+        ctk.CTkLabel(
+            cb_left,
+            text=f"Target: {cloud_url}   •   Last Published: {last_sync}",
+            font=theme.get_font(11),
+            text_color=theme.TEXT_SECONDARY
+        ).pack(anchor="w", pady=(2, 0))
+
+        if self.on_cloud_sync:
+            ctk.CTkButton(
+                cloud_banner,
+                text="🚀 Push Updates to Render Now",
+                fg_color="#0284c7",
+                hover_color="#0369a1",
+                text_color="#FFFFFF",
+                font=theme.get_font(12, "bold"),
+                height=34,
+                command=self.on_cloud_sync
+            ).pack(side="right", padx=16, pady=10)
 
         # 2. KPI Cards Grid (4 in row 1, 3 in row 2)
         kpi_frame = ctk.CTkFrame(self, fg_color="transparent")

@@ -126,15 +126,40 @@ class MainWindow(ctk.CTk):
         footer_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
         footer_frame.pack(side="bottom", fill="x", padx=14, pady=16)
 
+        # Cloud Sync / Push to Render Button in Sidebar
+        self.sidebar_cloud_btn = ctk.CTkButton(
+            footer_frame,
+            text="🚀 Push to Render",
+            font=theme.get_font(12, "bold"),
+            fg_color="#0284c7",
+            hover_color="#0369a1",
+            text_color="#FFFFFF",
+            height=34,
+            corner_radius=6,
+            command=self.open_cloud_sync
+        )
+        self.sidebar_cloud_btn.pack(fill="x", pady=(0, 6))
+
+        from app.cloud_sync_service import get_cloud_config
+        cfg = get_cloud_config()
+        last_t = cfg.get("last_sync_time") or "Not yet synced"
+        self.sidebar_sync_status = ctk.CTkLabel(
+            footer_frame,
+            text=f"Cloud: {last_t}",
+            font=theme.get_font(9),
+            text_color=theme.TEXT_MUTED
+        )
+        self.sidebar_sync_status.pack(anchor="w", pady=(0, 6))
+
         # Database connection indicator
         db_pill = ctk.CTkFrame(footer_frame, fg_color=theme.BG_INPUT, corner_radius=6)
         db_pill.pack(fill="x", pady=(0, 6))
 
-        dot = ctk.CTkLabel(db_pill, text="●", text_color=theme.ACCENT_GREEN, font=ctk.CTkFont(size=12))
+        dot = ctk.CTkLabel(db_pill, text="●", text_color=theme.ACCENT_GREEN, font=theme.get_font(12))
         dot.pack(side="left", padx=(10, 4), pady=4)
-        ctk.CTkLabel(db_pill, text="SQLite Connected", font=ctk.CTkFont(size=10, weight="bold"), text_color=theme.TEXT_SECONDARY).pack(side="left", pady=4)
+        ctk.CTkLabel(db_pill, text="SQLite Connected", font=theme.get_font(10, "bold"), text_color=theme.TEXT_SECONDARY).pack(side="left", pady=4)
 
-        ctk.CTkLabel(footer_frame, text="Minaram Cup v1.0 • Offline", font=ctk.CTkFont(size=10), text_color=theme.TEXT_MUTED).pack(anchor="w")
+        ctk.CTkLabel(footer_frame, text="Minaram Cup v1.0 • Offline", font=theme.get_font(10), text_color=theme.TEXT_MUTED).pack(anchor="w")
 
         # 2. Main Right Container
         self.right_container = ctk.CTkFrame(self, fg_color="transparent")
@@ -214,7 +239,7 @@ class MainWindow(ctk.CTk):
     def init_views(self):
         """Instantiate views."""
         self.views = {
-            "Dashboard": DashboardView(self.workspace, self.db, self.show_section),
+            "Dashboard": DashboardView(self.workspace, self.db, self.show_section, on_cloud_sync=self.open_cloud_sync),
             "Registrations": RegistrationsView(self.workspace, self.db),
             "Teams": TeamsView(self.workspace, self.db),
             "Groups": GroupsView(self.workspace, self.db),
@@ -239,13 +264,13 @@ class MainWindow(ctk.CTk):
                 btn.configure(
                     fg_color=theme.BG_CARD,
                     text_color=theme.ACCENT_GREEN_TEXT,
-                    font=ctk.CTkFont(size=12, weight="bold")
+                    font=theme.get_font(12, "bold")
                 )
             else:
                 btn.configure(
                     fg_color="transparent",
                     text_color=theme.TEXT_SECONDARY,
-                    font=ctk.CTkFont(size=12, weight="normal")
+                    font=theme.get_font(12, "normal")
                 )
 
         # Hide all views and show target view
@@ -281,6 +306,15 @@ class MainWindow(ctk.CTk):
 
     def on_cloud_synced(self):
         """Callback when cloud sync successfully completes."""
+        from app.cloud_sync_service import get_cloud_config
+        cfg = get_cloud_config()
+        last_t = cfg.get("last_sync_time") or "Just now"
+        if hasattr(self, "sidebar_sync_status"):
+            time_part = last_t.split()[-1] if " " in last_t else last_t
+            self.sidebar_sync_status.configure(
+                text=f"Cloud: Synced ({time_part})",
+                text_color=theme.ACCENT_GREEN_TEXT
+            )
         if self.current_section in self.views:
             self.views[self.current_section].refresh()
 

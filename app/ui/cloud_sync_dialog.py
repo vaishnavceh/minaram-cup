@@ -21,7 +21,9 @@ from app.cloud_sync_service import (
 
 class CloudSyncModal(BaseModal):
     def __init__(self, parent, on_sync_completed: Optional[Callable[[], None]] = None):
-        super().__init__(parent, title="☁️ Cloud Sync (Render API)", width=560, height=480)
+        super().__init__(parent, title="☁️ Cloud Sync (Render API)", width=580, height=520)
+        self.resizable(True, True)
+        self.minsize(540, 480)
         self.on_sync_completed = on_sync_completed
         self.is_syncing = False
 
@@ -31,23 +33,23 @@ class CloudSyncModal(BaseModal):
     def build_ui(self):
         # Description
         desc_lbl = ctk.CTkLabel(
-            self.container,
+            self.body_frame,
             text="Publish local tournament database changes directly to your Render cloud API.\nChanges reflect in real-time on your Vercel public web platform.",
-            font=ctk.CTkFont(size=11),
+            font=theme.get_font(11),
             text_color=theme.TEXT_MUTED,
             justify="left",
-            wraplength=500
+            wraplength=520
         )
-        desc_lbl.pack(fill="x", padx=20, pady=(0, 14))
+        desc_lbl.pack(fill="x", pady=(0, 12))
 
         # Config Card
-        card = ctk.CTkFrame(self.container, fg_color=theme.BG_INPUT, corner_radius=8, border_color=theme.BORDER_COLOR, border_width=1)
-        card.pack(fill="x", padx=20, pady=(0, 14))
+        card = ctk.CTkFrame(self.body_frame, fg_color=theme.BG_INPUT, corner_radius=8, border_color=theme.BORDER_COLOR, border_width=1)
+        card.pack(fill="x", pady=(0, 14))
 
         # Backend URL row
         u_box = ctk.CTkFrame(card, fg_color="transparent")
         u_box.pack(fill="x", padx=14, pady=(12, 6))
-        ctk.CTkLabel(u_box, text="Render Backend URL:", font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
+        ctk.CTkLabel(u_box, text="Render Backend URL:", font=theme.get_font(11, "bold"), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
         self.url_entry = ctk.CTkEntry(u_box, fg_color=theme.BG_CARD, border_color=theme.BORDER_COLOR)
         self.url_entry.pack(fill="x", pady=(4, 0))
         self.url_entry.insert(0, self.cfg.get("backend_url", DEFAULT_BACKEND_URL))
@@ -55,19 +57,20 @@ class CloudSyncModal(BaseModal):
         # Admin Password row
         p_box = ctk.CTkFrame(card, fg_color="transparent")
         p_box.pack(fill="x", padx=14, pady=(6, 12))
-        ctk.CTkLabel(p_box, text="Admin Sync Password:", font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
+        ctk.CTkLabel(p_box, text="Admin Sync Password:", font=theme.get_font(11, "bold"), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
         self.pwd_entry = ctk.CTkEntry(p_box, show="•", fg_color=theme.BG_CARD, border_color=theme.BORDER_COLOR)
         self.pwd_entry.pack(fill="x", pady=(4, 0))
         self.pwd_entry.insert(0, self.cfg.get("admin_password", "minaram2026"))
 
         # Status & Progress Box
-        self.status_box = ctk.CTkFrame(self.container, fg_color=theme.BG_CARD_HOVER, corner_radius=8)
-        self.status_box.pack(fill="x", padx=20, pady=(0, 16))
+        self.status_box = ctk.CTkFrame(self.body_frame, fg_color=theme.BG_CARD_HOVER, corner_radius=8)
+        self.status_box.pack(fill="x", pady=(0, 14))
 
+        last_t = self.cfg.get("last_sync_time") or "Never"
         self.status_lbl = ctk.CTkLabel(
             self.status_box,
-            text=f"Status: Ready to sync  •  Last: {self.cfg.get('last_sync_time') or 'Never'}",
-            font=ctk.CTkFont(size=11),
+            text=f"Status: Ready to sync  •  Last: {last_t}",
+            font=theme.get_font(11),
             text_color=theme.TEXT_PRIMARY
         )
         self.status_lbl.pack(padx=14, pady=(10, 6), anchor="w")
@@ -77,8 +80,8 @@ class CloudSyncModal(BaseModal):
         self.progress_bar.set(0)
 
         # Buttons Frame
-        btn_frame = ctk.CTkFrame(self.container, fg_color="transparent")
-        btn_frame.pack(fill="x", padx=20, pady=(0, 10))
+        btn_frame = ctk.CTkFrame(self.body_frame, fg_color="transparent")
+        btn_frame.pack(fill="x", pady=(0, 10))
 
         self.push_btn = ctk.CTkButton(
             btn_frame,
@@ -86,11 +89,11 @@ class CloudSyncModal(BaseModal):
             fg_color="#0284c7",
             hover_color="#0369a1",
             text_color="white",
-            font=ctk.CTkFont(size=13, weight="bold"),
-            height=36,
+            font=theme.get_font(13, "bold"),
+            height=38,
             command=self.start_push
         )
-        self.push_btn.pack(side="left", fill="x", expand=True, padx=(0, 6))
+        self.push_btn.pack(side="left", fill="x", expand=True, padx=(0, 8))
 
         self.pull_btn = ctk.CTkButton(
             btn_frame,
@@ -100,25 +103,25 @@ class CloudSyncModal(BaseModal):
             text_color=theme.TEXT_SECONDARY,
             border_color=theme.BORDER_COLOR,
             border_width=1,
-            font=ctk.CTkFont(size=12),
-            height=36,
+            font=theme.get_font(12),
+            height=38,
             command=self.start_pull
         )
-        self.pull_btn.pack(side="right", padx=(6, 0))
+        self.pull_btn.pack(side="right", padx=(0, 0))
 
         # Bottom Notice
         ctk.CTkLabel(
-            self.container,
+            self.body_frame,
             text="Tip: Render free tier services automatically spin down when idle.\nIf it takes ~30-50s on the first sync, it is simply waking up.",
-            font=ctk.CTkFont(size=10),
+            font=theme.get_font(10),
             text_color=theme.TEXT_MUTED,
             justify="center"
-        ).pack(fill="x", padx=20, pady=(4, 0))
+        ).pack(fill="x", pady=(4, 0))
 
     def set_syncing(self, is_syncing: bool, message: str = ""):
         self.is_syncing = is_syncing
         if is_syncing:
-            self.push_btn.configure(state="disabled", text="⏳ Syncing...")
+            self.push_btn.configure(state="disabled", text="⏳ Syncing with Render...")
             self.pull_btn.configure(state="disabled")
             self.url_entry.configure(state="disabled")
             self.pwd_entry.configure(state="disabled")

@@ -83,9 +83,9 @@ def get_jwt_token(base_url: str, username: str, password: str) -> str:
         headers={"Content-Type": "application/json"},
         method="POST"
     )
-    with urllib.request.urlopen(req, timeout=20) as resp:
+    with urllib.request.urlopen(req, timeout=60) as resp:
         data = json.loads(resp.read().decode("utf-8"))
-        token = data.get("token")
+        token = data.get("token") or data.get("access_token")
         if not token:
             raise ValueError("No authentication token returned by server")
         return token
@@ -172,7 +172,7 @@ def push_database(base_url: Optional[str] = None,
     # 4. Upload to Render
     report("Uploading database to Render cloud API...")
     try:
-        with urllib.request.urlopen(req, timeout=45) as resp:
+        with urllib.request.urlopen(req, timeout=60) as resp:
             res_data = json.loads(resp.read().decode("utf-8"))
             server_msg = res_data.get("message", "Database synchronized successfully.")
             
