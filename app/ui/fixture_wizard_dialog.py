@@ -296,59 +296,43 @@ class FixtureWizardModal(BaseModal):
         )
         self.timeline_breakdown_lbl.pack(anchor="w", pady=(2, 8))
 
-        # 4. Match Duration & Daily Operating Hours
-        ctk.CTkLabel(
+        # 4. Mobile Game Rules & Disconnection Protocol Card
+        rules_card = ctk.CTkFrame(
             self.scroll_content,
-            text="4. Match Timing & Daily Operating Window:",
-            font=theme.get_font(12, "bold"),
-            text_color=theme.TEXT_PRIMARY
-        ).pack(anchor="w", pady=(4, 4))
+            fg_color=theme.BG_CARD,
+            corner_radius=8,
+            border_color="#38bdf8",
+            border_width=1
+        )
+        rules_card.pack(fill="x", pady=(4, 10))
 
-        timing_grid = ctk.CTkFrame(self.scroll_content, fg_color="transparent")
-        timing_grid.pack(fill="x", pady=(0, 8))
-        timing_grid.columnconfigure(0, weight=1)
-        timing_grid.columnconfigure(1, weight=1)
-        timing_grid.columnconfigure(2, weight=1)
-
-        # Duration
-        c_dur = ctk.CTkFrame(timing_grid, fg_color="transparent")
-        c_dur.grid(row=0, column=0, sticky="ew", padx=(0, 4))
-        ctk.CTkLabel(c_dur, text="Match Duration (Minutes):", font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
-        self.dur_entry = ctk.CTkEntry(c_dur, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
-        self.dur_entry.insert(0, "30")
-        self.dur_entry.pack(fill="x", pady=(2, 0))
-
-        # Kickoff Time
-        c_kickoff = ctk.CTkFrame(timing_grid, fg_color="transparent")
-        c_kickoff.grid(row=0, column=1, sticky="ew", padx=4)
-        ctk.CTkLabel(c_kickoff, text="Kick-off Start Time (HH:MM):", font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
-        self.time_entry = ctk.CTkEntry(c_kickoff, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
-        self.time_entry.insert(0, "16:00")
-        self.time_entry.pack(fill="x", pady=(2, 0))
-
-        # Daily Operating End Time
-        c_close = ctk.CTkFrame(timing_grid, fg_color="transparent")
-        c_close.grid(row=0, column=2, sticky="ew", padx=(4, 0))
-        ctk.CTkLabel(c_close, text="Operating End Time (HH:MM):", font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
-        self.end_entry = ctk.CTkEntry(c_close, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
-        self.end_entry.insert(0, "20:00")
-        self.end_entry.pack(fill="x", pady=(2, 0))
-
-        # 5. Venues & Simultaneous Pitches
-        v_box = ctk.CTkFrame(self.scroll_content, fg_color="transparent")
-        v_box.pack(fill="x", pady=(4, 8))
+        rules_inner = ctk.CTkFrame(rules_card, fg_color="transparent")
+        rules_inner.pack(fill="x", padx=14, pady=10)
 
         ctk.CTkLabel(
-            v_box,
-            text="5. Venues / Pitches (comma-separated for parallel simultaneous matches):",
-            font=theme.get_font(11),
-            text_color=theme.TEXT_SECONDARY
-        ).pack(anchor="w")
-        self.venue_entry = ctk.CTkEntry(v_box, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
-        self.venue_entry.insert(0, "Minaram Pitch 1, Minaram Pitch 2")
-        self.venue_entry.pack(fill="x", pady=(2, 0))
+            rules_inner,
+            text="📱 4. Mobile Game Match Rules & Network Interruption Protocol:",
+            font=theme.get_font(12, "bold"),
+            text_color="#38bdf8"
+        ).pack(anchor="w", pady=(0, 4))
 
-        # 6. Overwrite Protection Scope Checkbox
+        ctk.CTkLabel(
+            rules_inner,
+            text="⏱️ Fixed Match Duration: 10 Minutes per 1v1 match\n"
+                 "🌐 Schedule Flexibility: Players can play at ANY time within their Matchweek timeline window.\n\n"
+                 "⚠️ Disconnection & Network Interruption Protocol (Strict Enforcement):\n"
+                 "• Mandatory Screenshot Proof: When an unintentional network cut occurs, either side must immediately take a clear screenshot showing the scoreline and game clock up to that exact disconnection moment. Submitting screenshot verification to the tournament desk is mandatory.\n"
+                 "• Additional 5-Minute Continuation Match: The match will immediately continue from that point by playing an additional 5-minute match between the two teams.\n"
+                 "• Aggregate Final Score: The official final scoreline will be calculated as the combined aggregate:\n"
+                 "   OFFICIAL FINAL SCORE = (Pre-Disconnect Score from Screenshot) + (Score from 5-Minute Continuation Match)\n"
+                 "• Intentional Rage-Quit & Dispute Resolution: Intentionally quitting, disconnecting to manipulate results, refusing to play the continuation match, or failing to produce screenshot proof will result in an immediate match forfeiture (awarded a 3-0 loss) and disciplinary review by tournament organizers.",
+            font=theme.get_font(10),
+            text_color=theme.TEXT_PRIMARY,
+            justify="left",
+            wraplength=640
+        ).pack(anchor="w")
+
+        # 5. Overwrite Protection Scope Checkbox
         self.clear_check_var = ctk.BooleanVar(value=True)
         self.clear_check = ctk.CTkCheckBox(
             self.scroll_content,
@@ -359,10 +343,10 @@ class FixtureWizardModal(BaseModal):
         )
         self.clear_check.pack(anchor="w", pady=(4, 10))
 
-        # 7. Live Interactive Preview Box
+        # 6. Live Interactive Preview Box
         ctk.CTkLabel(
             self.scroll_content,
-            text="6. Live Schedule Preview & Matchups Breakdown:",
+            text="5. Live Schedule Preview & Matchups Breakdown:",
             font=theme.get_font(11, "bold"),
             text_color=theme.TEXT_SECONDARY
         ).pack(anchor="w", pady=(4, 2))
@@ -559,21 +543,19 @@ class FixtureWizardModal(BaseModal):
         fmt = self.format_menu.get()
         s_d = self.date_entry.get().strip()
         e_d = self.end_date_entry.get().strip()
-        s_t = self.time_entry.get().strip() or "16:00"
-        end_t = self.end_entry.get().strip() or "20:00"
         target_mw = self.get_target_matchweek_number()
         total_mw = self.get_total_effective_matchweeks()
 
-        try:
-            dur = int(self.dur_entry.get().strip() or "30")
-        except ValueError:
-            dur = 30
         try:
             days_mw = int(self.mw_entry.get().strip() or "3")
         except ValueError:
             days_mw = 3
 
-        venues = [v.strip() for v in self.venue_entry.get().split(",") if v.strip()] or ["Minaram Stadium"]
+        # Fixed 10-minute mobile matches in online/mobile lobby
+        dur = 10
+        venues = ["Online / Mobile Lobby"]
+        s_t = "Flexible"
+        end_t = "Flexible"
 
         self.preview_box.delete("1.0", "end")
         self.status_lbl.configure(text="Generating preview...", text_color=theme.TEXT_MUTED)
@@ -616,27 +598,29 @@ class FixtureWizardModal(BaseModal):
                 mw_start = s_d_obj + timedelta(days=(target_mw - 1) * days_mw)
                 mw_end = mw_start + timedelta(days=days_mw)
                 txt = f"✓ MATCHWEEK {target_mw} SCHEDULE READY: {len(self.generated_fixtures)} matches\n"
-                txt += f"  Duration Window: {mw_start.strftime('%Y-%m-%d')} to {mw_end.strftime('%Y-%m-%d')} ({days_mw} days)\n"
-                txt += f"  Pitches in parallel: {', '.join(venues)}\n\n"
+                txt += f"  Rule: 10-Minute Mobile Match • Window: {mw_start.strftime('%Y-%m-%d')} to {mw_end.strftime('%Y-%m-%d')} ({days_mw} days)\n"
+                txt += f"  Timing: Flexible (Players can play 1v1 at any time within this matchweek timeline)\n"
+                txt += f"  Platform: Online / Mobile Lobby\n\n"
                 txt += "Official Match Pairings:\n"
                 for f in self.generated_fixtures:
-                    txt += f"  • M#{f['match_number']} [{f.get('group_name', 'Group')}]: {f['home_team_name']} vs {f['away_team_name']} | {f['scheduled_date']} {f['scheduled_time']} @ {f['venue']}\n"
+                    txt += f"  • M#{f['match_number']} [{f.get('group_name', 'Group')}]: {f['home_team_name']} vs {f['away_team_name']} | Window: {f['scheduled_date']} @ {f['venue']}\n"
             else:
                 mw_1_end = s_d_obj + timedelta(days=days_mw)
                 full_end = s_d_obj + timedelta(days=len(mw_groups) * days_mw)
                 txt = f"✓ FULL TOURNAMENT SCHEDULE READY: {len(self.generated_fixtures)} matches across {len(mw_groups)} Matchweeks\n"
-                txt += f"  1 Matchweek Duration: {s_d} to {mw_1_end.strftime('%Y-%m-%d')} ({days_mw} days per squad)\n"
-                txt += f"  Full Tournament Timeline: {s_d} to {full_end.strftime('%Y-%m-%d')}\n"
+                txt += f"  Rule: Fixed 10-Minute Mobile Matches (Flexible play anytime within Matchweek timeline)\n"
+                txt += f"  Disconnection Protocol: 5-Minute Continuation Match + Screenshot Aggregate Score\n"
+                txt += f"  1 Matchweek Window: {s_d} to {mw_1_end.strftime('%Y-%m-%d')} ({days_mw} days per squad)\n"
+                txt += f"  Full Tournament Timeline: {s_d} to {full_end.strftime('%Y-%m-%d')}\n\n"
                 for r_num, m_list in sorted(mw_groups.items()):
                     r_start = s_d_obj + timedelta(days=(r_num - 1) * days_mw)
                     r_end = r_start + timedelta(days=days_mw)
-                    times = f"{m_list[0].get('scheduled_time', '')} to {m_list[-1].get('scheduled_time', '')}" if m_list else ""
                     extra_tag = " [Extra Round]" if r_num > self.base_matchweeks else ""
-                    txt += f"  • Matchweek {r_num}{extra_tag}: {r_start.strftime('%Y-%m-%d')} to {r_end.strftime('%Y-%m-%d')} ({len(m_list)} matches, {times})\n"
+                    txt += f"  • Matchweek {r_num}{extra_tag}: {r_start.strftime('%Y-%m-%d')} to {r_end.strftime('%Y-%m-%d')} ({len(m_list)} matches, Flexible 1v1 Window)\n"
 
                 txt += "\nSample Matchups:\n"
                 for f in self.generated_fixtures[:8]:
-                    txt += f"  • M#{f['match_number']} [MW {f.get('round_number', 1)} - {f.get('group_name', '')}]: {f['home_team_name']} vs {f['away_team_name']} | {f['scheduled_date']} {f['scheduled_time']} @ {f['venue']}\n"
+                    txt += f"  • M#{f['match_number']} [MW {f.get('round_number', 1)} - {f.get('group_name', '')}]: {f['home_team_name']} vs {f['away_team_name']} | Window: {f['scheduled_date']} @ {f['venue']}\n"
                 if len(self.generated_fixtures) > 8:
                     txt += f"  ... and {len(self.generated_fixtures) - 8} more matches.\n"
 

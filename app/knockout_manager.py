@@ -60,7 +60,18 @@ class KnockoutManager:
         if not start_date:
             start_date = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
 
-        curr_dt = datetime.strptime(f"{start_date} {start_time}", "%Y-%m-%d %H:%M")
+        is_flexible_time = False
+        try:
+            curr_dt = datetime.strptime(f"{start_date} {start_time}", "%Y-%m-%d %H:%M")
+        except Exception:
+            try:
+                d = datetime.strptime(start_date, "%Y-%m-%d")
+            except Exception:
+                d = datetime.now() + timedelta(days=2)
+            curr_dt = datetime.combine(d.date(), datetime.strptime("16:00", "%H:%M").time())
+            is_flexible_time = True
+
+        time_val = "Flexible (MW Window)" if is_flexible_time else curr_dt.strftime("%H:%M")
 
         # Get existing max match number
         max_num = self.db.execute_one("SELECT MAX(match_number) AS m FROM matches;")["m"] or 0
@@ -94,7 +105,7 @@ class KnockoutManager:
                 "home_team_name": a1_name,
                 "away_team_name": b2_name,
                 "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                "scheduled_time": curr_dt.strftime("%H:%M"),
+                "scheduled_time": time_val,
                 "venue": venue,
                 "status": "Scheduled",
                 "notes": "Semi-Final 1"
@@ -113,7 +124,7 @@ class KnockoutManager:
                 "home_team_name": b1_name,
                 "away_team_name": a2_name,
                 "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                "scheduled_time": curr_dt.strftime("%H:%M"),
+                "scheduled_time": time_val,
                 "venue": venue,
                 "status": "Scheduled",
                 "notes": "Semi-Final 2"
@@ -132,7 +143,7 @@ class KnockoutManager:
                 "home_team_name": "Winner SF1",
                 "away_team_name": "Winner SF2",
                 "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                "scheduled_time": curr_dt.strftime("%H:%M"),
+                "scheduled_time": time_val,
                 "venue": venue,
                 "status": "Scheduled",
                 "notes": "Minaram Cup Final"
@@ -165,7 +176,7 @@ class KnockoutManager:
                     "home_team_name": h_name,
                     "away_team_name": a_name,
                     "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                    "scheduled_time": curr_dt.strftime("%H:%M"),
+                    "scheduled_time": time_val,
                     "venue": venue,
                     "status": "Scheduled",
                     "notes": f"Quarter-Final ({slot})"
@@ -185,7 +196,7 @@ class KnockoutManager:
                 "home_team_name": "Winner QF1",
                 "away_team_name": "Winner QF2",
                 "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                "scheduled_time": curr_dt.strftime("%H:%M"),
+                "scheduled_time": time_val,
                 "venue": venue,
                 "status": "Scheduled",
                 "notes": "Semi-Final 1"
@@ -203,7 +214,7 @@ class KnockoutManager:
                 "home_team_name": "Winner QF3",
                 "away_team_name": "Winner QF4",
                 "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                "scheduled_time": curr_dt.strftime("%H:%M"),
+                "scheduled_time": time_val,
                 "venue": venue,
                 "status": "Scheduled",
                 "notes": "Semi-Final 2"
@@ -222,7 +233,7 @@ class KnockoutManager:
                 "home_team_name": "Winner SF1",
                 "away_team_name": "Winner SF2",
                 "scheduled_date": curr_dt.strftime("%Y-%m-%d"),
-                "scheduled_time": curr_dt.strftime("%H:%M"),
+                "scheduled_time": time_val,
                 "venue": venue,
                 "status": "Scheduled",
                 "notes": "Minaram Cup Grand Final"

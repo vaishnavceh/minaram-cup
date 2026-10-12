@@ -213,7 +213,32 @@ class FixtureGenerator:
                             "away": a_team
                         })
 
-            # Schedule this round across pitches with infinite loop prevention
+            # Support flexible mobile gaming matches (players can play anytime within matchweek window)
+            is_mobile_flexible = (start_time == "Flexible" or any(v.lower() in ("mobile", "online", "mobile lobby", "online / mobile lobby") for v in (venues or [])))
+            if is_mobile_flexible:
+                v_name = venues[0] if venues else "Online / Mobile Lobby"
+                for match_to_assign in round_matches:
+                    fixtures.append({
+                        "match_number": match_num,
+                        "stage": "Group Stage",
+                        "group_id": match_to_assign["group_id"],
+                        "group_name": match_to_assign["group_name"],
+                        "round_number": mw_number,
+                        "bracket_slot": "",
+                        "home_team_id": match_to_assign["home"]["id"],
+                        "away_team_id": match_to_assign["away"]["id"],
+                        "home_team_name": match_to_assign["home"]["name"],
+                        "away_team_name": match_to_assign["away"]["name"],
+                        "scheduled_date": mw_date.strftime("%Y-%m-%d"),
+                        "scheduled_time": "Flexible (MW Window)",
+                        "venue": v_name,
+                        "status": "Scheduled",
+                        "notes": f"10-Min Mobile Match • Matchweek {mw_number}"
+                    })
+                    match_num += 1
+                continue
+
+            # Schedule physical matches across pitches with operating hours limit
             safety_counter = 0
             while round_matches:
                 safety_counter += 1
@@ -366,6 +391,31 @@ class FixtureGenerator:
                 h_team = a if swap else h
                 a_team = h if swap else a
                 round_matches.append({"home": h_team, "away": a_team, "round_number": round_idx})
+
+            # Support flexible mobile gaming matches
+            is_mobile_flexible = (start_time == "Flexible" or any(v.lower() in ("mobile", "online", "mobile lobby", "online / mobile lobby") for v in (venues or [])))
+            if is_mobile_flexible:
+                v_name = venues[0] if venues else "Online / Mobile Lobby"
+                for match_to_assign in round_matches:
+                    fixtures.append({
+                        "match_number": match_num,
+                        "stage": "League",
+                        "group_id": None,
+                        "group_name": "League",
+                        "round_number": match_to_assign["round_number"],
+                        "bracket_slot": "",
+                        "home_team_id": match_to_assign["home"]["id"],
+                        "away_team_id": match_to_assign["away"]["id"],
+                        "home_team_name": match_to_assign["home"]["name"],
+                        "away_team_name": match_to_assign["away"]["name"],
+                        "scheduled_date": mw_date.strftime("%Y-%m-%d"),
+                        "scheduled_time": "Flexible (MW Window)",
+                        "venue": v_name,
+                        "status": "Scheduled",
+                        "notes": f"10-Min Mobile Match • Matchweek {match_to_assign['round_number']}"
+                    })
+                    match_num += 1
+                continue
 
             safety_counter = 0
             while round_matches:
