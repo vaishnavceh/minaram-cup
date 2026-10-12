@@ -64,17 +64,6 @@ class DashboardView(ctk.CTkScrollableFrame):
         actions_box = ctk.CTkFrame(top_row, fg_color="transparent")
         actions_box.pack(side="right")
 
-        if self.on_cloud_sync:
-            ctk.CTkButton(
-                actions_box,
-                text="🚀 Push to Render",
-                fg_color="#0284c7",
-                hover_color="#0369a1",
-                text_color="#FFFFFF",
-                font=theme.get_font(12, "bold"),
-                height=32,
-                command=self.on_cloud_sync
-            ).pack(side="left", padx=4)
 
         ctk.CTkButton(
             actions_box,

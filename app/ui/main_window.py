@@ -126,31 +126,6 @@ class MainWindow(ctk.CTk):
         footer_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
         footer_frame.pack(side="bottom", fill="x", padx=14, pady=16)
 
-        # Cloud Sync / Push to Render Button in Sidebar
-        self.sidebar_cloud_btn = ctk.CTkButton(
-            footer_frame,
-            text="🚀 Push to Render",
-            font=theme.get_font(12, "bold"),
-            fg_color="#0284c7",
-            hover_color="#0369a1",
-            text_color="#FFFFFF",
-            height=34,
-            corner_radius=6,
-            command=self.open_cloud_sync
-        )
-        self.sidebar_cloud_btn.pack(fill="x", pady=(0, 6))
-
-        from app.cloud_sync_service import get_cloud_config
-        cfg = get_cloud_config()
-        last_t = cfg.get("last_sync_time") or "Not yet synced"
-        self.sidebar_sync_status = ctk.CTkLabel(
-            footer_frame,
-            text=f"Cloud: {last_t}",
-            font=theme.get_font(9),
-            text_color=theme.TEXT_MUTED
-        )
-        self.sidebar_sync_status.pack(anchor="w", pady=(0, 6))
-
         # Database connection indicator
         db_pill = ctk.CTkFrame(footer_frame, fg_color=theme.BG_INPUT, corner_radius=6)
         db_pill.pack(fill="x", pady=(0, 6))
@@ -207,18 +182,6 @@ class MainWindow(ctk.CTk):
             height=30,
             command=lambda: self.show_section("Registrations")
         ).pack(side="left", padx=(0, 8))
-
-        self.cloud_btn = ctk.CTkButton(
-            top_right,
-            text="☁️ Push to Render",
-            fg_color="#0284c7",
-            hover_color="#0369a1",
-            text_color="#FFFFFF",
-            font=ctk.CTkFont(size=12, weight="bold"),
-            height=30,
-            command=self.open_cloud_sync
-        )
-        self.cloud_btn.pack(side="left", padx=(0, 10))
 
         self.tourn_badge = ctk.CTkLabel(
             top_right,
@@ -306,15 +269,6 @@ class MainWindow(ctk.CTk):
 
     def on_cloud_synced(self):
         """Callback when cloud sync successfully completes."""
-        from app.cloud_sync_service import get_cloud_config
-        cfg = get_cloud_config()
-        last_t = cfg.get("last_sync_time") or "Just now"
-        if hasattr(self, "sidebar_sync_status"):
-            time_part = last_t.split()[-1] if " " in last_t else last_t
-            self.sidebar_sync_status.configure(
-                text=f"Cloud: Synced ({time_part})",
-                text_color=theme.ACCENT_GREEN_TEXT
-            )
         if self.current_section in self.views:
             self.views[self.current_section].refresh()
 
