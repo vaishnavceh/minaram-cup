@@ -7,6 +7,7 @@ and seamless view switching in a unified desktop workspace.
 import customtkinter as ctk
 from tkinter import messagebox
 from typing import Dict, Any
+import gc
 from pathlib import Path
 from PIL import Image
 
@@ -25,6 +26,30 @@ from app.ui.settings import SettingsView
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("green")
+
+
+class LazyViewsDict(dict):
+    """
+    Dictionary that lazily instantiates view frames on demand.
+    Saves significant RAM at boot and avoids heavy synchronous widget
+    hierarchy building for tabs that haven't been visited yet.
+    """
+    def __init__(self, factories, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.factories = factories
+
+    def __contains__(self, key):
+        return key in self.factories or super().__contains__(key)
+
+    def __getitem__(self, key):
+        if not super().__contains__(key) and key in self.factories:
+            self[key] = self.factories[key]()
+        return super().__getitem__(key)
+
+    def get(self, key, default=None):
+        if key in self:
+            return self[key]
+        return default
 
 
 class MainWindow(ctk.CTk):
@@ -52,6 +77,14 @@ class MainWindow(ctk.CTk):
         self.setup_layout()
         self.init_views()
         self.show_section("Dashboard")
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def on_close(self):
+        try:
+            self.db.close()
+        except Exception:
+            pass
+        self.destroy()
 
     def setup_layout(self):
         # 1. Left Sidebar Navigation
@@ -200,19 +233,20 @@ class MainWindow(ctk.CTk):
         self.workspace.pack(fill="both", expand=True)
 
     def init_views(self):
-        """Instantiate views."""
-        self.views = {
-            "Dashboard": DashboardView(self.workspace, self.db, self.show_section, on_cloud_sync=self.open_cloud_sync),
-            "Registrations": RegistrationsView(self.workspace, self.db),
-            "Teams": TeamsView(self.workspace, self.db),
-            "Groups": GroupsView(self.workspace, self.db),
-            "Fixtures": FixturesView(self.workspace, self.db, self.show_section),
-            "Results": ResultsView(self.workspace, self.db),
-            "Points Table": StandingsView(self.workspace, self.db),
-            "Knockout Stage": KnockoutView(self.workspace, self.db, self.show_section),
-            "Reports & Exports": ReportsView(self.workspace, self.db),
-            "Settings": SettingsView(self.workspace, self.db, self.on_settings_updated),
+        """Register views with lazy factory constructors."""
+        factories = {
+            "Dashboard": lambda: DashboardView(self.workspace, self.db, self.show_section, on_cloud_sync=self.open_cloud_sync),
+            "Registrations": lambda: RegistrationsView(self.workspace, self.db),
+            "Teams": lambda: TeamsView(self.workspace, self.db),
+            "Groups": lambda: GroupsView(self.workspace, self.db),
+            "Fixtures": lambda: FixturesView(self.workspace, self.db, self.show_section),
+            "Results": lambda: ResultsView(self.workspace, self.db),
+            "Points Table": lambda: StandingsView(self.workspace, self.db),
+            "Knockout Stage": lambda: KnockoutView(self.workspace, self.db, self.show_section),
+            "Reports & Exports": lambda: ReportsView(self.workspace, self.db),
+            "Settings": lambda: SettingsView(self.workspace, self.db, self.on_settings_updated),
         }
+        self.views = LazyViewsDict(factories)
 
     def show_section(self, section_name: str):
         if section_name not in self.views:
@@ -236,13 +270,21 @@ class MainWindow(ctk.CTk):
                     font=theme.get_font(12, "normal")
                 )
 
-        # Hide all views and show target view
-        for name, view in self.views.items():
+        # Check if view was already instantiated before this navigation
+        is_already_instantiated = super(LazyViewsDict, self.views).__contains__(section_name)
+        target_view = self.views[section_name]
+
+        # Hide all instantiated views and show target view
+        for name, view in list(self.views.items()):
             if name == section_name:
                 view.pack(fill="both", expand=True)
-                view.refresh()
+                if is_already_instantiated:
+                    view.refresh()
             else:
                 view.pack_forget()
+
+        # Reclaim orphaned widgets and objects
+        gc.collect()
 
     def handle_global_search(self, event=None):
         query = self.global_search_entry.get().strip()

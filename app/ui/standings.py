@@ -411,6 +411,17 @@ class StandingsView(ctk.CTkScrollableFrame):
                 ctk.CTkLabel(p_row, text=gd_txt, width=48, font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_PRIMARY).pack(side="left", padx=1)
                 ctk.CTkLabel(p_row, text=str(s["points"]), width=54, font=ctk.CTkFont(size=12, weight="bold"), text_color=theme.ACCENT_GREEN_TEXT).pack(side="left", padx=1)
 
+        calc_timer = None
+
+        def schedule_recalculation():
+            nonlocal calc_timer
+            if calc_timer is not None:
+                try:
+                    modal.after_cancel(calc_timer)
+                except Exception:
+                    pass
+            calc_timer = modal.after(150, recalculate_live_standings)
+
         def populate_editor():
             nonlocal target_teams, target_g_id
             for child in matches_scroll.winfo_children():
@@ -495,7 +506,7 @@ class StandingsView(ctk.CTkScrollableFrame):
                 ).pack(side="left", padx=4)
 
                 def on_key_change(e=None):
-                    recalculate_live_standings()
+                    schedule_recalculation()
 
                 h_entry.bind("<KeyRelease>", on_key_change)
                 a_entry.bind("<KeyRelease>", on_key_change)

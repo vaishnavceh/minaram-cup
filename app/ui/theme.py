@@ -63,7 +63,48 @@ def get_status_colors(status: str):
 import customtkinter as ctk
 from typing import Dict, Tuple, Optional
 
-_FONT_CACHE: Dict[Tuple[int, str, Optional[str]], ctk.CTkFont] = {}
+_FONT_CACHE: Dict[Tuple, ctk.CTkFont] = {}
+_orig_font_new = ctk.CTkFont.__new__
+_orig_font_init = ctk.CTkFont.__init__
+
+
+def _normalize_font_key(*args, **kwargs):
+    family = args[0] if len(args) > 0 else kwargs.get("family", None)
+    size = args[1] if len(args) > 1 else kwargs.get("size", None)
+    weight = args[2] if len(args) > 2 else kwargs.get("weight", None)
+    slant = args[3] if len(args) > 3 else kwargs.get("slant", "roman")
+    underline = args[4] if len(args) > 4 else kwargs.get("underline", False)
+    overstrike = args[5] if len(args) > 5 else kwargs.get("overstrike", False)
+    return (family, size, weight, slant, underline, overstrike)
+
+
+def _cached_font_new(cls, *args, **kwargs):
+    key = _normalize_font_key(*args, **kwargs)
+    if key in _FONT_CACHE:
+        cached = _FONT_CACHE[key]
+        try:
+            _ = cached.cget("size")
+            return cached
+        except Exception:
+            _FONT_CACHE.pop(key, None)
+    try:
+        inst = _orig_font_new(cls)
+        _FONT_CACHE[key] = inst
+        return inst
+    except Exception:
+        return _orig_font_new(cls)
+
+
+def _cached_font_init(self, *args, **kwargs):
+    if getattr(self, "_is_cached_initialized", False):
+        return
+    _orig_font_init(self, *args, **kwargs)
+    self._is_cached_initialized = True
+
+
+# Apply global monkey patch
+ctk.CTkFont.__new__ = _cached_font_new
+ctk.CTkFont.__init__ = _cached_font_init
 
 
 def get_font(size: int = 12, weight: str = "normal", family: Optional[str] = None) -> ctk.CTkFont:
@@ -72,15 +113,5 @@ def get_font(size: int = 12, weight: str = "normal", family: Optional[str] = Non
     Prevents allocating thousands of orphaned Tk font handles during table re-renders,
     keeping application memory footprint minimal and eliminating UI lag.
     """
-    key = (size, weight, family)
-    if key not in _FONT_CACHE:
-        try:
-            if family:
-                _FONT_CACHE[key] = ctk.CTkFont(family=family, size=size, weight=weight)
-            else:
-                _FONT_CACHE[key] = ctk.CTkFont(size=size, weight=weight)
-        except Exception:
-            # Fallback if called before Tk root exists
-            return ctk.CTkFont(size=size, weight=weight)
-    return _FONT_CACHE[key]
+    return ctk.CTkFont(family=family, size=size, weight=weight)
 

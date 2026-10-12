@@ -28,8 +28,17 @@ class RegistrationsView(ctk.CTkScrollableFrame):
         self.search_var = ctk.StringVar()
         self.status_var = ctk.StringVar(value="All")
         self.sort_var = ctk.StringVar(value="registered_at")
+        self._search_timer = None
 
         self.build_ui()
+
+    def _on_search_key(self, event=None):
+        if getattr(self, "_search_timer", None) is not None:
+            try:
+                self.after_cancel(self._search_timer)
+            except Exception:
+                pass
+        self._search_timer = self.after(250, self.load_table_data)
 
     def refresh(self):
         self.load_table_data()
@@ -164,7 +173,7 @@ class RegistrationsView(ctk.CTkScrollableFrame):
             border_color=theme.BORDER_COLOR
         )
         self.search_entry.pack(side="left", padx=(0, 12))
-        self.search_entry.bind("<KeyRelease>", lambda e: self.load_table_data())
+        self.search_entry.bind("<KeyRelease>", self._on_search_key)
 
         ctk.CTkLabel(filter_bar, text="Status:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED).pack(side="left", padx=(0, 4))
         self.status_menu = ctk.CTkOptionMenu(

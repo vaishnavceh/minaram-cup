@@ -25,8 +25,17 @@ class TeamsView(ctk.CTkScrollableFrame):
         self.search_var = ctk.StringVar()
         self.group_filter_var = ctk.StringVar(value="All Groups")
         self.status_filter_var = ctk.StringVar(value="All")
+        self._search_timer = None
 
         self.build_ui()
+
+    def _on_search_key(self, event=None):
+        if getattr(self, "_search_timer", None) is not None:
+            try:
+                self.after_cancel(self._search_timer)
+            except Exception:
+                pass
+        self._search_timer = self.after(250, self.load_teams_table)
 
     def refresh(self):
         self.update_group_filter_options()
@@ -99,7 +108,7 @@ class TeamsView(ctk.CTkScrollableFrame):
             border_color=theme.BORDER_COLOR
         )
         self.search_entry.pack(side="left", padx=(0, 12))
-        self.search_entry.bind("<KeyRelease>", lambda e: self.load_teams_table())
+        self.search_entry.bind("<KeyRelease>", self._on_search_key)
 
         ctk.CTkLabel(f_bar, text="Group:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED).pack(side="left", padx=(0, 4))
         self.group_menu = ctk.CTkOptionMenu(

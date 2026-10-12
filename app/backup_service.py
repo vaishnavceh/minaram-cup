@@ -90,9 +90,16 @@ class BackupService:
     def _worker_loop(self) -> None:
         while not self._stop_event.is_set():
             try:
-                action = self._backup_queue.get(timeout=0.3)
+                action = self._backup_queue.get(timeout=2.0)
             except queue.Empty:
                 continue
+
+            if action is None or self._stop_event.is_set():
+                try:
+                    self._backup_queue.task_done()
+                except ValueError:
+                    pass
+                break
 
             # Debounce: wait briefly to coalesce rapid successive writes
             if self.debounce_seconds > 0:
@@ -101,10 +108,18 @@ class BackupService:
             # Drain any further actions that queued during debounce window
             while not self._backup_queue.empty():
                 try:
-                    action = self._backup_queue.get_nowait()
+                    sub_action = self._backup_queue.get_nowait()
+                    if sub_action is None:
+                        action = None
+                        self._backup_queue.task_done()
+                        break
+                    action = sub_action
                     self._backup_queue.task_done()
-                except queue.Empty:
+                except (queue.Empty, ValueError):
                     break
+
+            if action is None or self._stop_event.is_set():
+                break
 
             try:
                 self.create_auto_backup(action_label=action)
@@ -139,6 +154,12 @@ class BackupService:
         self.flush(timeout=1.5)
         if hasattr(self, "_stop_event"):
             self._stop_event.set()
+        # Wake worker if blocked on queue.get
+        if hasattr(self, "_backup_queue"):
+            try:
+                self._backup_queue.put_nowait(None)
+            except Exception:
+                pass
         # Drain any leftover tasks in queue to prevent lingering unjoined items
         if hasattr(self, "_backup_queue"):
             while not self._backup_queue.empty():
