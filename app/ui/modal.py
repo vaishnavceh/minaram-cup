@@ -9,42 +9,59 @@ from app.ui import theme
 
 class BaseModal(ctk.CTkToplevel):
     def __init__(self, parent, title: str = "Dialog", width: int = 500, height: int = 400):
-        super().__init__(parent)
+        # Resolve true root window as CTkToplevel master
+        top = parent.winfo_toplevel() if hasattr(parent, "winfo_toplevel") else parent
+        super().__init__(top)
         self.parent = parent
         self.title(title)
-        self.geometry(f"{width}x{height}")
         self.configure(fg_color=theme.BG_MAIN)
         self.resizable(False, False)
 
-        # Center on parent window
+        # Center on parent window or screen
         self.update_idletasks()
         try:
-            px = parent.winfo_rootx()
-            py = parent.winfo_rooty()
-            pw = parent.winfo_width()
-            ph = parent.winfo_height()
-            x = px + max(0, (pw - width) // 2)
-            y = py + max(0, (ph - height) // 2)
-            self.geometry(f"+{x}+{y}")
+            if top and hasattr(top, "winfo_viewable") and top.winfo_viewable():
+                px = top.winfo_rootx()
+                py = top.winfo_rooty()
+                pw = top.winfo_width()
+                ph = top.winfo_height()
+                x = px + max(0, (pw - width) // 2)
+                y = py + max(0, (ph - height) // 2)
+            else:
+                sw = self.winfo_screenwidth()
+                sh = self.winfo_screenheight()
+                x = max(0, (sw - width) // 2)
+                y = max(0, (sh - height) // 2)
+            self.geometry(f"{width}x{height}+{x}+{y}")
         except Exception:
-            pass
+            self.geometry(f"{width}x{height}")
+
+        # Prevent modal from disappearing behind main window
+        self.lift()
+        self.attributes("-topmost", True)
 
         try:
-            top = parent.winfo_toplevel() if hasattr(parent, "winfo_toplevel") else parent
-            self.transient(top)
+            if top:
+                self.transient(top)
         except Exception:
             pass
 
-        try:
-            self.grab_set()
-        except Exception:
-            pass
+        # Safely grab focus once the Windows DWM dark titlebar cycle is completed
+        def _on_ready():
+            try:
+                if self.winfo_exists():
+                    self.lift()
+                    self.focus_force()
+                    try:
+                        self.grab_set()
+                    except Exception:
+                        pass
+                    # Release temporary topmost so child dialogs or popups remain usable
+                    self.after(200, lambda: self.attributes("-topmost", False) if self.winfo_exists() else None)
+            except Exception:
+                pass
 
-        try:
-            self.focus_force()
-        except Exception:
-            pass
-
+        self.after(100, _on_ready)
         self.protocol("WM_DELETE_WINDOW", self.destroy)
 
         # Modal Container Frame
@@ -64,7 +81,7 @@ class BaseModal(ctk.CTkToplevel):
         self.title_label = ctk.CTkLabel(
             self.header_frame,
             text=title,
-            font=ctk.CTkFont(size=18, weight="bold"),
+            font=theme.get_font(18, "bold"),
             text_color=theme.TEXT_PRIMARY
         )
         self.title_label.pack(side="left")
@@ -77,7 +94,7 @@ class BaseModal(ctk.CTkToplevel):
             fg_color="transparent",
             hover_color=theme.BG_CARD_HOVER,
             text_color=theme.TEXT_SECONDARY,
-            font=ctk.CTkFont(size=14, weight="bold"),
+            font=theme.get_font(14, "bold"),
             command=self.destroy
         )
         self.close_btn.pack(side="right")
