@@ -1,8 +1,4 @@
-"""
-Fixture administration interface: fixture generation wizard,
-conflict detector, rescheduling, status management, and manual match additions.
-"""
-
+import logging
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from typing import List, Dict, Any, Optional
@@ -15,6 +11,8 @@ from app.fixture_generator import FixtureGenerator
 from app.knockout_manager import KnockoutManager
 from app.export_service import ExportService
 
+logger = logging.getLogger("minaram_cup.fixtures")
+
 
 class FixturesView(ctk.CTkScrollableFrame):
     def __init__(self, parent, db: Database, navigate_callback=None):
@@ -25,12 +23,17 @@ class FixturesView(ctk.CTkScrollableFrame):
         self.knockout_mgr = KnockoutManager(db)
         self.export_service = ExportService(db)
 
+        # Pagination & Performance Cache
+        self.current_page = 1
+        self.page_size = 25
+
         # Filters
         self.stage_filter_var = ctk.StringVar(value="All Stages")
         self.status_filter_var = ctk.StringVar(value="All Statuses")
         self.group_filter_var = ctk.StringVar(value="All Groups")
 
         self.build_ui()
+
 
     def refresh(self):
         self.update_group_filter_options()
@@ -176,10 +179,57 @@ class FixturesView(ctk.CTkScrollableFrame):
             ).pack(side="left", padx=3)
 
         self.rows_container = ctk.CTkFrame(self.table_card, fg_color="transparent")
-        self.rows_container.pack(fill="both", expand=True, padx=14, pady=(0, 14))
+        self.rows_container.pack(fill="both", expand=True, padx=14, pady=(0, 4))
+
+        # Pagination Toolbar (Cuts Widget Count & RAM Usage)
+        self.pagination_frame = ctk.CTkFrame(self.table_card, fg_color="transparent")
+        self.pagination_frame.pack(fill="x", padx=14, pady=(2, 10))
+
+        self.prev_btn = ctk.CTkButton(
+            self.pagination_frame,
+            text="◀ Previous",
+            width=80,
+            height=26,
+            fg_color=theme.BG_INPUT,
+            hover_color=theme.BG_CARD_HOVER,
+            text_color=theme.TEXT_SECONDARY,
+            font=theme.get_font(11),
+            command=self.prev_page
+        )
+        self.prev_btn.pack(side="left")
+
+        self.page_info_lbl = ctk.CTkLabel(
+            self.pagination_frame,
+            text="",
+            font=theme.get_font(11),
+            text_color=theme.TEXT_MUTED
+        )
+        self.page_info_lbl.pack(side="left", padx=12)
+
+        self.next_btn = ctk.CTkButton(
+            self.pagination_frame,
+            text="Next ▶",
+            width=80,
+            height=26,
+            fg_color=theme.BG_INPUT,
+            hover_color=theme.BG_CARD_HOVER,
+            text_color=theme.TEXT_SECONDARY,
+            font=theme.get_font(11),
+            command=self.next_page
+        )
+        self.next_btn.pack(side="left")
 
         self.update_group_filter_options()
         self.check_conflicts()
+        self.load_fixtures_table()
+
+    def prev_page(self):
+        if self.current_page > 1:
+            self.current_page -= 1
+            self.load_fixtures_table()
+
+    def next_page(self):
+        self.current_page += 1
         self.load_fixtures_table()
 
     def update_group_filter_options(self):
@@ -187,17 +237,23 @@ class FixturesView(ctk.CTkScrollableFrame):
         self.group_menu.configure(values=["All Groups"] + [g["name"] for g in groups])
 
     def check_conflicts(self):
-        conflicts = self.fixture_gen.detect_conflicts()
-        if conflicts:
-            c = conflicts[0]
-            self.conflict_banner.pack(fill="x", padx=16, pady=(0, 14), before=self.table_card)
-            self.conflict_label.configure(
-                text=f"⚠️ Scheduling Conflict Detected: {c['type']} — {c['details']}"
-            )
-        else:
-            self.conflict_banner.pack_forget()
+        try:
+            conflicts = self.fixture_gen.detect_conflicts()
+            if conflicts:
+                c = conflicts[0]
+                if not self.conflict_banner.winfo_ismapped():
+                    self.conflict_banner.pack(fill="x", padx=16, pady=(0, 14), before=self.table_card)
+                self.conflict_label.configure(
+                    text=f"⚠️ Scheduling Conflict Detected: {c['type']} — {c['details']}"
+                )
+            else:
+                if self.conflict_banner.winfo_ismapped():
+                    self.conflict_banner.pack_forget()
+        except Exception:
+            pass
 
     def load_fixtures_table(self):
+        import gc
         for child in self.rows_container.winfo_children():
             child.destroy()
 
@@ -217,37 +273,57 @@ class FixturesView(ctk.CTkScrollableFrame):
         matches = self.fixture_gen.get_matches(stage=stage_filter, group_id=group_id, status=status_filter)
 
         if not matches:
+            self.pagination_frame.pack_forget()
             empty_box = ctk.CTkFrame(self.rows_container, fg_color="transparent")
             empty_box.pack(fill="x", pady=30)
-            ctk.CTkLabel(empty_box, text="No fixtures found. Click '⚡ Fixture Wizard' to schedule matches.", font=ctk.CTkFont(size=13), text_color=theme.TEXT_MUTED).pack()
+            ctk.CTkLabel(empty_box, text="No fixtures found. Click '⚡ Fixture Wizard' to schedule matches.", font=theme.get_font(13), text_color=theme.TEXT_MUTED).pack()
             return
 
-        for idx, m in enumerate(matches):
+        total_matches = len(matches)
+        total_pages = max(1, (total_matches + self.page_size - 1) // self.page_size)
+        if self.current_page > total_pages:
+            self.current_page = total_pages
+        if self.current_page < 1:
+            self.current_page = 1
+
+        start_idx = (self.current_page - 1) * self.page_size
+        end_idx = min(start_idx + self.page_size, total_matches)
+        page_matches = matches[start_idx:end_idx]
+
+        # Update pagination frame
+        self.pagination_frame.pack(fill="x", padx=14, pady=(2, 10))
+        self.page_info_lbl.configure(
+            text=f"Showing {start_idx + 1}-{end_idx} of {total_matches} matches (Page {self.current_page} of {total_pages})"
+        )
+        self.prev_btn.configure(state="normal" if self.current_page > 1 else "disabled")
+        self.next_btn.configure(state="normal" if self.current_page < total_pages else "disabled")
+
+        for idx, m in enumerate(page_matches):
             bg_col = theme.BG_INPUT if idx % 2 == 0 else theme.BG_ROW_ALT
             row = ctk.CTkFrame(self.rows_container, fg_color=bg_col, height=36, corner_radius=4)
             row.pack(fill="x", pady=2)
 
-            ctk.CTkLabel(row, text=str(m.match_number), width=36, font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_MUTED).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=str(m.match_number), width=36, font=theme.get_font(11, "bold"), text_color=theme.TEXT_MUTED).pack(side="left", padx=3)
 
             stage_desc = f"{m.stage} ({m.group_name})" if m.group_name else m.stage
-            ctk.CTkLabel(row, text=stage_desc, width=120, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=stage_desc, width=120, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY, anchor="w").pack(side="left", padx=3)
 
             # Home team
-            ctk.CTkLabel(row, text=m.home_team_name, width=140, font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=m.home_team_name, width=140, font=theme.get_font(11, "bold"), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left", padx=3)
 
             # Score
             sc_color = theme.ACCENT_GREEN_TEXT if m.is_completed else theme.TEXT_MUTED
-            ctk.CTkLabel(row, text=m.score_display, width=70, font=ctk.CTkFont(size=12, weight="bold"), text_color=sc_color).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=m.score_display, width=70, font=theme.get_font(12, "bold"), text_color=sc_color).pack(side="left", padx=3)
 
             # Away team
-            ctk.CTkLabel(row, text=m.away_team_name, width=140, font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=m.away_team_name, width=140, font=theme.get_font(11, "bold"), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left", padx=3)
 
             # Date & Time
             dt_s = f"{m.scheduled_date} {m.scheduled_time}".strip() or "-"
-            ctk.CTkLabel(row, text=dt_s, width=120, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=dt_s, width=120, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY, anchor="w").pack(side="left", padx=3)
 
             # Venue
-            ctk.CTkLabel(row, text=m.venue or "-", width=120, font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=m.venue or "-", width=120, font=theme.get_font(11), text_color=theme.TEXT_MUTED, anchor="w").pack(side="left", padx=3)
 
             # Status Badge
             badge_bg, badge_fg = theme.get_status_colors(m.status)
@@ -257,7 +333,7 @@ class FixturesView(ctk.CTkScrollableFrame):
                 fg_color=badge_bg,
                 text_color=badge_fg,
                 corner_radius=4,
-                font=ctk.CTkFont(size=10, weight="bold"),
+                font=theme.get_font(10, "bold"),
                 width=76,
                 height=22
             ).pack(side="left", padx=3)
@@ -276,7 +352,7 @@ class FixturesView(ctk.CTkScrollableFrame):
                 border_width=1,
                 hover_color=theme.BG_CARD_HOVER,
                 text_color=theme.TEXT_PRIMARY,
-                font=ctk.CTkFont(size=10),
+                font=theme.get_font(10),
                 command=lambda match=m: self.open_reschedule_modal(match)
             ).pack(side="left", padx=2)
 
@@ -288,13 +364,12 @@ class FixturesView(ctk.CTkScrollableFrame):
                 fg_color="transparent",
                 hover_color=theme.COLOR_DANGER_MUTED,
                 text_color=theme.COLOR_DANGER,
-                font=ctk.CTkFont(size=11, weight="bold"),
+                font=theme.get_font(11, "bold"),
                 command=lambda match_id=m.id: self.handle_delete_match(match_id)
             ).pack(side="left", padx=2)
 
-    # ----------------------------------------------------
-    # Fixture Generation Wizard Modal
-    # ----------------------------------------------------
+        gc.collect()
+
     # ----------------------------------------------------
     # Fixture Generation Wizard Modal
     # ----------------------------------------------------
@@ -566,8 +641,8 @@ class FixturesView(ctk.CTkScrollableFrame):
                 if target_mw is not None:
                     txt = f"✓ MATCHWEEK {target_mw} SCHEDULE READY: {len(generated_fixtures)} matches\n"
                     mw_matches = mw_groups.get(target_mw, generated_fixtures)
-                    d_str = mw_matches[0].get("scheduled_date", "")
-                    times = f"{mw_matches[0].get('scheduled_time', '')} to {mw_matches[-1].get('scheduled_time', '')}"
+                    d_str = mw_matches[0].get("scheduled_date", "") if mw_matches else ""
+                    times = f"{mw_matches[0].get('scheduled_time', '')} to {mw_matches[-1].get('scheduled_time', '')}" if mw_matches else ""
                     txt += f"  Date: {d_str} | Kickoff Window: {times}\n"
                     txt += f"  Venues in parallel: {', '.join(venues)}\n\n"
                     txt += "Official Match Pairings:\n"
@@ -577,8 +652,8 @@ class FixturesView(ctk.CTkScrollableFrame):
                     txt = f"✓ FULL TOURNAMENT SCHEDULE READY: {len(generated_fixtures)} matches across {len(mw_groups)} Matchweeks\n"
                     txt += f"  Timeline interval: 1 match every {days_mw} days per squad\n"
                     for r_num, m_list in sorted(mw_groups.items()):
-                        d_str = m_list[0].get("scheduled_date", "")
-                        times = f"{m_list[0].get('scheduled_time', '')} to {m_list[-1].get('scheduled_time', '')}"
+                        d_str = m_list[0].get("scheduled_date", "") if m_list else ""
+                        times = f"{m_list[0].get('scheduled_time', '')} to {m_list[-1].get('scheduled_time', '')}" if m_list else ""
                         txt += f"  • Matchweek {r_num}: {d_str} ({len(m_list)} matches, {times})\n"
 
                     txt += "\nSample Matchups:\n"

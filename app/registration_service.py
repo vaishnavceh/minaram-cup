@@ -304,13 +304,58 @@ class RegistrationService:
 
         broadcaster.broadcast_from_thread("registrations_updated", entity_id=reg_id)
 
-    def delete_registration(self, reg_id: int) -> None:
-        with self.db.transaction() as conn:
+    def delete_registration(self, reg_id: int, delete_associated_team: bool = True) -> None:
+        """
+        Delete a registration and automatically delete the corresponding team if no other
+        registrations are linked to it, keeping registrations and teams strictly synchronized.
+        """
+        deleted_team_ids = []
+        with self.db.transaction(action="registration_deleted") as conn:
             cursor = conn.cursor()
+
+            # Find registration details before deleting
+            reg = self.db.execute_one("SELECT team_name FROM registrations WHERE id = ?;", (reg_id,))
+
+            # Find mapped teams
+            cursor.execute("SELECT team_id FROM registration_team_map WHERE registration_id = ?;", (reg_id,))
+            mapped_rows = cursor.fetchall()
+            candidate_team_ids = {r[0] for r in mapped_rows}
+
+            # Also check by team name match if available
+            if reg and reg["team_name"]:
+                t_match = self.db.execute_one("SELECT id FROM teams WHERE LOWER(name) = LOWER(?);", (reg["team_name"],))
+                if t_match:
+                    candidate_team_ids.add(t_match["id"])
+
+            # Delete the mapping and registration
             cursor.execute("DELETE FROM registration_team_map WHERE registration_id = ?;", (reg_id,))
             cursor.execute("DELETE FROM registrations WHERE id = ?;", (reg_id,))
 
+            # Automatically delete orphaned teams
+            if delete_associated_team:
+                for t_id in candidate_team_ids:
+                    # Verify no other registration references this team
+                    cursor.execute("SELECT COUNT(*) FROM registration_team_map WHERE team_id = ?;", (t_id,))
+                    other_mapped = cursor.fetchone()[0]
+
+                    t_row = self.db.execute_one("SELECT name FROM teams WHERE id = ?;", (t_id,))
+                    other_by_name = 0
+                    if t_row:
+                        other_by_name = self.db.execute_one(
+                            "SELECT COUNT(*) AS c FROM registrations WHERE LOWER(team_name) = LOWER(?);",
+                            (t_row["name"],)
+                        )["c"]
+
+                    if other_mapped == 0 and other_by_name == 0:
+                        cursor.execute("DELETE FROM standings_overrides WHERE team_id = ?;", (t_id,))
+                        cursor.execute("DELETE FROM matches WHERE home_team_id = ? OR away_team_id = ?;", (t_id, t_id))
+                        cursor.execute("DELETE FROM teams WHERE id = ?;", (t_id,))
+                        deleted_team_ids.append(t_id)
+
+        for t_id in deleted_team_ids:
+            broadcaster.broadcast_from_thread("teams_updated", entity_id=t_id)
         broadcaster.broadcast_from_thread("registrations_updated", entity_id=reg_id)
+
 
     def confirm_and_create_team(self, reg_id: int) -> int:
         """Confirm a registration and create a corresponding team if not already created."""

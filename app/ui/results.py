@@ -3,6 +3,7 @@ Match results entry interface: score inputs, penalty shootout inputs,
 walkovers, audit history viewer modal, and automatic recalculations.
 """
 
+import gc
 import customtkinter as ctk
 from tkinter import messagebox
 from typing import Optional
@@ -136,28 +137,28 @@ class ResultsView(ctk.CTkScrollableFrame):
             row = ctk.CTkFrame(self.rows_container, fg_color=bg_col, height=38, corner_radius=4)
             row.pack(fill="x", pady=2)
 
-            ctk.CTkLabel(row, text=str(m.match_number), width=36, font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_MUTED).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=str(m.match_number), width=36, font=theme.get_font(11, "bold"), text_color=theme.TEXT_MUTED).pack(side="left", padx=3)
 
             stage_desc = f"{m.stage} ({m.group_name})" if m.group_name else m.stage
-            ctk.CTkLabel(row, text=stage_desc, width=120, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=stage_desc, width=120, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY, anchor="w").pack(side="left", padx=3)
 
             # Home team
             is_home_winner = (m.winner_team_id == m.home_team_id and m.is_completed)
             h_col = theme.ACCENT_GREEN_TEXT if is_home_winner else theme.TEXT_PRIMARY
-            ctk.CTkLabel(row, text=m.home_team_name, width=150, font=ctk.CTkFont(size=11, weight="bold"), text_color=h_col, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=m.home_team_name, width=150, font=theme.get_font(11, "bold"), text_color=h_col, anchor="w").pack(side="left", padx=3)
 
             # Score
             sc_color = theme.ACCENT_GREEN_TEXT if m.is_completed else theme.TEXT_MUTED
-            ctk.CTkLabel(row, text=m.score_display, width=90, font=ctk.CTkFont(size=12, weight="bold"), text_color=sc_color).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=m.score_display, width=90, font=theme.get_font(12, "bold"), text_color=sc_color).pack(side="left", padx=3)
 
             # Away team
             is_away_winner = (m.winner_team_id == m.away_team_id and m.is_completed)
             a_col = theme.ACCENT_GREEN_TEXT if is_away_winner else theme.TEXT_PRIMARY
-            ctk.CTkLabel(row, text=m.away_team_name, width=150, font=ctk.CTkFont(size=11, weight="bold"), text_color=a_col, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=m.away_team_name, width=150, font=theme.get_font(11, "bold"), text_color=a_col, anchor="w").pack(side="left", padx=3)
 
             # Date / Venue
             dt_s = f"{m.scheduled_date} ({m.venue})".strip() or "-"
-            ctk.CTkLabel(row, text=dt_s, width=130, font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=dt_s, width=130, font=theme.get_font(11), text_color=theme.TEXT_MUTED, anchor="w").pack(side="left", padx=3)
 
             # Status Badge
             badge_bg, badge_fg = theme.get_status_colors(m.status)
@@ -167,7 +168,7 @@ class ResultsView(ctk.CTkScrollableFrame):
                 fg_color=badge_bg,
                 text_color=badge_fg,
                 corner_radius=4,
-                font=ctk.CTkFont(size=10, weight="bold"),
+                font=theme.get_font(10, "bold"),
                 width=80,
                 height=22
             ).pack(side="left", padx=3)
@@ -185,7 +186,7 @@ class ResultsView(ctk.CTkScrollableFrame):
                     fg_color=theme.ACCENT_GREEN,
                     hover_color=theme.ACCENT_GREEN_HOVER,
                     text_color=theme.TEXT_DARK,
-                    font=ctk.CTkFont(size=11, weight="bold"),
+                    font=theme.get_font(11, "bold"),
                     command=lambda match=m: self.open_score_entry_modal(match)
                 ).pack(side="left", padx=2)
             else:
@@ -199,7 +200,7 @@ class ResultsView(ctk.CTkScrollableFrame):
                     border_width=1,
                     hover_color=theme.BG_CARD_HOVER,
                     text_color=theme.TEXT_PRIMARY,
-                    font=ctk.CTkFont(size=10),
+                    font=theme.get_font(10),
                     command=lambda match=m: self.open_score_entry_modal(match)
                 ).pack(side="left", padx=2)
 
@@ -213,7 +214,7 @@ class ResultsView(ctk.CTkScrollableFrame):
                     border_width=1,
                     hover_color=theme.BG_CARD_HOVER,
                     text_color=theme.TEXT_SECONDARY,
-                    font=ctk.CTkFont(size=10),
+                    font=theme.get_font(10),
                     command=lambda match_id=m.id: self.open_audit_modal(match_id)
                 ).pack(side="left", padx=2)
 
@@ -225,9 +226,11 @@ class ResultsView(ctk.CTkScrollableFrame):
                     fg_color="transparent",
                     hover_color=theme.COLOR_DANGER_MUTED,
                     text_color=theme.COLOR_DANGER,
-                    font=ctk.CTkFont(size=10),
+                    font=theme.get_font(10),
                     command=lambda match_id=m.id: self.handle_reset_match(match_id)
                 ).pack(side="left", padx=2)
+
+        gc.collect()
 
     # ----------------------------------------------------
     # Score Entry Modal

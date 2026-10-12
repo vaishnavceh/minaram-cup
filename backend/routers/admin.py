@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Body, status, File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Body, status, File, UploadFile, Form
 from pydantic import BaseModel
 
 from app.database import Database
@@ -59,11 +59,15 @@ class TeamCreate(BaseModel):
 
 
 class ResultEntry(BaseModel):
-    home_score: int
-    away_score: int
+    home_score: Optional[int] = None
+    away_score: Optional[int] = None
+    team_a_score: Optional[int] = None
+    team_b_score: Optional[int] = None
     status: Optional[str] = "Completed"
     home_penalty: Optional[int] = None
     away_penalty: Optional[int] = None
+    penalty_a: Optional[int] = None
+    penalty_b: Optional[int] = None
     walkover_winner_id: Optional[int] = None
     notes: Optional[str] = ""
 
@@ -83,15 +87,45 @@ class StandingsOverrideRequest(BaseModel):
 # ----------------------------------------------------
 # Authentication
 # ----------------------------------------------------
+@router.post("/auth/token")
+def login_admin_form(
+    username: str = Form(...),
+    password: str = Form(...)
+):
+    """OAuth2 / URL-encoded form login used by website Admin Portal."""
+    if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    token = create_access_token(username)
+    return {
+        "access_token": token,
+        "token": token,
+        "token_type": "bearer",
+        "username": username,
+        "role": "admin"
+    }
+
+
 @router.post("/login")
-def login_admin(req: LoginRequest):
+def login_admin_json(req: LoginRequest):
+    """JSON login for programmatic clients."""
     if req.username != ADMIN_USERNAME or req.password != ADMIN_PASSWORD:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password"
         )
     token = create_access_token(req.username)
-    return {"token": token, "username": req.username, "role": "admin"}
+    return {
+        "access_token": token,
+        "token": token,
+        "token_type": "bearer",
+        "username": req.username,
+        "role": "admin"
+    }
+
 
 
 @router.get("/me")
@@ -256,13 +290,20 @@ def generate_fixtures_admin(
 # ----------------------------------------------------
 @router.post("/matches/{match_id}/result")
 def enter_match_result_admin(match_id: int, req: ResultEntry, admin: dict = Depends(get_current_admin)):
+    h_score = req.home_score if req.home_score is not None else req.team_a_score
+    a_score = req.away_score if req.away_score is not None else req.team_b_score
+    if h_score is None or a_score is None:
+        raise HTTPException(status_code=400, detail="Both home and away scores are required")
+    h_pen = req.home_penalty if req.home_penalty is not None else req.penalty_a
+    a_pen = req.away_penalty if req.away_penalty is not None else req.penalty_b
+
     ok, msg = res_mgr.record_result(
         match_id=match_id,
-        home_score=req.home_score,
-        away_score=req.away_score,
+        home_score=h_score,
+        away_score=a_score,
         status=req.status or "Completed",
-        home_penalty=req.home_penalty,
-        away_penalty=req.away_penalty,
+        home_penalty=h_pen,
+        away_penalty=a_pen,
         walkover_winner_id=req.walkover_winner_id,
         notes=req.notes or ""
     )
@@ -271,12 +312,32 @@ def enter_match_result_admin(match_id: int, req: ResultEntry, admin: dict = Depe
     return {"status": "saved", "message": msg}
 
 
+@router.post("/matches/{match_id}/reset")
 @router.delete("/matches/{match_id}/result")
 def reset_match_result_admin(match_id: int, reason: str = Body("Admin Reset"), admin: dict = Depends(get_current_admin)):
     ok, msg = res_mgr.reset_result(match_id, reason=reason)
     if not ok:
         raise HTTPException(status_code=400, detail=msg)
     return {"status": "reset", "message": msg}
+
+
+@router.post("/tournament/advance-stage")
+def advance_tournament_stage_admin(admin: dict = Depends(get_current_admin)):
+    """Advance tournament from completed group stage to knockout rounds."""
+    try:
+        fixtures = ko_mgr.generate_bracket_from_group_qualifiers()
+        if not fixtures:
+            raise HTTPException(status_code=400, detail="Cannot advance stage: group standings are not completed yet.")
+        saved_cnt = fix_gen.save_fixtures(fixtures, clear_existing=False)
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("fixtures_updated", {"count": saved_cnt})
+        broadcaster.broadcast_from_thread("standings_updated", {})
+        return {"status": "advanced", "message": f"Successfully advanced tournament stage! Generated {saved_cnt} knockout fixtures."}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 
 # ----------------------------------------------------

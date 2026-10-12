@@ -91,17 +91,25 @@ def test_admin_endpoints_require_authentication():
 
 
 def test_admin_login_and_authenticated_operations():
-    # Login with valid credentials
+    # Login with valid credentials (JSON)
     login_resp = client.post("/api/admin/login", json={"username": "admin", "password": "minaram2026"})
     assert login_resp.status_code == 200
     token = login_resp.json()["token"]
     assert token is not None
+    assert login_resp.json()["access_token"] == token
+
+    # Form URL-encoded login as used by the website Admin portal
+    form_resp = client.post("/api/admin/auth/token", data={"username": "admin", "password": "minaram2026"})
+    assert form_resp.status_code == 200
+    assert form_resp.json()["access_token"] is not None
+    assert form_resp.json()["token_type"] == "bearer"
 
     headers = {"Authorization": f"Bearer {token}"}
 
     # Verify protected access with token
     health_resp = client.get("/api/admin/health", headers=headers)
     assert health_resp.status_code == 200
+
 
     # Test automatic registration-to-team creation via admin
     reg_data = {

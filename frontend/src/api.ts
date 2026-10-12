@@ -238,7 +238,13 @@ export const api = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        ...payload,
+        home_score: payload.team_a_score,
+        away_score: payload.team_b_score,
+        home_penalty: payload.penalty_a,
+        away_penalty: payload.penalty_b,
+      }),
     });
     return handleResponse(res);
   },

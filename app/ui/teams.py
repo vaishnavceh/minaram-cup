@@ -3,6 +3,7 @@ Team management interface: team CRUD, duplicate merging, group assignments,
 match history viewer, and performance metrics.
 """
 
+import gc
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from typing import List, Optional
@@ -197,26 +198,26 @@ class TeamsView(ctk.CTkScrollableFrame):
 
             stats = self.team_mgr.get_team_stats(t.id)
 
-            ctk.CTkLabel(row, text=str(t.id), width=40, font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED).pack(side="left", padx=3)
-            ctk.CTkLabel(row, text=t.name, width=160, font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=str(t.id), width=40, font=theme.get_font(11), text_color=theme.TEXT_MUTED).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=t.name, width=160, font=theme.get_font(11, "bold"), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left", padx=3)
 
             contact_str = f"{t.captain_name} ({t.phone_number})" if t.phone_number else t.captain_name or "-"
-            ctk.CTkLabel(row, text=contact_str, width=150, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=contact_str, width=150, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY, anchor="w").pack(side="left", padx=3)
 
             grp_name = t.group_name or "None"
-            ctk.CTkLabel(row, text=grp_name, width=90, font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED, anchor="w").pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=grp_name, width=90, font=theme.get_font(11), text_color=theme.TEXT_MUTED, anchor="w").pack(side="left", padx=3)
 
-            ctk.CTkLabel(row, text=f"#{t.seed}" if t.seed > 0 else "-", width=50, font=ctk.CTkFont(size=11), text_color=theme.COLOR_INFO).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=f"#{t.seed}" if t.seed > 0 else "-", width=50, font=theme.get_font(11), text_color=theme.COLOR_INFO).pack(side="left", padx=3)
 
             # Record stats
-            ctk.CTkLabel(row, text=str(stats["played"]), width=30, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=3)
-            ctk.CTkLabel(row, text=str(stats["won"]), width=30, font=ctk.CTkFont(size=11), text_color=theme.ACCENT_GREEN_TEXT).pack(side="left", padx=3)
-            ctk.CTkLabel(row, text=str(stats["drawn"]), width=30, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=3)
-            ctk.CTkLabel(row, text=str(stats["lost"]), width=30, font=ctk.CTkFont(size=11), text_color=theme.COLOR_DANGER).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=str(stats["played"]), width=30, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=str(stats["won"]), width=30, font=theme.get_font(11), text_color=theme.ACCENT_GREEN_TEXT).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=str(stats["drawn"]), width=30, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=str(stats["lost"]), width=30, font=theme.get_font(11), text_color=theme.COLOR_DANGER).pack(side="left", padx=3)
 
             gd_s = f"+{stats['goal_difference']}" if stats["goal_difference"] > 0 else str(stats["goal_difference"])
-            ctk.CTkLabel(row, text=gd_s, width=40, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=3)
-            ctk.CTkLabel(row, text=str(stats["points"]), width=40, font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.ACCENT_GREEN_TEXT).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=gd_s, width=40, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=3)
+            ctk.CTkLabel(row, text=str(stats["points"]), width=40, font=theme.get_font(11, "bold"), text_color=theme.ACCENT_GREEN_TEXT).pack(side="left", padx=3)
 
             # Action Buttons
             act_frame = ctk.CTkFrame(row, fg_color="transparent", width=160)
@@ -232,7 +233,7 @@ class TeamsView(ctk.CTkScrollableFrame):
                 border_width=1,
                 hover_color=theme.BG_CARD_HOVER,
                 text_color=theme.TEXT_PRIMARY,
-                font=ctk.CTkFont(size=10),
+                font=theme.get_font(10),
                 command=lambda team=t: self.open_history_modal(team)
             ).pack(side="left", padx=2)
 
@@ -246,7 +247,7 @@ class TeamsView(ctk.CTkScrollableFrame):
                 border_width=1,
                 hover_color=theme.BG_CARD_HOVER,
                 text_color=theme.TEXT_PRIMARY,
-                font=ctk.CTkFont(size=10),
+                font=theme.get_font(10),
                 command=lambda team=t: self.open_edit_team_modal(team)
             ).pack(side="left", padx=2)
 
@@ -258,9 +259,11 @@ class TeamsView(ctk.CTkScrollableFrame):
                 fg_color="transparent",
                 hover_color=theme.COLOR_DANGER_MUTED,
                 text_color=theme.COLOR_DANGER,
-                font=ctk.CTkFont(size=11, weight="bold"),
+                font=theme.get_font(11, "bold"),
                 command=lambda team=t: self.handle_delete_team(team)
             ).pack(side="left", padx=2)
+
+        gc.collect()
 
     # ----------------------------------------------------
     # Modals & Actions

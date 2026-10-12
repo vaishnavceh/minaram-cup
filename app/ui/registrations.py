@@ -3,6 +3,7 @@ Registration management interface: paste parsing, validation preview,
 bulk import from CSV/Excel, duplicate warnings, and CRUD management.
 """
 
+import gc
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from typing import List, Dict, Any, Optional
@@ -391,14 +392,14 @@ class RegistrationsView(ctk.CTkScrollableFrame):
             row.pack(fill="x", pady=2)
 
             # Columns
-            ctk.CTkLabel(row, text=str(reg.id), width=40, font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED).pack(side="left", padx=4)
-            ctk.CTkLabel(row, text=reg.participant_name, width=140, font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left", padx=4)
-            ctk.CTkLabel(row, text=reg.phone_number, width=110, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY, anchor="w").pack(side="left", padx=4)
-            ctk.CTkLabel(row, text=reg.team_name, width=150, font=ctk.CTkFont(size=11), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left", padx=4)
+            ctk.CTkLabel(row, text=str(reg.id), width=40, font=theme.get_font(11), text_color=theme.TEXT_MUTED).pack(side="left", padx=4)
+            ctk.CTkLabel(row, text=reg.participant_name, width=140, font=theme.get_font(11, "bold"), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left", padx=4)
+            ctk.CTkLabel(row, text=reg.phone_number, width=110, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY, anchor="w").pack(side="left", padx=4)
+            ctk.CTkLabel(row, text=reg.team_name, width=150, font=theme.get_font(11), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left", padx=4)
             
             # Short date
             d_short = reg.registered_at.split(" ")[0] if " " in reg.registered_at else reg.registered_at
-            ctk.CTkLabel(row, text=d_short, width=130, font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED, anchor="w").pack(side="left", padx=4)
+            ctk.CTkLabel(row, text=d_short, width=130, font=theme.get_font(11), text_color=theme.TEXT_MUTED, anchor="w").pack(side="left", padx=4)
 
             # Badge
             badge_bg, badge_fg = theme.get_status_colors(reg.status)
@@ -408,7 +409,7 @@ class RegistrationsView(ctk.CTkScrollableFrame):
                 fg_color=badge_bg,
                 text_color=badge_fg,
                 corner_radius=4,
-                font=ctk.CTkFont(size=10, weight="bold"),
+                font=theme.get_font(10, "bold"),
                 width=80,
                 height=22
             ).pack(side="left", padx=4)
@@ -426,7 +427,7 @@ class RegistrationsView(ctk.CTkScrollableFrame):
                     fg_color=theme.ACCENT_GREEN,
                     hover_color=theme.ACCENT_GREEN_HOVER,
                     text_color=theme.TEXT_DARK,
-                    font=ctk.CTkFont(size=10, weight="bold"),
+                    font=theme.get_font(10, "bold"),
                     command=lambda r_id=reg.id: self.handle_confirm_reg(r_id)
                 ).pack(side="left", padx=2)
 
@@ -440,7 +441,7 @@ class RegistrationsView(ctk.CTkScrollableFrame):
                 border_width=1,
                 hover_color=theme.BG_CARD_HOVER,
                 text_color=theme.TEXT_PRIMARY,
-                font=ctk.CTkFont(size=10),
+                font=theme.get_font(10),
                 command=lambda r=reg: self.open_edit_modal(r)
             ).pack(side="left", padx=2)
 
@@ -452,9 +453,11 @@ class RegistrationsView(ctk.CTkScrollableFrame):
                 fg_color="transparent",
                 hover_color=theme.COLOR_DANGER_MUTED,
                 text_color=theme.COLOR_DANGER,
-                font=ctk.CTkFont(size=11, weight="bold"),
+                font=theme.get_font(11, "bold"),
                 command=lambda r=reg: self.handle_delete_reg(r)
             ).pack(side="left", padx=2)
+
+        gc.collect()
 
     # ----------------------------------------------------
     # CRUD Modal Actions

@@ -3,6 +3,7 @@ Points table and tournament standings view: group tables, qualification indicato
 form guides (W/D/L), and tie-breaker summaries.
 """
 
+import gc
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from typing import Dict, Any, List, Optional
@@ -133,7 +134,7 @@ class StandingsView(ctk.CTkScrollableFrame):
                 ctk.CTkLabel(
                     cols_frame,
                     text=col_name,
-                    font=ctk.CTkFont(size=11, weight="bold"),
+                    font=theme.get_font(11, "bold"),
                     text_color=theme.TEXT_SECONDARY,
                     width=col_w,
                     anchor="w" if col_name == "Team Name" else "center"
@@ -141,7 +142,7 @@ class StandingsView(ctk.CTkScrollableFrame):
 
             # Rows
             if not standing_rows:
-                ctk.CTkLabel(card, text="No confirmed matches in this group yet.", font=ctk.CTkFont(size=11), text_color=theme.TEXT_MUTED).pack(pady=14)
+                ctk.CTkLabel(card, text="No confirmed matches in this group yet.", font=theme.get_font(11), text_color=theme.TEXT_MUTED).pack(pady=14)
             else:
                 for idx, row in enumerate(standing_rows):
                     row_bg = theme.BG_INPUT if idx % 2 == 0 else theme.BG_ROW_ALT
@@ -153,42 +154,42 @@ class StandingsView(ctk.CTkScrollableFrame):
                     ctk.CTkFrame(r_frame, width=3, fg_color=qual_color).pack(side="left", fill="y", padx=(0, 4))
 
                     # Rank
-                    ctk.CTkLabel(r_frame, text=str(row.rank), width=46, font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.ACCENT_GREEN_TEXT if row.is_qualified else theme.TEXT_MUTED).pack(side="left", padx=2)
+                    ctk.CTkLabel(r_frame, text=str(row.rank), width=46, font=theme.get_font(11, "bold"), text_color=theme.ACCENT_GREEN_TEXT if row.is_qualified else theme.TEXT_MUTED).pack(side="left", padx=2)
 
                     # Team
                     t_name_box = ctk.CTkFrame(r_frame, fg_color="transparent", width=180)
                     t_name_box.pack(side="left", padx=2)
-                    ctk.CTkLabel(t_name_box, text=row.team_name, font=ctk.CTkFont(size=11, weight="bold"), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left")
+                    ctk.CTkLabel(t_name_box, text=row.team_name, font=theme.get_font(11, "bold"), text_color=theme.TEXT_PRIMARY, anchor="w").pack(side="left")
                     if row.has_override:
-                        ctk.CTkLabel(t_name_box, text=" [ADJ]", font=ctk.CTkFont(size=9, weight="bold"), text_color="#F59E0B").pack(side="left")
+                        ctk.CTkLabel(t_name_box, text=" [ADJ]", font=theme.get_font(9, "bold"), text_color="#F59E0B").pack(side="left")
 
                     # P, W, D, L
-                    ctk.CTkLabel(r_frame, text=str(row.played), width=35, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=2)
-                    ctk.CTkLabel(r_frame, text=str(row.won), width=35, font=ctk.CTkFont(size=11), text_color=theme.ACCENT_GREEN_TEXT).pack(side="left", padx=2)
-                    ctk.CTkLabel(r_frame, text=str(row.drawn), width=35, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=2)
-                    ctk.CTkLabel(r_frame, text=str(row.lost), width=35, font=ctk.CTkFont(size=11), text_color=theme.COLOR_DANGER).pack(side="left", padx=2)
+                    ctk.CTkLabel(r_frame, text=str(row.played), width=35, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=2)
+                    ctk.CTkLabel(r_frame, text=str(row.won), width=35, font=theme.get_font(11), text_color=theme.ACCENT_GREEN_TEXT).pack(side="left", padx=2)
+                    ctk.CTkLabel(r_frame, text=str(row.drawn), width=35, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=2)
+                    ctk.CTkLabel(r_frame, text=str(row.lost), width=35, font=theme.get_font(11), text_color=theme.COLOR_DANGER).pack(side="left", padx=2)
 
                     # Goals
-                    ctk.CTkLabel(r_frame, text=str(row.goals_for), width=40, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=2)
-                    ctk.CTkLabel(r_frame, text=str(row.goals_against), width=40, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=2)
+                    ctk.CTkLabel(r_frame, text=str(row.goals_for), width=40, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=2)
+                    ctk.CTkLabel(r_frame, text=str(row.goals_against), width=40, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=2)
 
                     gd_txt = f"+{row.goal_difference}" if row.goal_difference > 0 else str(row.goal_difference)
-                    ctk.CTkLabel(r_frame, text=gd_txt, width=45, font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=2)
+                    ctk.CTkLabel(r_frame, text=gd_txt, width=45, font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(side="left", padx=2)
 
                     # Points
-                    ctk.CTkLabel(r_frame, text=str(row.points), width=45, font=ctk.CTkFont(size=12, weight="bold"), text_color=theme.ACCENT_GREEN_TEXT).pack(side="left", padx=2)
+                    ctk.CTkLabel(r_frame, text=str(row.points), width=45, font=theme.get_font(12, "bold"), text_color=theme.ACCENT_GREEN_TEXT).pack(side="left", padx=2)
 
                     # Form chips
                     form_box = ctk.CTkFrame(r_frame, fg_color="transparent", width=110)
                     form_box.pack(side="left", padx=2)
 
                     if not row.form:
-                        ctk.CTkLabel(form_box, text="-", font=ctk.CTkFont(size=10), text_color=theme.TEXT_MUTED).pack()
+                        ctk.CTkLabel(form_box, text="-", font=theme.get_font(10), text_color=theme.TEXT_MUTED).pack()
                     else:
                         for outcome in row.form:
                             f_bg = theme.ACCENT_GREEN_MUTED if outcome == "W" else (theme.COLOR_DANGER_MUTED if outcome == "L" else theme.BORDER_COLOR)
                             f_fg = theme.ACCENT_GREEN_TEXT if outcome == "W" else (theme.COLOR_DANGER if outcome == "L" else theme.TEXT_SECONDARY)
-                            chip = ctk.CTkLabel(form_box, text=outcome, width=18, height=18, fg_color=f_bg, text_color=f_fg, corner_radius=3, font=ctk.CTkFont(size=9, weight="bold"))
+                            chip = ctk.CTkLabel(form_box, text=outcome, width=18, height=18, fg_color=f_bg, text_color=f_fg, corner_radius=3, font=theme.get_font(9, "bold"))
                             chip.pack(side="left", padx=1)
 
                     # Status Badge
@@ -199,7 +200,7 @@ class StandingsView(ctk.CTkScrollableFrame):
                             fg_color=theme.ACCENT_GREEN_MUTED,
                             text_color=theme.ACCENT_GREEN_TEXT,
                             corner_radius=4,
-                            font=ctk.CTkFont(size=10, weight="bold"),
+                            font=theme.get_font(10, "bold"),
                             width=90,
                             height=20
                         ).pack(side="left", padx=4)
@@ -210,7 +211,9 @@ class StandingsView(ctk.CTkScrollableFrame):
                 leg = ctk.CTkFrame(card, fg_color="transparent")
                 leg.pack(fill="x", padx=14, pady=(8, 12))
                 ctk.CTkFrame(leg, width=10, height=10, fg_color=theme.ACCENT_GREEN).pack(side="left", padx=(0, 6))
-                ctk.CTkLabel(leg, text="Green indicator marks qualification zone for the Knockout Stage", font=ctk.CTkFont(size=10), text_color=theme.TEXT_MUTED).pack(side="left")
+                ctk.CTkLabel(leg, text="Green indicator marks qualification zone for the Knockout Stage", font=theme.get_font(10), text_color=theme.TEXT_MUTED).pack(side="left")
+
+        gc.collect()
 
     def handle_export(self):
         dest = filedialog.asksaveasfilename(

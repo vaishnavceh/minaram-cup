@@ -55,3 +55,32 @@ STATUS_COLORS = {
 
 def get_status_colors(status: str):
     return STATUS_COLORS.get(status, (BORDER_COLOR, TEXT_SECONDARY))
+
+
+# ----------------------------------------------------
+# Global Font Cache (Prevents GDI Handle & RAM Leaks)
+# ----------------------------------------------------
+import customtkinter as ctk
+from typing import Dict, Tuple, Optional
+
+_FONT_CACHE: Dict[Tuple[int, str, Optional[str]], ctk.CTkFont] = {}
+
+
+def get_font(size: int = 12, weight: str = "normal", family: Optional[str] = None) -> ctk.CTkFont:
+    """
+    Return a shared cached CTkFont instance.
+    Prevents allocating thousands of orphaned Tk font handles during table re-renders,
+    keeping application memory footprint minimal and eliminating UI lag.
+    """
+    key = (size, weight, family)
+    if key not in _FONT_CACHE:
+        try:
+            if family:
+                _FONT_CACHE[key] = ctk.CTkFont(family=family, size=size, weight=weight)
+            else:
+                _FONT_CACHE[key] = ctk.CTkFont(size=size, weight=weight)
+        except Exception:
+            # Fallback if called before Tk root exists
+            return ctk.CTkFont(size=size, weight=weight)
+    return _FONT_CACHE[key]
+

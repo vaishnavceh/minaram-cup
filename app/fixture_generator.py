@@ -134,6 +134,9 @@ class FixtureGenerator:
         except Exception:
             end_t = datetime.strptime("20:00", "%H:%M").time()
 
+        if end_t <= start_t:
+            end_t = (datetime.combine(curr_date, start_t) + timedelta(hours=6)).time()
+
         group_data: Dict[int, Dict[str, Any]] = {}
         for g in groups:
             g_id = g["id"]
@@ -214,13 +217,19 @@ class FixtureGenerator:
                             "away": away
                         })
 
-            # Schedule this round across pitches
+            # Schedule this round across pitches with infinite loop prevention
+            safety_counter = 0
             while round_matches:
+                safety_counter += 1
+                if safety_counter > 5000:
+                    logger.warning("Safety limit reached in round match scheduling.")
+                    break
                 # If current slot would finish past operating hours, advance to next day within matchday window
                 if slot_dt + timedelta(minutes=match_duration_mins) > slot_end_dt:
                     mw_date += timedelta(days=1)
                     slot_dt = datetime.combine(mw_date, start_t)
                     slot_end_dt = datetime.combine(mw_date, end_t)
+
 
                 teams_playing_in_slot = set()
 
@@ -314,6 +323,9 @@ class FixtureGenerator:
         except Exception:
             end_t = datetime.strptime("20:00", "%H:%M").time()
 
+        if end_t <= start_t:
+            end_t = (datetime.combine(curr_date, start_t) + timedelta(hours=6)).time()
+
         rounds = self.generate_round_robin_pairings(teams, double_round=double_round)
         if not rounds:
             return []
@@ -360,7 +372,13 @@ class FixtureGenerator:
 
             round_matches = [{"home": h, "away": a, "round_number": round_idx} for h, a in r_matches]
 
+            safety_counter = 0
             while round_matches:
+                safety_counter += 1
+                if safety_counter > 5000:
+                    logger.warning("Safety limit reached in league match scheduling.")
+                    break
+
                 if slot_dt + timedelta(minutes=match_duration_mins) > slot_end_dt:
                     mw_date += timedelta(days=1)
                     slot_dt = datetime.combine(mw_date, start_t)
@@ -470,8 +488,8 @@ class FixtureGenerator:
                     f.get("group_id"),
                     f.get("round_number", 1),
                     f.get("bracket_slot", ""),
-                    f["home_team_id"],
-                    f["away_team_id"],
+                    f.get("home_team_id"),
+                    f.get("away_team_id"),
                     f.get("scheduled_date", ""),
                     f.get("scheduled_time", ""),
                     f.get("venue", "Minaram Stadium"),
@@ -480,6 +498,7 @@ class FixtureGenerator:
                 count += 1
 
         return count
+
 
     # ----------------------------------------------------
     # Conflict Detection
