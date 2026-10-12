@@ -162,17 +162,6 @@ class FixtureGenerator:
         if days_per_matchweek < 1:
             days_per_matchweek = 3
 
-        if end_date:
-            try:
-                target_end = datetime.strptime(end_date, "%Y-%m-%d").date()
-                if target_end > curr_date and max_rounds > 1:
-                    span_days = (target_end - curr_date).days
-                    auto_interval = max(1, span_days // (max_rounds - 1))
-                    if days_per_matchweek == 3 and auto_interval != 3:
-                        days_per_matchweek = auto_interval
-            except Exception:
-                pass
-
         fixtures: List[Dict[str, Any]] = []
 
         total_mw_to_use = total_matchweeks if (total_matchweeks and total_matchweeks > 0) else max_rounds
@@ -340,17 +329,6 @@ class FixtureGenerator:
 
         if days_per_matchweek < 1:
             days_per_matchweek = 3
-
-        if end_date:
-            try:
-                target_end = datetime.strptime(end_date, "%Y-%m-%d").date()
-                if target_end > curr_date and len(rounds) > 1:
-                    span_days = (target_end - curr_date).days
-                    auto_interval = max(1, span_days // (len(rounds) - 1))
-                    if days_per_matchweek == 3 and auto_interval != 3:
-                        days_per_matchweek = auto_interval
-            except Exception:
-                pass
 
         fixtures: List[Dict[str, Any]] = []
 

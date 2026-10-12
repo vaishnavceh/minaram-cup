@@ -285,6 +285,7 @@ class FixtureWizardModal(BaseModal):
         # Auto-update ending date when timeline inputs change
         self.date_entry.bind("<KeyRelease>", lambda e: self.auto_update_end_date())
         self.mw_entry.bind("<KeyRelease>", lambda e: self.auto_update_end_date())
+        self.end_date_entry.bind("<KeyRelease>", lambda e: self.on_end_date_edited())
 
         # Live timeline breakdown label
         self.timeline_breakdown_lbl = ctk.CTkLabel(
@@ -466,9 +467,10 @@ class FixtureWizardModal(BaseModal):
         if choice.startswith("Matchweek "):
             try:
                 mw_num = int(choice.split()[1])
-                mw_d = s_d + timedelta(days=(mw_num - 1) * days_mw)
+                mw_start = s_d + timedelta(days=(mw_num - 1) * days_mw)
+                mw_end = mw_start + timedelta(days=days_mw)
                 self.mw_info_lbl.configure(
-                    text=f"📅 Scheduled Date: {mw_d.strftime('%Y-%m-%d')} • Generates and schedules Matchweek {mw_num} only.",
+                    text=f"📅 Matchweek {mw_num} Window: {mw_start.strftime('%Y-%m-%d')} to {mw_end.strftime('%Y-%m-%d')} ({days_mw} days duration) • Generates and schedules Matchweek {mw_num} only.",
                     text_color="#38bdf8"
                 )
                 self.clear_check.configure(
@@ -478,19 +480,22 @@ class FixtureWizardModal(BaseModal):
                 pass
         else:
             tot_mw = self.get_total_effective_matchweeks()
+            mw_1_end = s_d + timedelta(days=days_mw)
             self.mw_info_lbl.configure(
-                text=f"All {tot_mw} matchweeks will be generated sequentially across the tournament timeline.",
+                text=f"All {tot_mw} matchweeks will be generated sequentially across the timeline (1 Matchweek window: {s_d.strftime('%Y-%m-%d')} to {mw_1_end.strftime('%Y-%m-%d')}).",
                 text_color=theme.TEXT_MUTED
             )
             self.clear_check.configure(
                 text="Clear all existing fixtures before generating schedule"
             )
 
+        self.auto_update_end_date()
+
     def auto_update_end_date(self):
         """
-        Automatically compute ending date from:
-        Start Date + (Total Matchweeks * Days/Matchweek - 1 days)
-        Example: Start Oct 13, 3 MWs of 3 days = 9 days total -> End Oct 21.
+        Auto-calculate 1 matchweek's ending date from:
+        Start Date + Days/Matchweek
+        Example: Start Date = 2026-10-13, Days/Matchweek = 3 -> Ending Date = 2026-10-16.
         """
         try:
             s_d = datetime.strptime(self.date_entry.get().strip(), "%Y-%m-%d").date()
@@ -504,18 +509,51 @@ class FixtureWizardModal(BaseModal):
         except Exception:
             days_mw = 3
 
+        target_mw = self.get_target_matchweek_number()
         tot_mw = self.get_total_effective_matchweeks()
-        # Total tournament duration in days = (tot_mw - 1) intervals of days_mw + days_mw = tot_mw * days_mw
-        total_days = tot_mw * days_mw
-        e_d = s_d + timedelta(days=max(0, total_days - 1))
 
-        self.end_date_entry.delete(0, "end")
-        self.end_date_entry.insert(0, e_d.strftime("%Y-%m-%d"))
+        if target_mw is not None:
+            mw_start = s_d + timedelta(days=(target_mw - 1) * days_mw)
+            mw_end = mw_start + timedelta(days=days_mw)
+            self.end_date_entry.delete(0, "end")
+            self.end_date_entry.insert(0, mw_end.strftime("%Y-%m-%d"))
 
-        extra_info = f" (+{self.extra_matchweeks} extra round{'s' if self.extra_matchweeks > 1 else ''})" if self.extra_matchweeks > 0 else ""
-        self.timeline_breakdown_lbl.configure(
-            text=f"🗓️ Schedule: {tot_mw} Matchweeks{extra_info} × {days_mw} Days/MW = {total_days} days total ({s_d.strftime('%Y-%m-%d')} to {e_d.strftime('%Y-%m-%d')})"
-        )
+            self.timeline_breakdown_lbl.configure(
+                text=f"🗓️ Matchweek {target_mw} Window: {mw_start.strftime('%Y-%m-%d')} to {mw_end.strftime('%Y-%m-%d')} ({days_mw} days duration)"
+            )
+        else:
+            # 1 matchweek duration: Start Date to Start Date + Days/Matchweek
+            mw_end = s_d + timedelta(days=days_mw)
+            full_end = s_d + timedelta(days=tot_mw * days_mw)
+            self.end_date_entry.delete(0, "end")
+            self.end_date_entry.insert(0, mw_end.strftime("%Y-%m-%d"))
+
+            extra_info = f" (+{self.extra_matchweeks} extra round{'s' if self.extra_matchweeks > 1 else ''})" if self.extra_matchweeks > 0 else ""
+            self.timeline_breakdown_lbl.configure(
+                text=f"🗓️ 1 Matchweek Window: {s_d.strftime('%Y-%m-%d')} to {mw_end.strftime('%Y-%m-%d')} ({days_mw} days/MW) • Full Tournament ({tot_mw} MWs{extra_info}): {s_d.strftime('%Y-%m-%d')} to {full_end.strftime('%Y-%m-%d')}"
+            )
+
+    def on_end_date_edited(self):
+        """If user manually edits Ending Date, calculate the span for 1 matchweek and update Days/Matchweek."""
+        try:
+            s_d = datetime.strptime(self.date_entry.get().strip(), "%Y-%m-%d").date()
+            e_d = datetime.strptime(self.end_date_entry.get().strip(), "%Y-%m-%d").date()
+            span = (e_d - s_d).days
+            if span >= 1:
+                target_mw = self.get_target_matchweek_number()
+                if target_mw is not None and target_mw > 1:
+                    days_mw = max(1, span // target_mw)
+                else:
+                    days_mw = span
+                self.mw_entry.delete(0, "end")
+                self.mw_entry.insert(0, str(days_mw))
+                tot_mw = self.get_total_effective_matchweeks()
+                full_end = s_d + timedelta(days=tot_mw * days_mw)
+                self.timeline_breakdown_lbl.configure(
+                    text=f"🗓️ 1 Matchweek Window: {s_d.strftime('%Y-%m-%d')} to {e_d.strftime('%Y-%m-%d')} ({days_mw} days/MW) • Full Tournament ({tot_mw} MWs): {s_d.strftime('%Y-%m-%d')} to {full_end.strftime('%Y-%m-%d')}"
+                )
+        except Exception:
+            pass
 
     def run_preview(self) -> bool:
         fmt = self.format_menu.get()
@@ -569,24 +607,32 @@ class FixtureWizardModal(BaseModal):
             for f in self.generated_fixtures:
                 mw_groups.setdefault(f.get("round_number", 1), []).append(f)
 
+            try:
+                s_d_obj = datetime.strptime(s_d, "%Y-%m-%d").date()
+            except Exception:
+                s_d_obj = datetime.now().date()
+
             if target_mw is not None:
+                mw_start = s_d_obj + timedelta(days=(target_mw - 1) * days_mw)
+                mw_end = mw_start + timedelta(days=days_mw)
                 txt = f"✓ MATCHWEEK {target_mw} SCHEDULE READY: {len(self.generated_fixtures)} matches\n"
-                mw_matches = mw_groups.get(target_mw, self.generated_fixtures)
-                d_str = mw_matches[0].get("scheduled_date", "") if mw_matches else ""
-                times = f"{mw_matches[0].get('scheduled_time', '')} to {mw_matches[-1].get('scheduled_time', '')}" if mw_matches else ""
-                txt += f"  Date: {d_str} | Kickoff Window: {times}\n"
+                txt += f"  Duration Window: {mw_start.strftime('%Y-%m-%d')} to {mw_end.strftime('%Y-%m-%d')} ({days_mw} days)\n"
                 txt += f"  Pitches in parallel: {', '.join(venues)}\n\n"
                 txt += "Official Match Pairings:\n"
-                for f in mw_matches:
-                    txt += f"  • M#{f['match_number']} [{f.get('group_name', 'Group')}]: {f['home_team_name']} vs {f['away_team_name']} | {f['scheduled_time']} @ {f['venue']}\n"
+                for f in self.generated_fixtures:
+                    txt += f"  • M#{f['match_number']} [{f.get('group_name', 'Group')}]: {f['home_team_name']} vs {f['away_team_name']} | {f['scheduled_date']} {f['scheduled_time']} @ {f['venue']}\n"
             else:
+                mw_1_end = s_d_obj + timedelta(days=days_mw)
+                full_end = s_d_obj + timedelta(days=len(mw_groups) * days_mw)
                 txt = f"✓ FULL TOURNAMENT SCHEDULE READY: {len(self.generated_fixtures)} matches across {len(mw_groups)} Matchweeks\n"
-                txt += f"  Tournament Timeline: {s_d} to {e_d} (Interval: 1 match every {days_mw} days per squad)\n"
+                txt += f"  1 Matchweek Duration: {s_d} to {mw_1_end.strftime('%Y-%m-%d')} ({days_mw} days per squad)\n"
+                txt += f"  Full Tournament Timeline: {s_d} to {full_end.strftime('%Y-%m-%d')}\n"
                 for r_num, m_list in sorted(mw_groups.items()):
-                    d_str = m_list[0].get("scheduled_date", "") if m_list else ""
+                    r_start = s_d_obj + timedelta(days=(r_num - 1) * days_mw)
+                    r_end = r_start + timedelta(days=days_mw)
                     times = f"{m_list[0].get('scheduled_time', '')} to {m_list[-1].get('scheduled_time', '')}" if m_list else ""
                     extra_tag = " [Extra Round]" if r_num > self.base_matchweeks else ""
-                    txt += f"  • Matchweek {r_num}{extra_tag}: {d_str} ({len(m_list)} matches, {times})\n"
+                    txt += f"  • Matchweek {r_num}{extra_tag}: {r_start.strftime('%Y-%m-%d')} to {r_end.strftime('%Y-%m-%d')} ({len(m_list)} matches, {times})\n"
 
                 txt += "\nSample Matchups:\n"
                 for f in self.generated_fixtures[:8]:
