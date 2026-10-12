@@ -90,7 +90,8 @@ class FixtureGenerator:
         day_end_time: str = "20:00",
         end_date: str = "",
         days_per_matchweek: int = 3,
-        target_matchweek: Optional[int] = None
+        target_matchweek: Optional[int] = None,
+        total_matchweeks: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """
         Generate balanced, round-interleaved fixtures for all groups with:
@@ -174,7 +175,7 @@ class FixtureGenerator:
 
         fixtures: List[Dict[str, Any]] = []
 
-        # Determine starting match number and rounds to schedule
+        total_mw_to_use = total_matchweeks if (total_matchweeks and total_matchweeks > 0) else max_rounds
         if target_matchweek is not None and target_matchweek > 1:
             existing = self.db.execute_one(
                 "SELECT COALESCE(MAX(match_number), 0) AS m FROM matches WHERE round_number < ?;",
@@ -186,16 +187,17 @@ class FixtureGenerator:
                 prior_matches = 0
                 for r in range(target_matchweek - 1):
                     for g_info in group_data.values():
-                        if r < len(g_info["rounds"]):
-                            prior_matches += len(g_info["rounds"][r])
+                        n_r = len(g_info["rounds"])
+                        if n_r > 0:
+                            prior_matches += len(g_info["rounds"][r % n_r])
                 match_num = prior_matches + 1
-            rounds_to_schedule = [target_matchweek - 1] if (target_matchweek - 1 < max_rounds) else []
+            rounds_to_schedule = [target_matchweek - 1]
         elif target_matchweek == 1:
             match_num = 1
             rounds_to_schedule = [0]
         else:
             match_num = 1
-            rounds_to_schedule = list(range(max_rounds))
+            rounds_to_schedule = list(range(total_mw_to_use))
 
         for round_idx in rounds_to_schedule:
             mw_number = round_idx + 1
@@ -207,14 +209,19 @@ class FixtureGenerator:
             # Gather all matches for this round across all groups (interleaving groups)
             round_matches: List[Dict[str, Any]] = []
             for g_id, g_info in group_data.items():
-                if round_idx < len(g_info["rounds"]):
-                    for home, away in g_info["rounds"][round_idx]:
+                n_rounds = len(g_info["rounds"])
+                if n_rounds > 0:
+                    effective_idx = round_idx % n_rounds
+                    swap_home_away = ((round_idx // n_rounds) % 2 == 1)
+                    for home, away in g_info["rounds"][effective_idx]:
+                        h_team = away if swap_home_away else home
+                        a_team = home if swap_home_away else away
                         round_matches.append({
                             "group_id": g_id,
                             "group_name": g_info["name"],
                             "round_number": mw_number,
-                            "home": home,
-                            "away": away
+                            "home": h_team,
+                            "away": a_team
                         })
 
             # Schedule this round across pitches with infinite loop prevention
@@ -284,7 +291,8 @@ class FixtureGenerator:
         day_end_time: str = "20:00",
         end_date: str = "",
         days_per_matchweek: int = 3,
-        target_matchweek: Optional[int] = None
+        target_matchweek: Optional[int] = None,
+        total_matchweeks: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """Generate proposed fixtures for a full league tournament with matchweek spacing, multi-pitch support and operating hours."""
         teams_rows = self.db.execute_query(
@@ -346,6 +354,7 @@ class FixtureGenerator:
 
         fixtures: List[Dict[str, Any]] = []
 
+        total_mw_to_use = total_matchweeks if (total_matchweeks and total_matchweeks > 0) else len(rounds)
         if target_matchweek is not None and target_matchweek > 1:
             existing = self.db.execute_one(
                 "SELECT COALESCE(MAX(match_number), 0) AS m FROM matches WHERE round_number < ?;",
@@ -354,23 +363,31 @@ class FixtureGenerator:
             if existing and existing["m"] > 0:
                 match_num = existing["m"] + 1
             else:
-                prior_matches = sum(len(rounds[r]) for r in range(min(target_matchweek - 1, len(rounds))))
+                prior_matches = 0
+                for r in range(target_matchweek - 1):
+                    prior_matches += len(rounds[r % len(rounds)])
                 match_num = prior_matches + 1
-            rounds_indices = [target_matchweek] if (target_matchweek <= len(rounds)) else []
+            rounds_indices = [target_matchweek]
         elif target_matchweek == 1:
             match_num = 1
             rounds_indices = [1]
         else:
             match_num = 1
-            rounds_indices = list(range(1, len(rounds) + 1))
+            rounds_indices = list(range(1, total_mw_to_use + 1))
 
         for round_idx in rounds_indices:
-            r_matches = rounds[round_idx - 1]
+            eff_idx = (round_idx - 1) % len(rounds)
+            swap = (((round_idx - 1) // len(rounds)) % 2 == 1)
+            r_matches = rounds[eff_idx]
             mw_date = curr_date + timedelta(days=(round_idx - 1) * days_per_matchweek)
             slot_dt = datetime.combine(mw_date, start_t)
             slot_end_dt = datetime.combine(mw_date, end_t)
 
-            round_matches = [{"home": h, "away": a, "round_number": round_idx} for h, a in r_matches]
+            round_matches = []
+            for h, a in r_matches:
+                h_team = a if swap else h
+                a_team = h if swap else a
+                round_matches.append({"home": h_team, "away": a_team, "round_number": round_idx})
 
             safety_counter = 0
             while round_matches:
@@ -451,6 +468,77 @@ class FixtureGenerator:
                 return 3
             base_rounds = max_teams - 1 if max_teams % 2 == 0 else max_teams
             return base_rounds * 2 if double_round else base_rounds
+
+    def predict_fixture_summary(self, format_type: str = "Group Stage", double_round: bool = False) -> Dict[str, Any]:
+        """Predict fixtures breakdown, group counts, matches per round and matchweeks."""
+        confirmed_teams = self.db.execute_one("SELECT COUNT(*) AS c FROM teams WHERE status = 'Confirmed';")["c"]
+        groups = self.db.execute_query("SELECT id, name FROM groups ORDER BY display_order ASC, name ASC;")
+        group_count = len(groups)
+
+        if "League" in format_type:
+            n = confirmed_teams
+            base_mw = (n - 1 if n % 2 == 0 else n) if n >= 2 else 0
+            if double_round:
+                base_mw *= 2
+            total_matches = (n * (n - 1) // 2) if n >= 2 else 0
+            if double_round:
+                total_matches *= 2
+            mw_matches = total_matches // max(1, base_mw) if base_mw > 0 else 0
+            return {
+                "format": format_type,
+                "total_groups": 0,
+                "total_teams": n,
+                "base_matchweeks": base_mw,
+                "total_matches": total_matches,
+                "matches_per_mw": mw_matches,
+                "summary": f"League: {n} Teams • {total_matches} Total Matches across {base_mw} Matchweeks (~{mw_matches} matches/MW)"
+            }
+        elif "Knockout" in format_type:
+            base_mw = 3 if group_count <= 4 else 4
+            total_matches = (group_count * 2 - 1) if group_count >= 2 else 4
+            return {
+                "format": format_type,
+                "total_groups": group_count,
+                "total_teams": confirmed_teams,
+                "base_matchweeks": base_mw,
+                "total_matches": total_matches,
+                "matches_per_mw": max(1, total_matches // base_mw),
+                "summary": f"Knockout: Top Qualifiers from {group_count} Groups • {base_mw} Rounds ({total_matches} Bracket Matches)"
+            }
+        else:
+            total_matches = 0
+            max_teams_in_group = 0
+            for g in groups:
+                cnt = self.db.execute_one(
+                    "SELECT COUNT(*) AS c FROM teams WHERE group_id = ? AND status = 'Confirmed';",
+                    (g["id"],)
+                )["c"]
+                if cnt > max_teams_in_group:
+                    max_teams_in_group = cnt
+                if cnt >= 2:
+                    total_matches += cnt * (cnt - 1) // 2
+
+            if double_round:
+                total_matches *= 2
+
+            if max_teams_in_group >= 2:
+                base_mw = max_teams_in_group - 1 if max_teams_in_group % 2 == 0 else max_teams_in_group
+            else:
+                base_mw = 3
+            if double_round:
+                base_mw *= 2
+
+            matches_per_mw = (total_matches // base_mw) if base_mw > 0 else 0
+            return {
+                "format": format_type,
+                "total_groups": group_count,
+                "total_teams": confirmed_teams,
+                "max_teams_per_group": max_teams_in_group,
+                "base_matchweeks": base_mw,
+                "total_matches": total_matches,
+                "matches_per_mw": matches_per_mw,
+                "summary": f"Group Stage: {group_count} Groups • {confirmed_teams} Teams → {total_matches} Matches ({base_mw} Base MWs, ~{matches_per_mw}/MW)"
+            }
 
     # ----------------------------------------------------
     # Save Generated Fixtures

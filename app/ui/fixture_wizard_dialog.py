@@ -2,6 +2,7 @@
 MINARAM CUP — Fixture Generation Wizard Modal Dialog.
 Clean, modern, and robust interface for generating tournament fixtures,
 matchweek timeline spacing, parallel pitch scheduling, and knockout brackets.
+Includes auto-calculated timeline end date and dynamic additional matchweek controls.
 """
 
 from datetime import datetime, timedelta
@@ -18,19 +19,32 @@ from app.knockout_manager import KnockoutManager
 
 class FixtureWizardModal(BaseModal):
     def __init__(self, parent, db: Database, on_saved: Optional[Callable[[], None]] = None):
-        super().__init__(parent, title="⚡ Fixture Generation Wizard", width=720, height=720)
+        super().__init__(parent, title="⚡ Fixture Generation Wizard", width=740, height=750)
         self.resizable(True, True)
-        self.minsize(640, 580)
+        self.minsize(660, 600)
 
         self.db = db
         self.fixture_gen = FixtureGenerator(db)
         self.knockout_mgr = KnockoutManager(db)
         self.on_saved = on_saved
 
+        self.base_matchweeks: int = 3
+        self.extra_matchweeks: int = 0
         self.generated_fixtures: List[Dict[str, Any]] = []
         self.mw_options: List[str] = []
 
         self.build_ui()
+
+    def _get_real_total_matchweeks(self, fmt: str) -> int:
+        """Query real base matchweek count from the database for the given format."""
+        try:
+            return self.fixture_gen.get_total_matchweeks(fmt, double_round=("Double" in fmt)) or 3
+        except Exception:
+            return 3
+
+    def get_total_effective_matchweeks(self) -> int:
+        """Returns the total matchweeks including user-added additional matchweeks."""
+        return max(1, self.base_matchweeks + self.extra_matchweeks)
 
     def build_ui(self):
         # ----------------------------------------------------
@@ -104,6 +118,26 @@ class FixtureWizardModal(BaseModal):
         self.scroll_content = ctk.CTkScrollableFrame(self.body_frame, fg_color="transparent")
         self.scroll_content.pack(side="top", fill="both", expand=True, pady=(0, 4))
 
+        # Prediction Summary Banner (Computed from live database)
+        self.pred_banner = ctk.CTkFrame(
+            self.scroll_content,
+            fg_color=theme.BG_CARD,
+            corner_radius=8,
+            border_color="#0284c7",
+            border_width=1
+        )
+        self.pred_banner.pack(fill="x", pady=(0, 10))
+
+        self.pred_banner_lbl = ctk.CTkLabel(
+            self.pred_banner,
+            text="📊 Loading tournament prediction...",
+            font=theme.get_font(11, "bold"),
+            text_color="#38bdf8",
+            wraplength=640,
+            justify="left"
+        )
+        self.pred_banner_lbl.pack(anchor="w", padx=12, pady=8)
+
         # 1. Tournament Format
         ctk.CTkLabel(
             self.scroll_content,
@@ -128,22 +162,68 @@ class FixtureWizardModal(BaseModal):
         )
         self.format_menu.pack(fill="x", pady=(0, 10))
 
-        # 2. Matchweek Scope Selection Card
-        mw_card = ctk.CTkFrame(self.scroll_content, fg_color=theme.BG_INPUT, corner_radius=8, border_color=theme.BORDER_COLOR, border_width=1)
+        # 2. Matchweek Scope & Additional Matchweeks Management Card
+        mw_card = ctk.CTkFrame(
+            self.scroll_content,
+            fg_color=theme.BG_INPUT,
+            corner_radius=8,
+            border_color=theme.BORDER_COLOR,
+            border_width=1
+        )
         mw_card.pack(fill="x", pady=(0, 10))
 
         mw_card_inner = ctk.CTkFrame(mw_card, fg_color="transparent")
         mw_card_inner.pack(fill="x", padx=14, pady=10)
 
+        # Top row: title & additional matchweek stepper controls
+        mw_hdr_row = ctk.CTkFrame(mw_card_inner, fg_color="transparent")
+        mw_hdr_row.pack(fill="x")
+
         ctk.CTkLabel(
-            mw_card_inner,
-            text="2. Matchweek Scope Selection (All vs Specific Round):",
+            mw_hdr_row,
+            text="2. Matchweek Scope & Schedule Rounds:",
             font=theme.get_font(11, "bold"),
             text_color=theme.TEXT_PRIMARY
-        ).pack(anchor="w")
+        ).pack(side="left")
 
-        total_mw = self.fixture_gen.get_total_matchweeks("Group Stage") or 3
-        self.mw_options = ["All Matchweeks (Full Schedule)"] + [f"Matchweek {i} (Round {i}) Only" for i in range(1, total_mw + 1)]
+        # Additional Matchweek controls on the right
+        mw_stepper_frame = ctk.CTkFrame(mw_hdr_row, fg_color="transparent")
+        mw_stepper_frame.pack(side="right")
+
+        self.add_mw_btn = ctk.CTkButton(
+            mw_stepper_frame,
+            text="+ Add Matchweek",
+            font=theme.get_font(10, "bold"),
+            fg_color="#0284c7",
+            hover_color="#0369a1",
+            text_color="#FFFFFF",
+            width=110,
+            height=26,
+            command=self.add_matchweek
+        )
+        self.add_mw_btn.pack(side="left", padx=(0, 4))
+
+        self.remove_mw_btn = ctk.CTkButton(
+            mw_stepper_frame,
+            text="- Remove",
+            font=theme.get_font(10),
+            fg_color=theme.BG_CARD,
+            border_color=theme.BORDER_COLOR,
+            border_width=1,
+            hover_color=theme.BG_CARD_HOVER,
+            text_color=theme.TEXT_MUTED,
+            width=70,
+            height=26,
+            command=self.remove_matchweek
+        )
+        self.remove_mw_btn.pack(side="left")
+
+        # Matchweek dropdown menu
+        self.base_matchweeks = self._get_real_total_matchweeks("Group Stage")
+        tot_mw = self.get_total_effective_matchweeks()
+        self.mw_options = [f"All Matchweeks (Full Schedule - {tot_mw} Rounds)"] + [
+            f"Matchweek {i} (Round {i}) Only" for i in range(1, tot_mw + 1)
+        ]
 
         self.matchweek_menu = ctk.CTkOptionMenu(
             mw_card_inner,
@@ -155,11 +235,11 @@ class FixtureWizardModal(BaseModal):
             font=theme.get_font(11),
             command=self.on_matchweek_changed
         )
-        self.matchweek_menu.pack(fill="x", pady=(6, 4))
+        self.matchweek_menu.pack(fill="x", pady=(8, 4))
 
         self.mw_info_lbl = ctk.CTkLabel(
             mw_card_inner,
-            text="All matchweeks will be generated sequentially across the tournament timeline.",
+            text="",
             font=theme.get_font(10),
             text_color=theme.TEXT_MUTED
         )
@@ -174,7 +254,7 @@ class FixtureWizardModal(BaseModal):
         ).pack(anchor="w", pady=(4, 4))
 
         timeline_grid = ctk.CTkFrame(self.scroll_content, fg_color="transparent")
-        timeline_grid.pack(fill="x", pady=(0, 8))
+        timeline_grid.pack(fill="x", pady=(0, 4))
         timeline_grid.columnconfigure(0, weight=1)
         timeline_grid.columnconfigure(1, weight=1)
         timeline_grid.columnconfigure(2, weight=1)
@@ -187,7 +267,7 @@ class FixtureWizardModal(BaseModal):
         self.date_entry.insert(0, (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"))
         self.date_entry.pack(fill="x", pady=(2, 0))
 
-        # Days Per Matchweek
+        # Days Per Matchweek (e.g. 1 match per 3 days)
         c_mw = ctk.CTkFrame(timeline_grid, fg_color="transparent")
         c_mw.grid(row=0, column=1, sticky="ew", padx=4)
         ctk.CTkLabel(c_mw, text="Days / Matchweek (Interval):", font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
@@ -195,17 +275,25 @@ class FixtureWizardModal(BaseModal):
         self.mw_entry.insert(0, "3")
         self.mw_entry.pack(fill="x", pady=(2, 0))
 
-        # Ending Date (Auto-calculated)
+        # Ending Date (Auto-calculated from timeline days)
         c_end = ctk.CTkFrame(timeline_grid, fg_color="transparent")
         c_end.grid(row=0, column=2, sticky="ew", padx=(4, 0))
         ctk.CTkLabel(c_end, text="Ending Date (Auto-calc):", font=theme.get_font(11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
         self.end_date_entry = ctk.CTkEntry(c_end, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
-        self.end_date_entry.insert(0, (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d"))
         self.end_date_entry.pack(fill="x", pady=(2, 0))
 
         # Auto-update ending date when timeline inputs change
         self.date_entry.bind("<KeyRelease>", lambda e: self.auto_update_end_date())
         self.mw_entry.bind("<KeyRelease>", lambda e: self.auto_update_end_date())
+
+        # Live timeline breakdown label
+        self.timeline_breakdown_lbl = ctk.CTkLabel(
+            self.scroll_content,
+            text="",
+            font=theme.get_font(10, "bold"),
+            text_color=theme.ACCENT_GREEN_TEXT
+        )
+        self.timeline_breakdown_lbl.pack(anchor="w", pady=(2, 8))
 
         # 4. Match Duration & Daily Operating Hours
         ctk.CTkLabel(
@@ -292,7 +380,65 @@ class FixtureWizardModal(BaseModal):
             "Click '👁️ Preview Schedule' to calculate round pairings, simultaneous pitch allocations, and kickoff times..."
         )
 
+        self.update_prediction_display()
+
+    def update_prediction_display(self):
+        """Fetch predicted tournament metrics from database and refresh matchweek dropdown & timeline."""
+        fmt = self.format_menu.get()
+        double = ("Double" in fmt)
+        try:
+            pred = self.fixture_gen.predict_fixture_summary(fmt, double_round=double)
+            self.base_matchweeks = pred.get("base_matchweeks", 3)
+            tot_matches = pred.get("total_matches", 0)
+            tot_groups = pred.get("total_groups", 0)
+            tot_teams = pred.get("total_teams", 0)
+            per_mw = pred.get("matches_per_mw", 0)
+
+            if "Knockout" in fmt:
+                summary_txt = f"⚔️ Knockout: Top Qualifiers from {tot_groups} Groups • {self.base_matchweeks} Rounds ({tot_matches} matches)"
+            elif "League" in fmt:
+                summary_txt = f"🏆 League: {tot_teams} Teams • {tot_matches} Total Fixtures • {self.base_matchweeks} Base Matchweeks (~{per_mw}/MW)"
+            else:
+                summary_txt = f"📊 Predicted: {tot_groups} Groups • {tot_teams} Teams → {tot_matches} Total Fixtures ({self.base_matchweeks} Base MWs, ~{per_mw}/MW)"
+
+            self.pred_banner_lbl.configure(text=summary_txt)
+        except Exception:
+            self.base_matchweeks = self._get_real_total_matchweeks(fmt)
+
+        self.refresh_matchweek_options()
         self.auto_update_end_date()
+
+    def refresh_matchweek_options(self):
+        """Refresh the Matchweek options dropdown based on base + additional matchweeks."""
+        tot_mw = self.get_total_effective_matchweeks()
+        extra_note = f" (+{self.extra_matchweeks} Extra)" if self.extra_matchweeks > 0 else ""
+        first_opt = f"All Matchweeks (Full Schedule - {tot_mw} Rounds{extra_note})"
+
+        current_choice = self.matchweek_menu.get() if hasattr(self, "matchweek_menu") else ""
+        self.mw_options = [first_opt] + [f"Matchweek {i} (Round {i}) Only" for i in range(1, tot_mw + 1)]
+
+        self.matchweek_menu.configure(values=self.mw_options)
+
+        # Retain selection if valid, otherwise select All Matchweeks
+        if current_choice in self.mw_options:
+            self.matchweek_menu.set(current_choice)
+            self.on_matchweek_changed(current_choice)
+        else:
+            self.matchweek_menu.set(self.mw_options[0])
+            self.on_matchweek_changed(self.mw_options[0])
+
+    def add_matchweek(self):
+        """Increment additional matchweeks and auto-update ending date."""
+        self.extra_matchweeks += 1
+        self.refresh_matchweek_options()
+        self.auto_update_end_date()
+
+    def remove_matchweek(self):
+        """Decrement additional matchweeks down to 0."""
+        if self.extra_matchweeks > 0:
+            self.extra_matchweeks -= 1
+            self.refresh_matchweek_options()
+            self.auto_update_end_date()
 
     def get_target_matchweek_number(self) -> Optional[int]:
         choice = self.matchweek_menu.get().strip()
@@ -304,12 +450,8 @@ class FixtureWizardModal(BaseModal):
         return None
 
     def on_format_changed(self, choice: str):
-        t_mw = self.fixture_gen.get_total_matchweeks(choice, double_round=("Double" in choice)) or 3
-        self.mw_options = ["All Matchweeks (Full Schedule)"] + [f"Matchweek {i} (Round {i}) Only" for i in range(1, t_mw + 1)]
-        self.matchweek_menu.configure(values=self.mw_options)
-        self.matchweek_menu.set(self.mw_options[0])
-        self.on_matchweek_changed(self.mw_options[0])
-        self.auto_update_end_date()
+        self.extra_matchweeks = 0
+        self.update_prediction_display()
 
     def on_matchweek_changed(self, choice: str):
         try:
@@ -335,8 +477,9 @@ class FixtureWizardModal(BaseModal):
             except Exception:
                 pass
         else:
+            tot_mw = self.get_total_effective_matchweeks()
             self.mw_info_lbl.configure(
-                text="All matchweeks will be generated sequentially across the tournament timeline.",
+                text=f"All {tot_mw} matchweeks will be generated sequentially across the tournament timeline.",
                 text_color=theme.TEXT_MUTED
             )
             self.clear_check.configure(
@@ -344,16 +487,35 @@ class FixtureWizardModal(BaseModal):
             )
 
     def auto_update_end_date(self):
+        """
+        Automatically compute ending date from:
+        Start Date + (Total Matchweeks * Days/Matchweek - 1 days)
+        Example: Start Oct 13, 3 MWs of 3 days = 9 days total -> End Oct 21.
+        """
         try:
             s_d = datetime.strptime(self.date_entry.get().strip(), "%Y-%m-%d").date()
-            days_mw = int(self.mw_entry.get().strip() or "3")
-            fmt = self.format_menu.get()
-            t_mw = self.fixture_gen.get_total_matchweeks(fmt, double_round=("Double" in fmt)) or 3
-            e_d = s_d + timedelta(days=max(0, (t_mw - 1) * days_mw))
-            self.end_date_entry.delete(0, "end")
-            self.end_date_entry.insert(0, e_d.strftime("%Y-%m-%d"))
         except Exception:
-            pass
+            s_d = datetime.now().date() + timedelta(days=1)
+
+        try:
+            days_mw = int(self.mw_entry.get().strip() or "3")
+            if days_mw < 1:
+                days_mw = 1
+        except Exception:
+            days_mw = 3
+
+        tot_mw = self.get_total_effective_matchweeks()
+        # Total tournament duration in days = (tot_mw - 1) intervals of days_mw + days_mw = tot_mw * days_mw
+        total_days = tot_mw * days_mw
+        e_d = s_d + timedelta(days=max(0, total_days - 1))
+
+        self.end_date_entry.delete(0, "end")
+        self.end_date_entry.insert(0, e_d.strftime("%Y-%m-%d"))
+
+        extra_info = f" (+{self.extra_matchweeks} extra round{'s' if self.extra_matchweeks > 1 else ''})" if self.extra_matchweeks > 0 else ""
+        self.timeline_breakdown_lbl.configure(
+            text=f"🗓️ Schedule: {tot_mw} Matchweeks{extra_info} × {days_mw} Days/MW = {total_days} days total ({s_d.strftime('%Y-%m-%d')} to {e_d.strftime('%Y-%m-%d')})"
+        )
 
     def run_preview(self) -> bool:
         fmt = self.format_menu.get()
@@ -362,6 +524,7 @@ class FixtureWizardModal(BaseModal):
         s_t = self.time_entry.get().strip() or "16:00"
         end_t = self.end_entry.get().strip() or "20:00"
         target_mw = self.get_target_matchweek_number()
+        total_mw = self.get_total_effective_matchweeks()
 
         try:
             dur = int(self.dur_entry.get().strip() or "30")
@@ -387,13 +550,13 @@ class FixtureWizardModal(BaseModal):
                 self.generated_fixtures = self.fixture_gen.preview_league_fixtures(
                     start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues,
                     double_round=double, day_end_time=end_t, end_date=e_d, days_per_matchweek=days_mw,
-                    target_matchweek=target_mw
+                    target_matchweek=target_mw, total_matchweeks=total_mw
                 )
             else:
                 self.generated_fixtures = self.fixture_gen.preview_group_fixtures(
                     start_date=s_d, start_time=s_t, match_duration_mins=dur, venues=venues,
                     double_round=False, day_end_time=end_t, end_date=e_d, days_per_matchweek=days_mw,
-                    target_matchweek=target_mw
+                    target_matchweek=target_mw, total_matchweeks=total_mw
                 )
 
             if not self.generated_fixtures:
@@ -401,7 +564,7 @@ class FixtureWizardModal(BaseModal):
                 self.status_lbl.configure(text="0 fixtures generated", text_color=theme.COLOR_DANGER)
                 return False
 
-            # Group by Matchweek
+            # Group fixtures by Matchweek
             mw_groups: Dict[int, List[Dict[str, Any]]] = {}
             for f in self.generated_fixtures:
                 mw_groups.setdefault(f.get("round_number", 1), []).append(f)
@@ -418,11 +581,12 @@ class FixtureWizardModal(BaseModal):
                     txt += f"  • M#{f['match_number']} [{f.get('group_name', 'Group')}]: {f['home_team_name']} vs {f['away_team_name']} | {f['scheduled_time']} @ {f['venue']}\n"
             else:
                 txt = f"✓ FULL TOURNAMENT SCHEDULE READY: {len(self.generated_fixtures)} matches across {len(mw_groups)} Matchweeks\n"
-                txt += f"  Timeline interval: 1 match every {days_mw} days per squad\n"
+                txt += f"  Tournament Timeline: {s_d} to {e_d} (Interval: 1 match every {days_mw} days per squad)\n"
                 for r_num, m_list in sorted(mw_groups.items()):
                     d_str = m_list[0].get("scheduled_date", "") if m_list else ""
                     times = f"{m_list[0].get('scheduled_time', '')} to {m_list[-1].get('scheduled_time', '')}" if m_list else ""
-                    txt += f"  • Matchweek {r_num}: {d_str} ({len(m_list)} matches, {times})\n"
+                    extra_tag = " [Extra Round]" if r_num > self.base_matchweeks else ""
+                    txt += f"  • Matchweek {r_num}{extra_tag}: {d_str} ({len(m_list)} matches, {times})\n"
 
                 txt += "\nSample Matchups:\n"
                 for f in self.generated_fixtures[:8]:
