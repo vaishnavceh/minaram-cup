@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { PublicMatch } from '../types';
 import { MatchCard } from '../components/MatchCard';
-import { Calendar, Filter, Search } from 'lucide-react';
+import { Calendar, Filter, Search, Clock } from 'lucide-react';
+import { getMatchTimeline } from '../utils/fixtureDates';
 
 export const FixturesPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<PublicMatch[]>([]);
@@ -58,6 +59,25 @@ export const FixturesPage: React.FC = () => {
     });
     const sorted = Array.from(set).sort((a, b) => a - b);
     return ['ALL', ...sorted.map(String)];
+  }, [fixtures]);
+
+  const matchweekTimelineMap = React.useMemo(() => {
+    const map = new Map<string, { start: string; end: string }>();
+    fixtures.forEach((m) => {
+      if (m.round_number) {
+        const mwKey = String(m.round_number);
+        if (!map.has(mwKey)) {
+          const tl = getMatchTimeline(m);
+          if (tl.hasDates) {
+            map.set(mwKey, {
+              start: tl.startDateFormatted,
+              end: tl.endDateFormatted,
+            });
+          }
+        }
+      }
+    });
+    return map;
   }, [fixtures]);
 
   const stages = [
@@ -162,19 +182,27 @@ export const FixturesPage: React.FC = () => {
         {availableMatchweeks.length > 2 && (
           <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-neutral-800/60">
             <span className="text-xs font-mono text-neutral-400 mr-2">MATCHWEEK:</span>
-            {availableMatchweeks.map((mw) => (
-              <button
-                key={mw}
-                onClick={() => setSelectedMatchweek(mw)}
-                className={`px-2.5 py-0.5 rounded text-xs font-mono transition-colors ${
-                  selectedMatchweek === mw
-                    ? 'bg-brand-red text-white font-bold'
-                    : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-neutral-800'
-                }`}
-              >
-                {mw === 'ALL' ? 'ALL MATCHWEEKS' : `MW ${mw}`}
-              </button>
-            ))}
+            {availableMatchweeks.map((mw) => {
+              const tl = mw !== 'ALL' ? matchweekTimelineMap.get(mw) : null;
+              return (
+                <button
+                  key={mw}
+                  onClick={() => setSelectedMatchweek(mw)}
+                  className={`px-2.5 py-1 rounded text-xs font-mono transition-colors flex items-center space-x-1.5 ${
+                    selectedMatchweek === mw
+                      ? 'bg-brand-red text-white font-bold'
+                      : 'bg-black/40 text-neutral-400 hover:text-white hover:bg-neutral-800'
+                  }`}
+                >
+                  <span>{mw === 'ALL' ? 'ALL MATCHWEEKS' : `MW ${mw}`}</span>
+                  {tl && (
+                    <span className="text-[10px] opacity-80 hidden sm:inline">
+                      ({tl.start} – {tl.end})
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
 
@@ -197,6 +225,43 @@ export const FixturesPage: React.FC = () => {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Active Timeline & Rules Info Banner */}
+      <div className="bg-[#121212] border border-[#222222] rounded-lg p-4 sm:p-5 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2 text-[11px] font-mono uppercase tracking-wider text-neutral-400">
+              <Clock className="w-3.5 h-3.5 text-brand-red" />
+              <span>
+                {selectedMatchweek === 'ALL'
+                  ? 'FLEXIBLE MATCHWEEK PLAYING WINDOWS'
+                  : `MATCHWEEK ${selectedMatchweek} PLAYING TIMELINE`}
+              </span>
+            </div>
+            <div className="text-sm sm:text-base text-neutral-200">
+              {selectedMatchweek !== 'ALL' && matchweekTimelineMap.has(selectedMatchweek) ? (
+                <span>
+                  Playing Window: <strong className="text-white">{matchweekTimelineMap.get(selectedMatchweek)?.start}</strong> to{' '}
+                  <strong className="text-white">{matchweekTimelineMap.get(selectedMatchweek)?.end}</strong> ·{' '}
+                  <span className="text-brand-red font-bold">
+                    Last Day of Playing: {matchweekTimelineMap.get(selectedMatchweek)?.end}
+                  </span>
+                </span>
+              ) : (
+                <span>
+                  Each fixture features a 3-day flexible window. All 10-minute mobile matches must be completed by the{' '}
+                  <span className="text-brand-red font-bold">Last Day of Playing</span> listed on each match card.
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 text-xs font-mono text-neutral-400 shrink-0 bg-black/60 border border-neutral-800 rounded px-3 py-1.5 self-start md:self-auto">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>10-Min Mobile Match · Flexible Play</span>
+          </div>
+        </div>
       </div>
 
       {/* Fixtures Grid */}

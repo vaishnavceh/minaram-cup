@@ -98,6 +98,7 @@ class Match:
     away_captain: str = ""
     away_phone: str = ""
     scheduled_date: str = ""
+    scheduled_end_date: str = ""
     scheduled_time: str = ""
     venue: str = "Main Pitch"
     home_score: Optional[int] = None
@@ -109,6 +110,19 @@ class Match:
     winner_team_name: Optional[str] = None
     notes: str = ""
     completed_at: str = ""
+
+    @property
+    def end_date(self) -> str:
+        if self.scheduled_end_date:
+            return self.scheduled_end_date
+        if self.scheduled_date:
+            try:
+                from datetime import datetime, timedelta
+                s_d = datetime.strptime(self.scheduled_date[:10], "%Y-%m-%d").date()
+                return (s_d + timedelta(days=3)).strftime("%Y-%m-%d")
+            except Exception:
+                pass
+        return ""
 
     @property
     def is_completed(self) -> bool:

@@ -1,6 +1,7 @@
 import React from 'react';
 import { PublicMatch } from '../types';
-import { Calendar, MapPin, Trophy, Swords, Phone, User } from 'lucide-react';
+import { Calendar, MapPin, Phone, User, Clock } from 'lucide-react';
+import { getMatchTimeline } from '../utils/fixtureDates';
 
 interface MatchCardProps {
   match: PublicMatch;
@@ -8,6 +9,7 @@ interface MatchCardProps {
 }
 
 export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) => {
+  const timeline = getMatchTimeline(match);
   const isCompleted = match.status === 'COMPLETED';
   const isLive = match.status === 'IN_PROGRESS';
 
@@ -182,17 +184,42 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
         </div>
       )}
 
-      {/* Footer Info: Pitch & Time */}
-      {!compact && (
-        <div className="px-4 py-2 bg-black/60 border-t border-[#1a1a1a] flex items-center justify-between text-[11px] font-mono text-neutral-400">
-          <div className="flex items-center space-x-1.5">
-            <MapPin className="w-3 h-3 text-neutral-400" />
-            <span>{match.pitch || 'Pitch 1 (eFootball Station)'}</span>
+      {/* Match Playing Window: Start Date & Last Day to Play */}
+      <div className="px-4 py-2.5 bg-[#0b0b0b] border-t border-[#1a1a1a] flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+        <div className="flex items-center space-x-1.5 text-neutral-300">
+          <Calendar className="w-3.5 h-3.5 text-brand-red shrink-0" />
+          <span className="text-neutral-500 font-bold uppercase text-[10px] tracking-wider shrink-0">WINDOW:</span>
+          <span className="text-white font-semibold whitespace-nowrap">{timeline.startDateFormatted}</span>
+          <span className="text-neutral-600 font-bold">➔</span>
+          <span className="text-white font-semibold whitespace-nowrap">{timeline.endDateFormatted}</span>
+        </div>
+
+        {/* Highlighted Last Day to Play Badge */}
+        <div className="flex items-center shrink-0">
+          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold bg-neutral-900 border border-brand-red/60 text-brand-red uppercase tracking-wider shadow-sm">
+            <Clock className="w-2.5 h-2.5 mr-0.5 shrink-0" />
+            <span>LAST DAY: {timeline.endDateFormatted}</span>
+          </span>
+        </div>
+      </div>
+
+      {/* Footer Info: Pitch & Mobile Match Notice */}
+      {!compact ? (
+        <div className="px-4 py-2 bg-black/60 border-t border-[#181818] flex flex-wrap items-center justify-between gap-1.5 text-[11px] font-mono text-neutral-400">
+          <div className="flex items-center space-x-1.5 min-w-0">
+            <MapPin className="w-3 h-3 text-neutral-500 shrink-0" />
+            <span className="truncate">{match.pitch || 'Online / Mobile Lobby'}</span>
           </div>
-          <div className="flex items-center space-x-1.5">
-            <Calendar className="w-3 h-3 text-neutral-400" />
-            <span>{match.scheduled_time || 'Scheduled'}</span>
+          <div className="flex items-center space-x-1.5 text-neutral-400 shrink-0">
+            <span className="text-[10px] uppercase tracking-wider text-neutral-400">
+              10-MIN MATCH · FLEXIBLE WINDOW
+            </span>
           </div>
+        </div>
+      ) : (
+        <div className="px-3 py-1.5 bg-black/60 border-t border-[#181818] flex items-center justify-between text-[10px] font-mono text-neutral-400">
+          <span className="truncate">{timeline.startDateFormatted} ➔ {timeline.endDateFormatted}</span>
+          <span className="text-brand-red font-bold shrink-0">LAST DAY: {timeline.endDateFormatted}</span>
         </div>
       )}
     </div>

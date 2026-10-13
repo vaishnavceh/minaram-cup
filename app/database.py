@@ -217,6 +217,7 @@ class Database:
                 home_team_id INTEGER REFERENCES teams(id) ON DELETE RESTRICT,
                 away_team_id INTEGER REFERENCES teams(id) ON DELETE RESTRICT,
                 scheduled_date TEXT DEFAULT '',
+                scheduled_end_date TEXT DEFAULT '',
                 scheduled_time TEXT DEFAULT '',
                 venue TEXT DEFAULT 'Minaram Stadium',
                 home_score INTEGER DEFAULT NULL,
@@ -233,6 +234,11 @@ class Database:
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_matches_group ON matches(group_id);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_matches_teams ON matches(home_team_id, away_team_id);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_matches_status ON matches(status);")
+
+            # Migration: Ensure scheduled_end_date exists in matches
+            match_cols = [r[1] for r in cursor.execute("PRAGMA table_info(matches);").fetchall()]
+            if "scheduled_end_date" not in match_cols:
+                cursor.execute("ALTER TABLE matches ADD COLUMN scheduled_end_date TEXT DEFAULT '';")
 
             # 7. Match Audit Log Table
             cursor.execute("""

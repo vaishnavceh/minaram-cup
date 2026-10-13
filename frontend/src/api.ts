@@ -38,7 +38,8 @@ export function normalizeMatch(m: any): PublicMatch {
       ? 'IN_PROGRESS'
       : 'SCHEDULED';
 
-  const date = m.scheduled_date || m.date || '';
+  const date = m.scheduled_date || m.date || m.start_date || '';
+  const endDate = m.scheduled_end_date || m.end_date || '';
   const time = m.scheduled_time || m.time || '';
   const sched = date && time ? `${date} · ${time}` : date || time || 'Scheduled';
 
@@ -64,7 +65,10 @@ export function normalizeMatch(m: any): PublicMatch {
     status: status,
     scheduled_time: sched,
     scheduled_date: date || null,
-    pitch: m.venue || m.pitch || 'Minaram Pitch 1',
+    start_date: date || null,
+    end_date: endDate || null,
+    scheduled_end_date: endDate || null,
+    pitch: m.venue || m.pitch || 'Online / Mobile Lobby',
     winner_id: m.winner_team_id ?? m.winner_id ?? null,
     winner_name: m.winner_team_name ?? m.winner_name ?? null,
     notes: m.notes || null,

@@ -50,6 +50,9 @@ export interface PublicMatch {
   status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
   scheduled_time?: string | null;
   scheduled_date?: string | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  scheduled_end_date?: string | null;
   pitch?: string | null;
   winner_id?: number | null;
   winner_name?: string | null;

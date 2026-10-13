@@ -218,6 +218,7 @@ class FixtureGenerator:
             if is_mobile_flexible:
                 v_name = venues[0] if venues else "Online / Mobile Lobby"
                 for match_to_assign in round_matches:
+                    mw_end_date = mw_date + timedelta(days=days_per_matchweek)
                     fixtures.append({
                         "match_number": match_num,
                         "stage": "Group Stage",
@@ -230,6 +231,8 @@ class FixtureGenerator:
                         "home_team_name": match_to_assign["home"]["name"],
                         "away_team_name": match_to_assign["away"]["name"],
                         "scheduled_date": mw_date.strftime("%Y-%m-%d"),
+                        "scheduled_end_date": mw_end_date.strftime("%Y-%m-%d"),
+                        "end_date": mw_end_date.strftime("%Y-%m-%d"),
                         "scheduled_time": "Flexible (MW Window)",
                         "venue": v_name,
                         "status": "Scheduled",
@@ -268,6 +271,7 @@ class FixtureGenerator:
                         teams_playing_in_slot.add(match_to_assign["home"]["id"])
                         teams_playing_in_slot.add(match_to_assign["away"]["id"])
 
+                        mw_end_date = mw_date + timedelta(days=days_per_matchweek)
                         fixtures.append({
                             "match_number": match_num,
                             "stage": "Group Stage",
@@ -280,6 +284,8 @@ class FixtureGenerator:
                             "home_team_name": match_to_assign["home"]["name"],
                             "away_team_name": match_to_assign["away"]["name"],
                             "scheduled_date": slot_dt.strftime("%Y-%m-%d"),
+                            "scheduled_end_date": mw_end_date.strftime("%Y-%m-%d"),
+                            "end_date": mw_end_date.strftime("%Y-%m-%d"),
                             "scheduled_time": slot_dt.strftime("%H:%M"),
                             "venue": venue,
                             "status": "Scheduled",
@@ -397,6 +403,7 @@ class FixtureGenerator:
             if is_mobile_flexible:
                 v_name = venues[0] if venues else "Online / Mobile Lobby"
                 for match_to_assign in round_matches:
+                    mw_end_date = mw_date + timedelta(days=days_per_matchweek)
                     fixtures.append({
                         "match_number": match_num,
                         "stage": "League",
@@ -409,6 +416,8 @@ class FixtureGenerator:
                         "home_team_name": match_to_assign["home"]["name"],
                         "away_team_name": match_to_assign["away"]["name"],
                         "scheduled_date": mw_date.strftime("%Y-%m-%d"),
+                        "scheduled_end_date": mw_end_date.strftime("%Y-%m-%d"),
+                        "end_date": mw_end_date.strftime("%Y-%m-%d"),
                         "scheduled_time": "Flexible (MW Window)",
                         "venue": v_name,
                         "status": "Scheduled",
@@ -445,6 +454,7 @@ class FixtureGenerator:
                         teams_playing_in_slot.add(match_to_assign["home"]["id"])
                         teams_playing_in_slot.add(match_to_assign["away"]["id"])
 
+                        mw_end_date = mw_date + timedelta(days=days_per_matchweek)
                         fixtures.append({
                             "match_number": match_num,
                             "stage": "League",
@@ -457,6 +467,8 @@ class FixtureGenerator:
                             "home_team_name": match_to_assign["home"]["name"],
                             "away_team_name": match_to_assign["away"]["name"],
                             "scheduled_date": slot_dt.strftime("%Y-%m-%d"),
+                            "scheduled_end_date": mw_end_date.strftime("%Y-%m-%d"),
+                            "end_date": mw_end_date.strftime("%Y-%m-%d"),
                             "scheduled_time": slot_dt.strftime("%H:%M"),
                             "venue": venue,
                             "status": "Scheduled",
@@ -592,12 +604,19 @@ class FixtureGenerator:
 
             count = 0
             for f in fixtures:
+                s_d = f.get("scheduled_date", "")
+                s_e = f.get("scheduled_end_date", "") or f.get("end_date", "")
+                if not s_e and s_d:
+                    try:
+                        s_e = (datetime.strptime(s_d[:10], "%Y-%m-%d").date() + timedelta(days=3)).strftime("%Y-%m-%d")
+                    except Exception:
+                        s_e = ""
                 cursor.execute("""
                     INSERT INTO matches (
                         match_number, stage, group_id, round_number, bracket_slot,
-                        home_team_id, away_team_id, scheduled_date, scheduled_time,
+                        home_team_id, away_team_id, scheduled_date, scheduled_end_date, scheduled_time,
                         venue, status, notes
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Scheduled', ?);
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Scheduled', ?);
                 """, (
                     f["match_number"],
                     f["stage"],
@@ -606,7 +625,8 @@ class FixtureGenerator:
                     f.get("bracket_slot", ""),
                     f.get("home_team_id"),
                     f.get("away_team_id"),
-                    f.get("scheduled_date", ""),
+                    s_d,
+                    s_e,
                     f.get("scheduled_time", ""),
                     f.get("venue", "Minaram Stadium"),
                     f.get("notes", "")
@@ -700,7 +720,7 @@ class FixtureGenerator:
                    m.round_number, m.bracket_slot,
                    m.home_team_id, ht.name AS home_name, ht.captain_name AS home_captain, ht.phone_number AS home_phone,
                    m.away_team_id, at.name AS away_name, at.captain_name AS away_captain, at.phone_number AS away_phone,
-                   m.scheduled_date, m.scheduled_time, m.venue,
+                   m.scheduled_date, m.scheduled_end_date, m.scheduled_time, m.venue,
                    m.home_score, m.away_score, m.home_penalty, m.away_penalty,
                    m.status, m.winner_team_id, wt.name AS winner_name,
                    m.notes, m.completed_at
@@ -746,6 +766,7 @@ class FixtureGenerator:
                 away_captain=r["away_captain"] or "",
                 away_phone=r["away_phone"] or "",
                 scheduled_date=r["scheduled_date"] or "",
+                scheduled_end_date=r["scheduled_end_date"] if "scheduled_end_date" in r.keys() and r["scheduled_end_date"] else "",
                 scheduled_time=r["scheduled_time"] or "",
                 venue=r["venue"] or "",
                 home_score=r["home_score"],
