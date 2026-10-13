@@ -6,32 +6,7 @@ import { MatchCard } from '../components/MatchCard';
 import { StandingsTable } from '../components/StandingsTable';
 import { Ticker } from '../components/Ticker';
 import { Trophy, Swords, Calendar, BarChart3, ArrowRight, ShieldAlert, Sparkles } from 'lucide-react';
-import { REGISTRATION_DEADLINE, PRIZE_POOL, TOTAL_PRIZE_POOL } from '../constants';
-
-interface CountdownTime {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-  isClosed: boolean;
-}
-
-const getCountdownTime = (targetIso: string): CountdownTime => {
-  const targetMs = new Date(targetIso).getTime();
-  const diff = targetMs - Date.now();
-
-  if (diff <= 0 || isNaN(targetMs)) {
-    return { days: 0, hours: 0, minutes: 0, seconds: 0, isClosed: true };
-  }
-
-  return {
-    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-    minutes: Math.floor((diff / (1000 * 60)) % 60),
-    seconds: Math.floor((diff / 1000) % 60),
-    isClosed: false,
-  };
-};
+import { PRIZE_POOL, TOTAL_PRIZE_POOL } from '../constants';
 
 export const HomePage: React.FC = () => {
   const [tournament, setTournament] = useState<PublicTournament | null>(null);
@@ -39,17 +14,6 @@ export const HomePage: React.FC = () => {
   const [upcomingMatches, setUpcomingMatches] = useState<PublicMatch[]>([]);
   const [standings, setStandings] = useState<PublicGroupStandings[]>([]);
   const [loading, setLoading] = useState(true);
-  const [countdown, setCountdown] = useState<CountdownTime>(() => getCountdownTime(REGISTRATION_DEADLINE));
-
-  useEffect(() => {
-    const tick = () => {
-      setCountdown(getCountdownTime(REGISTRATION_DEADLINE));
-    };
-
-    tick();
-    const timer = setInterval(tick, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   const loadData = async () => {
     try {
@@ -171,84 +135,29 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Registration Deadline & Countdown Banner */}
-          <div
-            className={`w-full max-w-3xl mt-5 p-3.5 sm:px-6 sm:py-3.5 rounded-lg border backdrop-blur-md transition-all duration-300 shadow-lg ${
-              countdown.isClosed
-                ? 'bg-black/60 border-neutral-800/80 text-neutral-400'
-                : 'bg-black/70 border-neutral-800 hover:border-brand-red/50'
-            }`}
-          >
+          {/* Group Stage Active Banner */}
+          <div className="w-full max-w-3xl mt-5 p-3.5 sm:px-6 sm:py-3.5 rounded-lg border border-neutral-800 bg-black/70 backdrop-blur-md transition-all duration-300 shadow-lg hover:border-brand-red/50">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6 text-center sm:text-left">
-              {/* Left Column: Monospace Label & Large Condensed Date */}
+              {/* Left Column: Monospace Status & Large Condensed Announcement */}
               <div className="flex flex-col items-center sm:items-start">
-                <div className="flex items-center space-x-1.5 text-[11px] font-mono uppercase tracking-widest">
-                  {countdown.isClosed ? (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-brand-red" />
-                      <span className="text-neutral-400 font-semibold">REGISTRATION CLOSED</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-neutral-300 font-semibold">REGISTRATION CLOSES</span>
-                    </>
-                  )}
+                <div className="flex items-center space-x-2 text-[11px] font-mono uppercase tracking-widest text-emerald-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="font-bold">COMPETITION ACTIVE</span>
+                  <span className="text-neutral-600">·</span>
+                  <span className="text-neutral-400 font-normal">MATCHWEEK 1 IN PROGRESS</span>
                 </div>
                 <div className="font-display text-2xl sm:text-3xl text-white tracking-wide leading-none mt-1">
-                  TUE, 13 OCT · 6:00 PM
+                  GROUP STAGE IS LIVE
                 </div>
               </div>
 
-              {/* Right Column: Live Countdown or Closed State */}
-              {countdown.isClosed ? (
-                <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded bg-neutral-900/80 border border-neutral-800 text-neutral-400 text-xs font-mono tracking-wider uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-red" />
-                  <span>REGISTRATION CLOSED</span>
+              {/* Right Column: Live Status Badge */}
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded bg-neutral-900/90 border border-brand-red/50 text-brand-red text-xs font-mono tracking-wider uppercase shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-ping" />
+                  <span className="font-bold">MATCHES IN PROGRESS</span>
                 </div>
-              ) : (
-                <div
-                  className="flex items-center space-x-1 sm:space-x-1.5"
-                  aria-live="off"
-                  aria-label="Registration countdown"
-                >
-                  <div className="flex flex-col items-center min-w-[44px] sm:min-w-[50px] bg-neutral-950/80 border border-neutral-800 rounded px-1.5 py-1">
-                    <span className="font-display text-xl sm:text-2xl text-white tabular-nums leading-none">
-                      {String(countdown.days).padStart(2, '0')}
-                    </span>
-                    <span className="text-[9px] font-mono tracking-wider text-neutral-400 uppercase mt-0.5">
-                      DAYS
-                    </span>
-                  </div>
-                  <span className="font-display text-lg text-neutral-600 pb-2.5">:</span>
-                  <div className="flex flex-col items-center min-w-[44px] sm:min-w-[50px] bg-neutral-950/80 border border-neutral-800 rounded px-1.5 py-1">
-                    <span className="font-display text-xl sm:text-2xl text-white tabular-nums leading-none">
-                      {String(countdown.hours).padStart(2, '0')}
-                    </span>
-                    <span className="text-[9px] font-mono tracking-wider text-neutral-400 uppercase mt-0.5">
-                      HRS
-                    </span>
-                  </div>
-                  <span className="font-display text-lg text-neutral-600 pb-2.5">:</span>
-                  <div className="flex flex-col items-center min-w-[44px] sm:min-w-[50px] bg-neutral-950/80 border border-neutral-800 rounded px-1.5 py-1">
-                    <span className="font-display text-xl sm:text-2xl text-white tabular-nums leading-none">
-                      {String(countdown.minutes).padStart(2, '0')}
-                    </span>
-                    <span className="text-[9px] font-mono tracking-wider text-neutral-400 uppercase mt-0.5">
-                      MIN
-                    </span>
-                  </div>
-                  <span className="font-display text-lg text-neutral-600 pb-2.5">:</span>
-                  <div className="flex flex-col items-center min-w-[44px] sm:min-w-[50px] bg-neutral-950/80 border border-neutral-800 rounded px-1.5 py-1">
-                    <span className="font-display text-xl sm:text-2xl text-brand-red tabular-nums leading-none">
-                      {String(countdown.seconds).padStart(2, '0')}
-                    </span>
-                    <span className="text-[9px] font-mono tracking-wider text-neutral-400 uppercase mt-0.5">
-                      SEC
-                    </span>
-                  </div>
-                </div>
-              )}
+              </div>
             </div>
           </div>
 
