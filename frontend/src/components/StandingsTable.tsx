@@ -1,11 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PublicGroupStandings } from '../types';
+import { Download, Check } from 'lucide-react';
 
 interface StandingsTableProps {
   groupData: PublicGroupStandings;
 }
 
 export const StandingsTable: React.FC<StandingsTableProps> = ({ groupData }) => {
+  const [pdfSaved, setPdfSaved] = useState(false);
+
+  const handleExportGroupPdf = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const { exportSingleGroupPdf } = await import('../utils/standingsPdf');
+      exportSingleGroupPdf(groupData);
+      setPdfSaved(true);
+      setTimeout(() => setPdfSaved(false), 2000);
+    } catch (err) {
+      console.error('Failed to export single group PDF', err);
+    }
+  };
+
   return (
     <div className="bg-[#121212] border border-[#222222] rounded-lg overflow-hidden">
       {/* Header */}
@@ -16,9 +31,24 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({ groupData }) => 
             GROUP {groupData.group_name}
           </h3>
         </div>
-        <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-widest">
-          TOP 2 ADVANCE TO PLAYOFFS
-        </span>
+        <div className="flex items-center space-x-3">
+          <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-widest hidden sm:inline">
+            TOP 2 ADVANCE TO PLAYOFFS
+          </span>
+          <button
+            type="button"
+            onClick={handleExportGroupPdf}
+            title={`Export Group ${groupData.group_name} Standings as PDF`}
+            className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-mono transition-all border cursor-pointer select-none ${
+              pdfSaved
+                ? 'bg-emerald-950/80 text-emerald-400 border-emerald-700/60'
+                : 'bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white border-neutral-800 hover:border-neutral-600'
+            }`}
+          >
+            {pdfSaved ? <Check className="w-2.5 h-2.5 text-emerald-400" /> : <Download className="w-2.5 h-2.5" />}
+            <span className="text-[9px] uppercase font-bold">{pdfSaved ? 'SAVED' : 'PDF'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Table */}

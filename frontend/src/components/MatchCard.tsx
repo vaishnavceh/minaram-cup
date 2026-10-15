@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { PublicMatch } from '../types';
-import { Calendar, MapPin, Phone, User, Clock } from 'lucide-react';
+import { Calendar, MapPin, Phone, User, Clock, Download, Check, Loader2 } from 'lucide-react';
 import { getMatchTimeline } from '../utils/fixtureDates';
 
 interface MatchCardProps {
@@ -9,6 +9,10 @@ interface MatchCardProps {
 }
 
 export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
+
   const timeline = getMatchTimeline(match);
   const isCompleted = match.status === 'COMPLETED';
   const isLive = match.status === 'IN_PROGRESS';
@@ -25,8 +29,27 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
 
   const isDraw = isCompleted && (match.team_a_score ?? 0) === (match.team_b_score ?? 0) && match.penalty_a === null;
 
+  const handleDownloadPng = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!cardRef.current || isExporting) return;
+    try {
+      setIsExporting(true);
+      const { downloadMatchCardAsPng } = await import('../utils/exportMatchCard');
+      await downloadMatchCardAsPng(cardRef.current, match);
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to download match card as PNG', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
-    <div className="bg-[#121212] border border-[#222222] rounded-lg overflow-hidden hover:border-[#383838] transition-all duration-200 group relative">
+    <div
+      ref={cardRef}
+      className="bg-[#121212] border border-[#222222] rounded-lg overflow-hidden hover:border-[#383838] transition-all duration-200 group relative"
+    >
       {/* Accent top border when live or completed */}
       {isLive && <div className="absolute top-0 left-0 right-0 h-1 bg-brand-red animate-pulse" />}
       {isCompleted && <div className="absolute top-0 left-0 right-0 h-0.5 bg-neutral-700" />}
@@ -54,8 +77,8 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
           )}
         </div>
 
-        {/* Status Badge */}
-        <div>
+        {/* Status Badge & Download Action */}
+        <div className="flex items-center space-x-1.5 shrink-0">
           {isLive ? (
             <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-brand-red text-white uppercase tracking-wider animate-pulse">
               LIVE
@@ -69,6 +92,32 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
               UPCOMING
             </span>
           )}
+
+          {/* Download Card as PNG */}
+          <button
+            type="button"
+            onClick={handleDownloadPng}
+            disabled={isExporting}
+            data-export-hide="true"
+            aria-label="Download match card as PNG"
+            title="Download match card as PNG"
+            className={`inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-[10px] font-mono tracking-wider transition-all duration-150 border cursor-pointer select-none ${
+              downloadSuccess
+                ? 'bg-emerald-950/80 text-emerald-400 border-emerald-700/60'
+                : 'bg-neutral-900/90 hover:bg-neutral-800 text-neutral-400 hover:text-white border-neutral-800 hover:border-neutral-600'
+            }`}
+          >
+            {isExporting ? (
+              <Loader2 className="w-2.5 h-2.5 animate-spin text-brand-red" />
+            ) : downloadSuccess ? (
+              <Check className="w-2.5 h-2.5 text-emerald-400" />
+            ) : (
+              <Download className="w-2.5 h-2.5" />
+            )}
+            <span className="text-[9px] uppercase font-bold">
+              {downloadSuccess ? 'SAVED' : 'PNG'}
+            </span>
+          </button>
         </div>
       </div>
 
