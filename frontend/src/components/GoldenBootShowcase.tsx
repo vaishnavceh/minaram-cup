@@ -1,17 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../api';
 import { TopScorer } from '../types';
 import { INITIAL_GOLDEN_BOOT_PODIUM, GoldenBootEntry } from '../constants';
-import { Trophy, Flame, ChevronDown, ChevronUp, Award, Zap, Shield, Sparkles } from 'lucide-react';
+import {
+  Trophy,
+  Flame,
+  ChevronDown,
+  ChevronUp,
+  Award,
+  Zap,
+  Shield,
+  Sparkles,
+  Download,
+  Check,
+  Loader2,
+} from 'lucide-react';
 
 interface GoldenBootShowcaseProps {
   compact?: boolean;
 }
 
 export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact = false }) => {
+  const exportRef = useRef<HTMLDivElement>(null);
   const [topScorers, setTopScorers] = useState<TopScorer[]>([]);
   const [showFullTable, setShowFullTable] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -32,6 +47,21 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
       isMounted = false;
     };
   }, []);
+
+  const handleDownloadPng = async () => {
+    if (!exportRef.current || isExporting) return;
+    try {
+      setIsExporting(true);
+      const { downloadGoldenBootAsPng } = await import('../utils/exportGoldenBoot');
+      await downloadGoldenBootAsPng(exportRef.current);
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 2500);
+    } catch (err) {
+      console.error('Failed to download Golden Boot standings as PNG', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // Compute podium: either from live API or fallback constants
   const podiumEntries: GoldenBootEntry[] = React.useMemo(() => {
@@ -83,21 +113,50 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
 
   return (
     <section id="golden-boot" className="relative">
-      {/* Section Header */}
-      <div className="flex flex-col items-center text-center mb-8">
-        <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-amber-400 mb-1">
-          <Flame className="w-4 h-4 text-amber-500 animate-pulse" />
-          <span>INDIVIDUAL ACCOLADES</span>
-        </div>
-        <h2 className="font-display text-4xl sm:text-5xl text-white tracking-wider flex items-center justify-center space-x-2">
-          <span>GOLDEN BOOT</span>
-        </h2>
-        <p className="text-xs sm:text-sm font-mono text-neutral-400 mt-2 max-w-xl">
-          Tournament top goal scorers in the Minaram Cup eFootball Championship.
-        </p>
-      </div>
+      <div
+        ref={exportRef}
+        className="p-4 sm:p-7 rounded-2xl bg-[#0c0c0c] border border-neutral-800/80 shadow-2xl relative"
+      >
+        {/* Section Header */}
+        <div className="flex flex-col items-center text-center mb-8 relative">
+          <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-amber-400 mb-1">
+            <Flame className="w-4 h-4 text-amber-500 animate-pulse" />
+            <span>INDIVIDUAL ACCOLADES</span>
+          </div>
+          <h2 className="font-display text-4xl sm:text-5xl text-white tracking-wider text-center whitespace-nowrap mb-2">
+            GOLDEN BOOT
+          </h2>
+          <p className="text-xs sm:text-sm font-mono text-neutral-400 max-w-xl">
+            Tournament top goal scorers in the Minaram Cup eFootball Championship.
+          </p>
 
-      {/* Podium Cards Grid (1st Winner, 2nd Runner Up, 3rd Place) */}
+          {/* Download Standings PNG Button */}
+          <div className="mt-4 flex items-center space-x-3" data-export-hide="true">
+            <button
+              type="button"
+              onClick={handleDownloadPng}
+              disabled={isExporting}
+              className={`inline-flex items-center space-x-2 px-3.5 py-1.5 rounded text-xs font-mono font-bold tracking-wider uppercase transition-all duration-200 border cursor-pointer select-none shadow-sm ${
+                downloadSuccess
+                  ? 'bg-emerald-950/90 text-emerald-300 border-emerald-600/80 shadow-emerald-900/30'
+                  : 'bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border-neutral-700 hover:border-amber-500/60'
+              } disabled:opacity-50`}
+              title="Download tournament golden boot standings as a PNG image"
+              aria-label="Download Golden Boot standings as PNG"
+            >
+              {isExporting ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
+              ) : downloadSuccess ? (
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+              ) : (
+                <Download className="w-3.5 h-3.5 text-amber-400" />
+              )}
+              <span>{downloadSuccess ? 'STANDINGS PNG SAVED' : 'DOWNLOAD STANDINGS (PNG)'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Podium Cards Grid (1st Winner, 2nd Runner Up, 3rd Place) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 items-stretch max-w-5xl mx-auto">
         {podiumEntries.map((scorer) => {
           const isWinner = scorer.rank === 1;
@@ -236,9 +295,10 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
       {/* Expandable Full Top Scorers Leaderboard Toggle */}
       {!compact && (
         <div className="max-w-5xl mx-auto mt-8">
-          <div className="flex justify-center">
+          <div className="flex justify-center" data-export-hide="true">
             <button
               type="button"
+              data-export-hide="true"
               onClick={() => setShowFullTable((prev) => !prev)}
               className="inline-flex items-center space-x-2 px-4 py-2 rounded-lg bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white text-xs font-mono tracking-wider transition-all cursor-pointer shadow-sm"
             >
@@ -375,6 +435,17 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
           )}
         </div>
       )}
+
+        {/* Tournament Watermark Signature for UI & Export Graphic */}
+        <div className="mt-8 pt-4 border-t border-neutral-900 flex flex-wrap items-center justify-between text-[11px] font-mono text-neutral-500 gap-2">
+          <div className="flex items-center space-x-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            <span className="text-neutral-300 font-bold">MINARAM CUP 2026</span>
+            <span className="text-neutral-500">· OFFICIAL EFOOTBALL CHAMPIONSHIP</span>
+          </div>
+          <span className="text-neutral-400 font-medium">TKM COLLEGE OF ENGINEERING · GOLDEN BOOT RACE</span>
+        </div>
+      </div>
     </section>
   );
 };
