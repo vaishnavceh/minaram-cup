@@ -70,8 +70,8 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
         {
           rank: 1,
           placeLabel: '1ST',
-          awardTitle: 'GOLDEN BOOT WINNER',
-          awardSub: 'TOURNAMENT TOP SCORER',
+          awardTitle: 'FIRST PLACE',
+          awardSub: 'CURRENT RACE LEADER',
           playerName: topScorers[0].player_name,
           teamName: topScorers[0].team_name,
           groupName: topScorers[0].group_name,
@@ -84,7 +84,7 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
           rank: 2,
           placeLabel: '2ND',
           awardTitle: 'SECOND PLACE',
-          awardSub: 'SILVER BOOT',
+          awardSub: 'SILVER BOOT CONTENDER',
           playerName: topScorers[1].player_name,
           teamName: topScorers[1].team_name,
           groupName: topScorers[1].group_name,
@@ -97,7 +97,7 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
           rank: 3,
           placeLabel: '3RD',
           awardTitle: 'THIRD PLACE',
-          awardSub: 'BRONZE BOOT',
+          awardSub: 'BRONZE BOOT CONTENDER',
           playerName: topScorers[2].player_name,
           teamName: topScorers[2].team_name,
           groupName: topScorers[2].group_name,
@@ -124,10 +124,10 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
             <span>INDIVIDUAL ACCOLADES</span>
           </div>
           <h2 className="font-display text-4xl sm:text-5xl text-white tracking-wider text-center whitespace-nowrap mb-2">
-            GOLDEN BOOT
+            GOLDEN BOOT RACE
           </h2>
           <p className="text-xs sm:text-sm font-mono text-neutral-400 max-w-xl">
-            Tournament top goal scorers in the Minaram Cup eFootball Championship.
+            Live tournament top goal scorers & Golden Boot race standings.
           </p>
 
           {/* Download Standings PNG Button */}
@@ -141,8 +141,8 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
                   ? 'bg-emerald-950/90 text-emerald-300 border-emerald-600/80 shadow-emerald-900/30'
                   : 'bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border-neutral-700 hover:border-amber-500/60'
               } disabled:opacity-50`}
-              title="Download tournament golden boot standings as a PNG image"
-              aria-label="Download Golden Boot standings as PNG"
+              title="Download tournament golden boot race standings as a PNG image"
+              aria-label="Download Golden Boot race standings as PNG"
             >
               {isExporting ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
@@ -151,7 +151,7 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
               ) : (
                 <Download className="w-3.5 h-3.5 text-amber-400" />
               )}
-              <span>{downloadSuccess ? 'STANDINGS PNG SAVED' : 'DOWNLOAD STANDINGS (PNG)'}</span>
+              <span>{downloadSuccess ? 'RACE STANDINGS PNG SAVED' : 'DOWNLOAD RACE STANDINGS (PNG)'}</span>
             </button>
           </div>
         </div>

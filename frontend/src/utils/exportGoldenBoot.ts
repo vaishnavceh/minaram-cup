@@ -18,7 +18,7 @@ export async function downloadGoldenBootAsPng(element: HTMLElement): Promise<voi
     }
   }
 
-  const filename = `MinaramCup_Golden_Boot_Standings_${new Date().toISOString().slice(0, 10)}.png`;
+  const filename = `MinaramCup_Golden_Boot_Race_${new Date().toISOString().slice(0, 10)}.png`;
 
   const captureOptions = {
     cacheBust: true,
