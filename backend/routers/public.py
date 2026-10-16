@@ -324,3 +324,42 @@ def get_asset_manifest() -> Dict[str, Any]:
         except Exception:
             pass
     return {"status": "default", "backgrounds": [], "logos": {}}
+
+
+@router.get("/top-scorers")
+def get_public_top_scorers(limit: int = 15) -> List[Dict[str, Any]]:
+    """Retrieve tournament top goal scorers and Golden Boot standings."""
+    query = """
+        SELECT t.id, t.name, t.captain_name, t.group_id, g.name AS group_name,
+               SUM(CASE WHEN m.home_team_id = t.id THEN m.home_score ELSE 0 END +
+                   CASE WHEN m.away_team_id = t.id THEN m.away_score ELSE 0 END) AS goals,
+               COUNT(m.id) AS matches_played
+        FROM teams t
+        LEFT JOIN groups g ON t.group_id = g.id
+        JOIN matches m ON (m.home_team_id = t.id OR m.away_team_id = t.id)
+        WHERE m.status IN ('Completed', 'Walkover')
+          AND m.home_score IS NOT NULL
+          AND m.away_score IS NOT NULL
+        GROUP BY t.id
+        HAVING goals > 0
+        ORDER BY goals DESC, matches_played ASC, t.name ASC
+        LIMIT ?;
+    """
+    rows = db.execute_query(query, (limit,))
+    res = []
+    for idx, r in enumerate(rows):
+        mp = r["matches_played"] or 1
+        g = r["goals"] or 0
+        ratio = round(g / mp, 1) if mp > 0 else 0
+        res.append({
+            "rank": idx + 1,
+            "team_id": r["id"],
+            "team_name": r["name"],
+            "player_name": r["captain_name"] or r["name"],
+            "group_name": r["group_name"] or "TBD",
+            "goals": g,
+            "matches_played": mp,
+            "goals_per_match": ratio
+        })
+    return res
+

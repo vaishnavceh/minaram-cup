@@ -6,6 +6,7 @@ import {
   PublicGroupStandings,
   PublicBracket,
   AssetManifest,
+  TopScorer,
 } from './types';
 
 const RAW_BASE = (import.meta.env.VITE_API_URL as string) || '';
@@ -218,6 +219,14 @@ export const api = {
     const res = await fetch(`${API_BASE}/public/manifest`);
     return handleResponse<AssetManifest>(res);
   },
+
+  async getTopScorers(limit?: number): Promise<TopScorer[]> {
+    const query = limit ? `?limit=${limit}` : '';
+    const res = await fetch(`${API_BASE}/public/top-scorers${query}`);
+    const list = await handleResponse<TopScorer[]>(res);
+    return Array.isArray(list) ? list : [];
+  },
+
 
   // Admin Authentication & Mutation Endpoints (Private)
   async adminLogin(formData: URLSearchParams): Promise<{ access_token: string; token_type: string }> {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { PublicGroupStandings } from '../types';
 import { StandingsTable } from '../components/StandingsTable';
+import { GoldenBootShowcase } from '../components/GoldenBootShowcase';
 import { BarChart3, HelpCircle, ShieldCheck, FileDown, Check, Loader2 } from 'lucide-react';
 
 export const StandingsPage: React.FC = () => {
@@ -98,6 +99,11 @@ export const StandingsPage: React.FC = () => {
           ))}
         </div>
       )}
+
+      {/* Golden Boot Leaderboard Section */}
+      <div className="mt-16">
+        <GoldenBootShowcase />
+      </div>
 
       {/* Tie-breaker & Rules Callout */}
       <div className="mt-14 bg-[#121212] border border-[#222222] rounded-lg p-6 sm:p-8">

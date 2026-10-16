@@ -100,3 +100,15 @@ export interface LiveEventPayload {
   timestamp: string;
   data: any;
 }
+
+export interface TopScorer {
+  rank: number;
+  team_id: number;
+  team_name: string;
+  player_name: string;
+  group_name: string;
+  goals: number;
+  matches_played: number;
+  goals_per_match: number;
+}
+

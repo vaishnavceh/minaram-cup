@@ -5,6 +5,7 @@ import { PublicTournament, PublicMatch, PublicGroupStandings } from '../types';
 import { MatchCard } from '../components/MatchCard';
 import { StandingsTable } from '../components/StandingsTable';
 import { Ticker } from '../components/Ticker';
+import { GoldenBootShowcase } from '../components/GoldenBootShowcase';
 import { Trophy, Swords, Calendar, BarChart3, ArrowRight, ShieldAlert, Sparkles } from 'lucide-react';
 import { PRIZE_POOL, TOTAL_PRIZE_POOL } from '../constants';
 
@@ -283,6 +284,9 @@ export const HomePage: React.FC = () => {
             </p>
           </div>
         </section>
+
+        {/* Golden Boot Top Scorers Section */}
+        <GoldenBootShowcase />
 
         {/* Next Matches & Recent Results Split Grid */}
         <section>

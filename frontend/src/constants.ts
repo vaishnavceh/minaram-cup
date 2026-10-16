@@ -44,3 +44,60 @@ export const PRIZE_POOL: PrizeTier[] = [
 ];
 
 export const TOTAL_PRIZE_POOL = PRIZE_POOL.reduce((total, tier) => total + tier.amount, 0);
+
+export interface GoldenBootEntry {
+  rank: number;
+  placeLabel: string;
+  awardTitle: string;
+  awardSub: string;
+  playerName: string;
+  teamName: string;
+  groupName: string;
+  goals: number;
+  matchesPlayed: number;
+  goalsPerMatch: number;
+  featured?: boolean;
+}
+
+export const INITIAL_GOLDEN_BOOT_PODIUM: GoldenBootEntry[] = [
+  {
+    rank: 1,
+    placeLabel: '1ST',
+    awardTitle: 'GOLDEN BOOT WINNER',
+    awardSub: 'TOURNAMENT TOP SCORER',
+    playerName: 'Aromal',
+    teamName: 'Fury FC',
+    groupName: 'Group E',
+    goals: 11,
+    matchesPlayed: 2,
+    goalsPerMatch: 5.5,
+    featured: true,
+  },
+  {
+    rank: 2,
+    placeLabel: '2ND',
+    awardTitle: 'SECOND PLACE',
+    awardSub: 'SILVER BOOT',
+    playerName: 'Brian',
+    teamName: 'Zeltic Fc',
+    groupName: 'Group L',
+    goals: 10,
+    matchesPlayed: 1,
+    goalsPerMatch: 10.0,
+    featured: false,
+  },
+  {
+    rank: 3,
+    placeLabel: '3RD',
+    awardTitle: 'THIRD PLACE',
+    awardSub: 'BRONZE BOOT',
+    playerName: 'Akshay T Geevarghese',
+    teamName: 'Imperium',
+    groupName: 'Group B',
+    goals: 8,
+    matchesPlayed: 2,
+    goalsPerMatch: 4.0,
+    featured: false,
+  },
+];
+
