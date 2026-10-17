@@ -27,6 +27,8 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
     ((match.team_a_score ?? 0) === (match.team_b_score ?? 0) && (match.penalty_b ?? 0) > (match.penalty_a ?? 0))
   );
 
+  const isTeamAUndecided = !match.team_a_name || match.team_a_name === 'TBD' || match.team_a_name.toLowerCase().includes('yet to decide');
+  const isTeamBUndecided = !match.team_b_name || match.team_b_name === 'TBD' || match.team_b_name.toLowerCase().includes('yet to decide');
   const isDraw = isCompleted && (match.team_a_score ?? 0) === (match.team_b_score ?? 0) && match.penalty_a === null;
 
   const handleDownloadPng = async (e: React.MouseEvent) => {
@@ -127,16 +129,26 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
           {/* Team A */}
           <div className="col-span-5 flex items-center space-x-3">
             <div className="w-9 h-9 rounded-full bg-neutral-900 border border-neutral-700 flex items-center justify-center font-display text-base text-white shrink-0 group-hover:border-neutral-500">
-              {match.team_a_name ? match.team_a_name.substring(0, 2).toUpperCase() : 'TBD'}
+              {isTeamAUndecided ? (
+                <span className="text-neutral-500 font-mono text-sm">?</span>
+              ) : (
+                match.team_a_name?.substring(0, 2).toUpperCase() || '?'
+              )}
             </div>
             <div className="min-w-0">
               <h4
-                className={`font-semibold text-sm sm:text-base truncate ${
-                  teamAWon ? 'text-white font-bold' : isCompleted ? 'text-neutral-400' : 'text-neutral-200'
+                className={`text-sm sm:text-base truncate ${
+                  isTeamAUndecided
+                    ? 'italic text-neutral-400 font-normal font-mono'
+                    : teamAWon
+                    ? 'text-white font-bold'
+                    : isCompleted
+                    ? 'text-neutral-400 font-semibold'
+                    : 'text-neutral-200 font-semibold'
                 }`}
-                title={match.team_a_name || 'TBD'}
+                title={match.team_a_name || 'Yet to decide'}
               >
-                {match.team_a_name || 'TBD'}
+                {match.team_a_name || 'Yet to decide'}
               </h4>
               {teamAWon && (
                 <span className="text-[10px] font-mono text-emerald-400 flex items-center">
@@ -170,12 +182,18 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
           <div className="col-span-5 flex items-center justify-end space-x-3 text-right">
             <div className="min-w-0 order-1">
               <h4
-                className={`font-semibold text-sm sm:text-base truncate ${
-                  teamBWon ? 'text-white font-bold' : isCompleted ? 'text-neutral-400' : 'text-neutral-200'
+                className={`text-sm sm:text-base truncate ${
+                  isTeamBUndecided
+                    ? 'italic text-neutral-400 font-normal font-mono'
+                    : teamBWon
+                    ? 'text-white font-bold'
+                    : isCompleted
+                    ? 'text-neutral-400 font-semibold'
+                    : 'text-neutral-200 font-semibold'
                 }`}
-                title={match.team_b_name || 'TBD'}
+                title={match.team_b_name || 'Yet to decide'}
               >
-                {match.team_b_name || 'TBD'}
+                {match.team_b_name || 'Yet to decide'}
               </h4>
               {teamBWon && (
                 <span className="text-[10px] font-mono text-emerald-400 flex items-center justify-end">
@@ -184,7 +202,11 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
               )}
             </div>
             <div className="w-9 h-9 rounded-full bg-neutral-900 border border-neutral-700 flex items-center justify-center font-display text-base text-white shrink-0 group-hover:border-neutral-500 order-2">
-              {match.team_b_name ? match.team_b_name.substring(0, 2).toUpperCase() : 'TBD'}
+              {isTeamBUndecided ? (
+                <span className="text-neutral-500 font-mono text-sm">?</span>
+              ) : (
+                match.team_b_name?.substring(0, 2).toUpperCase() || '?'
+              )}
             </div>
           </div>
         </div>

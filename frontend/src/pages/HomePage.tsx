@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api';
-import { PublicTournament, PublicMatch, PublicGroupStandings } from '../types';
+import { PublicTournament, PublicMatch, PublicGroupStandings, PublicBracket } from '../types';
 import { MatchCard } from '../components/MatchCard';
 import { StandingsTable } from '../components/StandingsTable';
 import { Ticker } from '../components/Ticker';
 import { GoldenBootShowcase } from '../components/GoldenBootShowcase';
-import { Trophy, Swords, Calendar, BarChart3, ArrowRight, ShieldAlert, Sparkles } from 'lucide-react';
+import { BracketTree } from '../components/BracketTree';
+import { Trophy, Swords, Calendar, BarChart3, ArrowRight, ShieldAlert, Sparkles, GitFork } from 'lucide-react';
 import { PRIZE_POOL, TOTAL_PRIZE_POOL } from '../constants';
 
 export const HomePage: React.FC = () => {
@@ -14,15 +15,17 @@ export const HomePage: React.FC = () => {
   const [recentMatches, setRecentMatches] = useState<PublicMatch[]>([]);
   const [upcomingMatches, setUpcomingMatches] = useState<PublicMatch[]>([]);
   const [standings, setStandings] = useState<PublicGroupStandings[]>([]);
+  const [bracket, setBracket] = useState<PublicBracket>({ rounds: [] });
   const [loading, setLoading] = useState(true);
 
   const loadData = async () => {
     try {
-      const [tData, rData, fData, sData] = await Promise.all([
+      const [tData, rData, fData, sData, bData] = await Promise.all([
         api.getTournament(),
         api.getResults(6),
         api.getFixtures(),
         api.getStandings(),
+        api.getBracket(),
       ]);
       setTournament(tData);
       setRecentMatches(Array.isArray(rData) ? rData : []);
@@ -30,6 +33,7 @@ export const HomePage: React.FC = () => {
       const upcoming = fixturesList.filter((m) => m.status === 'SCHEDULED');
       setUpcomingMatches(upcoming.length > 0 ? upcoming.slice(0, 4) : fixturesList.slice(0, 4));
       setStandings(Array.isArray(sData) ? sData : []);
+      setBracket(bData);
     } catch (err) {
       console.error('Failed to load homepage tournament data', err);
     } finally {
@@ -287,6 +291,33 @@ export const HomePage: React.FC = () => {
 
         {/* Golden Boot Top Scorers Section */}
         <GoldenBootShowcase />
+
+        {/* Knockout Championship Bracket Section */}
+        <section id="knockout-bracket" className="relative">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-[#222222] gap-4">
+            <div>
+              <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-brand-red mb-1">
+                <GitFork className="w-4 h-4" />
+                <span>CHAMPIONSHIP PLAYOFFS</span>
+              </div>
+              <h2 className="font-display text-4xl sm:text-5xl text-white tracking-wider">
+                KNOCKOUT BRACKET
+              </h2>
+              <p className="text-xs sm:text-sm font-mono text-neutral-400 max-w-xl mt-1">
+                Road to the Minaram Cup trophy. All slots are currently unseeded (yet to decide) while group stage matches are live.
+              </p>
+            </div>
+            <Link
+              to="/bracket"
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700 text-white font-mono text-xs tracking-wider uppercase transition-all shrink-0"
+            >
+              <span>FULL BRACKET VIEW</span>
+              <ArrowRight className="w-4 h-4 text-brand-red" />
+            </Link>
+          </div>
+
+          <BracketTree bracket={bracket} showTrophyPedestal={false} />
+        </section>
 
         {/* Next Matches & Recent Results Split Grid */}
         <section>

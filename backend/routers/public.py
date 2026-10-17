@@ -297,20 +297,159 @@ def get_public_bracket() -> Dict[str, Any]:
                 "id": m.id,
                 "match_number": m.match_number,
                 "bracket_slot": m.bracket_slot,
-                "home_team_name": m.home_team_name if m.home_team_name != "TBD" else (m.notes or "TBD"),
-                "away_team_name": m.away_team_name if m.away_team_name != "TBD" else (m.notes or "TBD"),
+                "home_team_name": (
+                    m.home_team_name
+                    if m.home_team_name and m.home_team_name != "TBD" and "Yet to decide" not in m.home_team_name
+                    else "Yet to decide"
+                ),
+                "away_team_name": (
+                    m.away_team_name
+                    if m.away_team_name and m.away_team_name != "TBD" and "Yet to decide" not in m.away_team_name
+                    else "Yet to decide"
+                ),
                 "home_score": m.home_score,
                 "away_score": m.away_score,
                 "home_penalty": m.home_penalty,
                 "away_penalty": m.away_penalty,
-                "status": m.status,
+                "status": "Yet to decide" if not m.is_completed and (not m.home_team_id or not m.away_team_id) else m.status,
                 "winner_team_name": m.winner_team_name,
                 "is_completed": m.is_completed,
-                "scheduled_date": m.scheduled_date,
-                "scheduled_time": m.scheduled_time
+                "scheduled_date": m.scheduled_date or "TBD",
+                "scheduled_time": m.scheduled_time or "TBD",
+                "notes": m.notes or ""
             }
             for m in matches
         ]
+
+    # Fallback to standard 7-match knockout structure if no knockout fixtures exist
+    if not res:
+        res = {
+            "Quarter-Final": [
+                {
+                    "id": 85,
+                    "match_number": 85,
+                    "bracket_slot": "QF1",
+                    "home_team_name": "Yet to decide",
+                    "away_team_name": "Yet to decide",
+                    "home_score": None,
+                    "away_score": None,
+                    "home_penalty": None,
+                    "away_penalty": None,
+                    "status": "Yet to decide",
+                    "winner_team_name": None,
+                    "is_completed": False,
+                    "scheduled_date": "2026-10-26",
+                    "scheduled_time": "Flexible (MW Window)",
+                    "notes": "Quarter-Final 1"
+                },
+                {
+                    "id": 86,
+                    "match_number": 86,
+                    "bracket_slot": "QF2",
+                    "home_team_name": "Yet to decide",
+                    "away_team_name": "Yet to decide",
+                    "home_score": None,
+                    "away_score": None,
+                    "home_penalty": None,
+                    "away_penalty": None,
+                    "status": "Yet to decide",
+                    "winner_team_name": None,
+                    "is_completed": False,
+                    "scheduled_date": "2026-10-26",
+                    "scheduled_time": "Flexible (MW Window)",
+                    "notes": "Quarter-Final 2"
+                },
+                {
+                    "id": 87,
+                    "match_number": 87,
+                    "bracket_slot": "QF3",
+                    "home_team_name": "Yet to decide",
+                    "away_team_name": "Yet to decide",
+                    "home_score": None,
+                    "away_score": None,
+                    "home_penalty": None,
+                    "away_penalty": None,
+                    "status": "Yet to decide",
+                    "winner_team_name": None,
+                    "is_completed": False,
+                    "scheduled_date": "2026-10-27",
+                    "scheduled_time": "Flexible (MW Window)",
+                    "notes": "Quarter-Final 3"
+                },
+                {
+                    "id": 88,
+                    "match_number": 88,
+                    "bracket_slot": "QF4",
+                    "home_team_name": "Yet to decide",
+                    "away_team_name": "Yet to decide",
+                    "home_score": None,
+                    "away_score": None,
+                    "home_penalty": None,
+                    "away_penalty": None,
+                    "status": "Yet to decide",
+                    "winner_team_name": None,
+                    "is_completed": False,
+                    "scheduled_date": "2026-10-27",
+                    "scheduled_time": "Flexible (MW Window)",
+                    "notes": "Quarter-Final 4"
+                },
+            ],
+            "Semi-Final": [
+                {
+                    "id": 89,
+                    "match_number": 89,
+                    "bracket_slot": "SF1",
+                    "home_team_name": "Yet to decide",
+                    "away_team_name": "Yet to decide",
+                    "home_score": None,
+                    "away_score": None,
+                    "home_penalty": None,
+                    "away_penalty": None,
+                    "status": "Yet to decide",
+                    "winner_team_name": None,
+                    "is_completed": False,
+                    "scheduled_date": "2026-10-29",
+                    "scheduled_time": "Flexible (MW Window)",
+                    "notes": "Semi-Final 1"
+                },
+                {
+                    "id": 90,
+                    "match_number": 90,
+                    "bracket_slot": "SF2",
+                    "home_team_name": "Yet to decide",
+                    "away_team_name": "Yet to decide",
+                    "home_score": None,
+                    "away_score": None,
+                    "home_penalty": None,
+                    "away_penalty": None,
+                    "status": "Yet to decide",
+                    "winner_team_name": None,
+                    "is_completed": False,
+                    "scheduled_date": "2026-10-29",
+                    "scheduled_time": "Flexible (MW Window)",
+                    "notes": "Semi-Final 2"
+                },
+            ],
+            "Final": [
+                {
+                    "id": 91,
+                    "match_number": 91,
+                    "bracket_slot": "F",
+                    "home_team_name": "Yet to decide",
+                    "away_team_name": "Yet to decide",
+                    "home_score": None,
+                    "away_score": None,
+                    "home_penalty": None,
+                    "away_penalty": None,
+                    "status": "Yet to decide",
+                    "winner_team_name": None,
+                    "is_completed": False,
+                    "scheduled_date": "2026-10-31",
+                    "scheduled_time": "Flexible (MW Window)",
+                    "notes": "Minaram Cup Grand Final"
+                }
+            ]
+        }
     return res
 
 
