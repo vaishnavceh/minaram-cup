@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api';
 import { PublicMatch } from '../types';
-import { Lock, LogOut, CheckCircle, RefreshCw, AlertCircle, Trophy, Save } from 'lucide-react';
+import { Lock, LogOut, CheckCircle, RefreshCw, AlertCircle, Trophy, Save, Shield } from 'lucide-react';
 
 export const AdminPage: React.FC = () => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('minaram_admin_token'));
@@ -18,6 +18,9 @@ export const AdminPage: React.FC = () => {
   const [teamBScore, setTeamBScore] = useState<number>(0);
   const [penaltyA, setPenaltyA] = useState<string>('');
   const [penaltyB, setPenaltyB] = useState<string>('');
+  const [matchStatus, setMatchStatus] = useState<string>('Completed');
+  const [walkoverWinnerId, setWalkoverWinnerId] = useState<number | null>(null);
+  const [notes, setNotes] = useState<string>('');
   const [actionSuccess, setActionSuccess] = useState<string>('');
   const [actionError, setActionError] = useState<string>('');
 
@@ -33,6 +36,9 @@ export const AdminPage: React.FC = () => {
         setSelectedMatchId(data[0].id);
         setTeamAScore(data[0].team_a_score ?? 0);
         setTeamBScore(data[0].team_b_score ?? 0);
+        setMatchStatus(data[0].raw_status === 'Walkover' ? 'Walkover' : 'Completed');
+        setWalkoverWinnerId(data[0].winner_id ?? null);
+        setNotes(data[0].notes || '');
       }
     } catch (err) {
       console.error('Failed to load matches for admin', err);
@@ -78,9 +84,38 @@ export const AdminPage: React.FC = () => {
       setTeamBScore(m.team_b_score ?? 0);
       setPenaltyA(m.penalty_a !== null ? String(m.penalty_a) : '');
       setPenaltyB(m.penalty_b !== null ? String(m.penalty_b) : '');
+      setMatchStatus(m.raw_status === 'Walkover' ? 'Walkover' : 'Completed');
+      setWalkoverWinnerId(m.winner_id ?? null);
+      setNotes(m.notes || '');
     }
     setActionSuccess('');
     setActionError('');
+  };
+
+  const applyRule2Walkover = (awardedTo: 'A' | 'B') => {
+    if (!selectedMatch) return;
+    if (awardedTo === 'A') {
+      setTeamAScore(3);
+      setTeamBScore(0);
+      setMatchStatus('Walkover');
+      setWalkoverWinnerId(selectedMatch.team_a_id ?? null);
+      setNotes(`Rule 2 Walkover: 3–0 awarded to ${selectedMatch.team_a_name || 'Team A'} (opponent failed to play within deadline)`);
+    } else {
+      setTeamAScore(0);
+      setTeamBScore(3);
+      setMatchStatus('Walkover');
+      setWalkoverWinnerId(selectedMatch.team_b_id ?? null);
+      setNotes(`Rule 2 Walkover: 3–0 awarded to ${selectedMatch.team_b_name || 'Team B'} (opponent failed to play within deadline)`);
+    }
+  };
+
+  const applyRule3BothFailed = () => {
+    if (!selectedMatch) return;
+    setTeamAScore(0);
+    setTeamBScore(0);
+    setMatchStatus('Completed');
+    setWalkoverWinnerId(null);
+    setNotes('Rule 3: Both teams failed to play within given deadline (0–0 recorded, 1 point awarded to each team)');
   };
 
   const handleRecordResult = async (e: React.FormEvent) => {
@@ -93,6 +128,9 @@ export const AdminPage: React.FC = () => {
       const payload: any = {
         team_a_score: teamAScore,
         team_b_score: teamBScore,
+        status: matchStatus,
+        walkover_winner_id: matchStatus === 'Walkover' ? walkoverWinnerId : null,
+        notes: notes,
       };
       if (penaltyA !== '' && penaltyB !== '') {
         payload.penalty_a = parseInt(penaltyA, 10);
@@ -360,6 +398,59 @@ export const AdminPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Fixture Rules Presets */}
+              <div className="p-3 bg-black/60 rounded-lg border border-neutral-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono text-neutral-400 uppercase font-semibold flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-brand-red" />
+                    Fixture Rules Quick Actions (Walkovers & Forfeits)
+                  </span>
+                  <span className="text-[10px] font-mono text-neutral-500">
+                    Auto-populates scores & audit note
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => applyRule2Walkover('A')}
+                    className="p-2.5 text-left bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-700/60 rounded text-xs transition-colors"
+                  >
+                    <span className="text-brand-red font-mono font-bold block text-[10px]">
+                      RULE 2: WALKOVER
+                    </span>
+                    <span className="text-white font-medium truncate block">
+                      3–0 to {selectedMatch.team_a_name || 'Team A'}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => applyRule2Walkover('B')}
+                    className="p-2.5 text-left bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-700/60 rounded text-xs transition-colors"
+                  >
+                    <span className="text-brand-red font-mono font-bold block text-[10px]">
+                      RULE 2: WALKOVER
+                    </span>
+                    <span className="text-white font-medium truncate block">
+                      3–0 to {selectedMatch.team_b_name || 'Team B'}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={applyRule3BothFailed}
+                    className="p-2.5 text-left bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-700/60 rounded text-xs transition-colors"
+                  >
+                    <span className="text-amber-400 font-mono font-bold block text-[10px]">
+                      RULE 3: BOTH FAILED
+                    </span>
+                    <span className="text-white font-medium truncate block">
+                      0–0 (1 Point Each)
+                    </span>
+                  </button>
+                </div>
+              </div>
+
               {/* Score Input Fields */}
               <div className="grid grid-cols-2 gap-6">
                 <div className="bg-black/50 p-4 rounded-lg border border-neutral-800 text-center">
@@ -389,6 +480,72 @@ export const AdminPage: React.FC = () => {
                     className="w-24 text-center font-display text-4xl bg-neutral-900 border border-neutral-700 rounded py-2 text-white tabular-nums focus:border-brand-red focus:outline-none"
                   />
                 </div>
+              </div>
+
+              {/* Outcome Status & Walkover Winner */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-mono text-neutral-400 mb-1">
+                    Match Outcome Status
+                  </label>
+                  <select
+                    value={matchStatus}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setMatchStatus(val);
+                      if (val === 'Walkover' && !walkoverWinnerId) {
+                        setWalkoverWinnerId(selectedMatch.team_a_id ?? null);
+                      }
+                    }}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded text-xs font-mono text-white focus:outline-none"
+                  >
+                    <option value="Completed">Completed (Normal Match / Double Forfeit)</option>
+                    <option value="Walkover">Walkover (Awarded to One Team)</option>
+                  </select>
+                </div>
+
+                {matchStatus === 'Walkover' ? (
+                  <div>
+                    <label className="block text-xs font-mono text-neutral-400 mb-1">
+                      Walkover Awarded To
+                    </label>
+                    <select
+                      value={walkoverWinnerId ?? ''}
+                      onChange={(e) => setWalkoverWinnerId(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-neutral-900 border border-brand-red/60 rounded text-xs font-mono text-white focus:outline-none"
+                    >
+                      <option value={selectedMatch.team_a_id ?? ''}>
+                        {selectedMatch.team_a_name || 'Team A'}
+                      </option>
+                      <option value={selectedMatch.team_b_id ?? ''}>
+                        {selectedMatch.team_b_name || 'Team B'}
+                      </option>
+                    </select>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-xs font-mono text-neutral-400 mb-1">
+                      Match Classification
+                    </label>
+                    <div className="px-3 py-2 bg-neutral-900/60 border border-neutral-800 rounded text-xs font-mono text-neutral-400">
+                      Standard Result (Win = 3 pts, Draw = 1 pt)
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Notes / Reason */}
+              <div>
+                <label className="block text-xs font-mono text-neutral-400 mb-1">
+                  Notes / Audit Reference / Rule Applied
+                </label>
+                <input
+                  type="text"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="e.g. Rule 2 Walkover verified after deadline, or normal play"
+                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded text-xs font-mono text-white focus:outline-none"
+                />
               </div>
 
               {/* Optional Penalty Shootout */}

@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { PublicMatch } from '../types';
-import { Calendar, MapPin, Phone, User, Clock, Download, Check, Loader2 } from 'lucide-react';
+import { Calendar, MapPin, Phone, User, Clock, Download, Check, Loader2, MessageCircle, AlertTriangle } from 'lucide-react';
 import { getMatchTimeline } from '../utils/fixtureDates';
+import { makeWhatsAppLink, getComplaintWhatsAppLink } from '../utils/whatsapp';
 
 interface MatchCardProps {
   match: PublicMatch;
@@ -16,6 +17,10 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
   const timeline = getMatchTimeline(match);
   const isCompleted = match.status === 'COMPLETED';
   const isLive = match.status === 'IN_PROGRESS';
+
+  const teamAWhatsAppUrl = match.team_a_whatsapp || makeWhatsAppLink(match.team_a_phone);
+  const teamBWhatsAppUrl = match.team_b_whatsapp || makeWhatsAppLink(match.team_b_phone);
+  const complaintUrl = getComplaintWhatsAppLink(match);
 
   const teamAWon = isCompleted && (
     (match.team_a_score ?? 0) > (match.team_b_score ?? 0) ||
@@ -86,9 +91,15 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
               LIVE
             </span>
           ) : isCompleted ? (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-neutral-800 text-neutral-300 uppercase tracking-wider">
-              FT
-            </span>
+            match.raw_status?.toUpperCase() === 'WALKOVER' ? (
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-brand-red/20 text-brand-red border border-brand-red/50 uppercase tracking-wider">
+                WALKOVER
+              </span>
+            ) : (
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-neutral-800 text-neutral-300 uppercase tracking-wider">
+                FT
+              </span>
+            )
           ) : (
             <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-neutral-900 border border-neutral-700 text-neutral-400 uppercase tracking-wider">
               UPCOMING
@@ -218,36 +229,66 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
           {/* Team A Contact */}
           <div className="flex items-center space-x-1.5 text-neutral-400 min-w-0">
             <User className="w-3 h-3 text-neutral-500 shrink-0" />
-            <span className="truncate text-neutral-300 font-medium max-w-[120px] sm:max-w-[140px]" title={match.team_a_captain || 'Captain'}>
+            <span className="truncate text-neutral-300 font-medium max-w-[110px] sm:max-w-[130px]" title={match.team_a_captain || 'Captain'}>
               {match.team_a_captain || 'Captain'}
             </span>
             {match.team_a_phone && (
-              <a
-                href={`tel:${match.team_a_phone}`}
-                className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-brand-red font-bold hover:text-white transition-colors"
-                title={`Call ${match.team_a_captain || match.team_a_name || 'Team A'}`}
-              >
-                <Phone className="w-2.5 h-2.5 shrink-0" />
-                <span>{match.team_a_phone}</span>
-              </a>
+              <div className="inline-flex items-center space-x-1 shrink-0">
+                <a
+                  href={`tel:${match.team_a_phone}`}
+                  className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 font-bold hover:text-white transition-colors"
+                  title={`Call ${match.team_a_captain || match.team_a_name || 'Team A'}`}
+                >
+                  <Phone className="w-2.5 h-2.5 shrink-0" />
+                  <span>{match.team_a_phone}</span>
+                </a>
+                {teamAWhatsAppUrl && (
+                  <a
+                    href={teamAWhatsAppUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-400 hover:text-emerald-300 font-bold transition-colors"
+                    title={`Message ${match.team_a_captain || match.team_a_name || 'Team A'} on WhatsApp`}
+                  >
+                    <MessageCircle className="w-2.5 h-2.5 shrink-0" />
+                    <span>WhatsApp</span>
+                  </a>
+                )}
+              </div>
             )}
           </div>
 
-          <div className="hidden sm:block text-neutral-700">|</div>
+          <div className="hidden md:block text-neutral-700">|</div>
 
           {/* Team B Contact */}
           <div className="flex items-center space-x-1.5 text-neutral-400 min-w-0 justify-end ml-auto">
             {match.team_b_phone && (
-              <a
-                href={`tel:${match.team_b_phone}`}
-                className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-brand-red font-bold hover:text-white transition-colors"
-                title={`Call ${match.team_b_captain || match.team_b_name || 'Team B'}`}
-              >
-                <Phone className="w-2.5 h-2.5 shrink-0" />
-                <span>{match.team_b_phone}</span>
-              </a>
+              <div className="inline-flex items-center space-x-1 shrink-0">
+                {teamBWhatsAppUrl && (
+                  <a
+                    href={teamBWhatsAppUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-400 hover:text-emerald-300 font-bold transition-colors"
+                    title={`Message ${match.team_b_captain || match.team_b_name || 'Team B'} on WhatsApp`}
+                  >
+                    <MessageCircle className="w-2.5 h-2.5 shrink-0" />
+                    <span>WhatsApp</span>
+                  </a>
+                )}
+                <a
+                  href={`tel:${match.team_b_phone}`}
+                  className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 font-bold hover:text-white transition-colors"
+                  title={`Call ${match.team_b_captain || match.team_b_name || 'Team B'}`}
+                >
+                  <Phone className="w-2.5 h-2.5 shrink-0" />
+                  <span>{match.team_b_phone}</span>
+                </a>
+              </div>
             )}
-            <span className="truncate text-neutral-300 font-medium max-w-[120px] sm:max-w-[140px] text-right" title={match.team_b_captain || 'Captain'}>
+            <span className="truncate text-neutral-300 font-medium max-w-[110px] sm:max-w-[130px] text-right" title={match.team_b_captain || 'Captain'}>
               {match.team_b_captain || 'Captain'}
             </span>
             <User className="w-3 h-3 text-neutral-500 shrink-0" />
@@ -274,23 +315,43 @@ export const MatchCard: React.FC<MatchCardProps> = ({ match, compact = false }) 
         </div>
       </div>
 
-      {/* Footer Info: Pitch & Mobile Match Notice */}
+      {/* Footer Info: Pitch & Raise Complaint Notice */}
       {!compact ? (
         <div className="px-4 py-2 bg-black/60 border-t border-[#181818] flex flex-wrap items-center justify-between gap-1.5 text-[11px] font-mono text-neutral-400">
           <div className="flex items-center space-x-1.5 min-w-0">
             <MapPin className="w-3 h-3 text-neutral-500 shrink-0" />
             <span className="truncate">{match.pitch || 'Online / Mobile Lobby'}</span>
           </div>
-          <div className="flex items-center space-x-1.5 text-neutral-400 shrink-0">
-            <span className="text-[10px] uppercase tracking-wider text-neutral-400">
-              10-MIN MATCH · FLEXIBLE WINDOW
+
+          <div className="flex items-center space-x-2.5 shrink-0">
+            <a
+              href={complaintUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center space-x-1 text-[10px] font-bold text-amber-400 hover:text-amber-300 bg-amber-950/60 hover:bg-amber-900/70 border border-amber-800/80 rounded px-2 py-0.5 transition-all shadow-sm"
+              title="Raise a dispute or submit walkover proof to tournament admins on WhatsApp"
+            >
+              <AlertTriangle className="w-2.5 h-2.5 text-amber-400 shrink-0" />
+              <span>Raise Complaint</span>
+            </a>
+            <span className="text-[10px] uppercase tracking-wider text-neutral-500 hidden sm:inline">
+              10-MIN MATCH
             </span>
           </div>
         </div>
       ) : (
         <div className="px-3 py-1.5 bg-black/60 border-t border-[#181818] flex items-center justify-between text-[10px] font-mono text-neutral-400">
           <span className="truncate">{timeline.startDateFormatted} ➔ {timeline.endDateFormatted}</span>
-          <span className="text-brand-red font-bold shrink-0">LAST DAY: {timeline.endDateFormatted}</span>
+          <a
+            href={complaintUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="text-amber-400 hover:underline font-bold shrink-0 ml-2"
+          >
+            Raise Complaint
+          </a>
         </div>
       )}
     </div>

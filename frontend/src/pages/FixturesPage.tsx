@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { PublicMatch } from '../types';
 import { MatchCard } from '../components/MatchCard';
-import { Calendar, Filter, Search, Clock } from 'lucide-react';
+import { Calendar, Filter, Search, Clock, Shield, ChevronDown, ChevronUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { getMatchTimeline } from '../utils/fixtureDates';
 
 export const FixturesPage: React.FC = () => {
@@ -12,6 +13,7 @@ export const FixturesPage: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState<string>('ALL');
   const [selectedMatchweek, setSelectedMatchweek] = useState<string>('ALL');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [showFixtureRules, setShowFixtureRules] = useState<boolean>(false);
 
   const loadFixtures = async () => {
     try {
@@ -257,11 +259,93 @@ export const FixturesPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 text-xs font-mono text-neutral-400 shrink-0 bg-black/60 border border-neutral-800 rounded px-3 py-1.5 self-start md:self-auto">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>10-Min Mobile Match · Flexible Play</span>
+          <div className="flex items-center space-x-2 shrink-0 self-start md:self-auto">
+            <button
+              type="button"
+              onClick={() => setShowFixtureRules(!showFixtureRules)}
+              className="flex items-center space-x-1.5 text-xs font-mono px-3 py-1.5 rounded bg-brand-red/10 border border-brand-red/40 text-brand-red hover:bg-brand-red hover:text-white transition-colors"
+            >
+              <Shield className="w-3.5 h-3.5" />
+              <span>{showFixtureRules ? 'HIDE RULES' : 'FIXTURE RULES'}</span>
+              {showFixtureRules ? <ChevronUp className="w-3.5 h-3.5 ml-1" /> : <ChevronDown className="w-3.5 h-3.5 ml-1" />}
+            </button>
+            <div className="hidden sm:flex items-center space-x-2 text-xs font-mono text-neutral-400 bg-black/60 border border-neutral-800 rounded px-3 py-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>10-Min Mobile Match</span>
+            </div>
           </div>
         </div>
+
+        {/* Collapsible Fixture Rules Quick Reference */}
+        {showFixtureRules && (
+          <div className="mt-4 pt-4 border-t border-[#222222] space-y-3 font-sans">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                <Shield className="w-3.5 h-3.5 text-brand-red" />
+                OFFICIAL FIXTURE & WALKOVER DIRECTIVES
+              </span>
+              <Link to="/rules" className="text-[11px] font-mono text-brand-red hover:underline">
+                Full Rulebook ➔
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2.5 text-xs">
+              <div className="bg-black/50 p-3 rounded border border-neutral-800">
+                <span className="text-[10px] font-mono font-bold text-brand-red block mb-1">
+                  1. POINTS SYSTEM
+                </span>
+                <span className="text-neutral-300">
+                  Win: <strong>3 pts</strong> · Draw: <strong>1 pt</strong> · Loss: <strong>0 pts</strong>
+                </span>
+              </div>
+              <div className="bg-black/50 p-3 rounded border border-brand-red/30">
+                <span className="text-[10px] font-mono font-bold text-brand-red block mb-1">
+                  2. ONE TEAM FAILS TO PLAY
+                </span>
+                <span className="text-neutral-300">
+                  Opponent awarded <strong className="text-white">3–0 walkover</strong> and receives <strong className="text-emerald-400">3 points</strong>.
+                </span>
+              </div>
+              <div className="bg-black/50 p-3 rounded border border-neutral-800">
+                <span className="text-[10px] font-mono font-bold text-amber-400 block mb-1">
+                  3. BOTH TEAMS FAIL TO PLAY
+                </span>
+                <span className="text-neutral-300">
+                  Recorded as <strong className="text-white">0–0</strong>, both teams receive <strong className="text-amber-400">1 point each</strong>.
+                </span>
+              </div>
+              <div className="bg-black/50 p-3 rounded border border-neutral-800">
+                <span className="text-[10px] font-mono font-bold text-neutral-300 block mb-1">
+                  4. WALKOVER CLAIMS
+                </span>
+                <span className="text-neutral-300">
+                  Contact admins <em>only after deadline has passed</em> with proof.
+                </span>
+              </div>
+              <div className="bg-black/50 p-3 rounded border border-neutral-800">
+                <span className="text-[10px] font-mono font-bold text-neutral-300 block mb-1">
+                  5. DEADLINE
+                </span>
+                <span className="text-neutral-300">
+                  All matches must finish by deadline. Teams coordinate proactively.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 bg-black/40 p-3 rounded border border-neutral-800 text-xs">
+              <div className="text-neutral-300">
+                <span className="font-bold text-white">Need to report an issue or coordinate?</span> Each fixture card provides direct captain WhatsApp links. To submit walkover proof or dispute a deadline breach, contact tournament desk.
+              </div>
+              <a
+                href="https://wa.me/919746603975"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-400 font-bold font-mono text-xs shrink-0 transition-colors"
+              >
+                <span>Raise Complaint / Walkover Claim ➔</span>
+              </a>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Fixtures Grid */}

@@ -41,13 +41,16 @@ export interface PublicMatch {
   team_b_name?: string | null;
   team_a_captain?: string | null;
   team_a_phone?: string | null;
+  team_a_whatsapp?: string | null;
   team_b_captain?: string | null;
   team_b_phone?: string | null;
+  team_b_whatsapp?: string | null;
   team_a_score?: number | null;
   team_b_score?: number | null;
   penalty_a?: number | null;
   penalty_b?: number | null;
   status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  raw_status?: string | null;
   scheduled_time?: string | null;
   scheduled_date?: string | null;
   start_date?: string | null;

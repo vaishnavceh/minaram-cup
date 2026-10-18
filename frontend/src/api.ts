@@ -8,6 +8,7 @@ import {
   AssetManifest,
   TopScorer,
 } from './types';
+import { makeWhatsAppLink } from './utils/whatsapp';
 
 const RAW_BASE = (import.meta.env.VITE_API_URL as string) || '';
 const API_BASE = RAW_BASE ? `${RAW_BASE.replace(/\/+$/, '')}/api` : '/api';
@@ -57,8 +58,10 @@ export function normalizeMatch(m: any): PublicMatch {
     team_b_name: !m.away_team_name && !m.team_b_name ? 'Yet to decide' : (m.away_team_name === 'TBD' || m.team_b_name === 'TBD' ? 'Yet to decide' : (m.away_team_name ?? m.team_b_name ?? m.opponent_b ?? (!m.is_home ? m.name : m.opponent) ?? 'Yet to decide')),
     team_a_captain: m.home_captain ?? m.team_a_captain ?? null,
     team_a_phone: m.home_phone ?? m.team_a_phone ?? null,
+    team_a_whatsapp: m.home_whatsapp_link || makeWhatsAppLink(m.home_phone ?? m.team_a_phone),
     team_b_captain: m.away_captain ?? m.team_b_captain ?? null,
     team_b_phone: m.away_phone ?? m.team_b_phone ?? null,
+    team_b_whatsapp: m.away_whatsapp_link || makeWhatsAppLink(m.away_phone ?? m.team_b_phone),
     team_a_score: homeScore !== undefined && homeScore !== null ? Number(homeScore) : null,
     team_b_score: awayScore !== undefined && awayScore !== null ? Number(awayScore) : null,
     penalty_a: m.home_penalty ?? m.penalty_a ?? null,
@@ -73,6 +76,7 @@ export function normalizeMatch(m: any): PublicMatch {
     winner_id: m.winner_team_id ?? m.winner_id ?? null,
     winner_name: m.winner_team_name ?? m.winner_name ?? null,
     notes: m.notes || null,
+    raw_status: m.status || null,
   };
 }
 
@@ -242,7 +246,15 @@ export const api = {
 
   async adminRecordResult(
     matchId: number,
-    payload: { team_a_score: number; team_b_score: number; penalty_a?: number; penalty_b?: number },
+    payload: {
+      team_a_score: number;
+      team_b_score: number;
+      penalty_a?: number;
+      penalty_b?: number;
+      status?: string;
+      walkover_winner_id?: number | null;
+      notes?: string;
+    },
     token: string
   ): Promise<any> {
     const res = await fetch(`${API_BASE}/admin/matches/${matchId}/result`, {
@@ -257,6 +269,9 @@ export const api = {
         away_score: payload.team_b_score,
         home_penalty: payload.penalty_a,
         away_penalty: payload.penalty_b,
+        status: payload.status || 'Completed',
+        walkover_winner_id: payload.walkover_winner_id,
+        notes: payload.notes || '',
       }),
     });
     return handleResponse(res);

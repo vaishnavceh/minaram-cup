@@ -1,4 +1,5 @@
 import logging
+import webbrowser
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from typing import List, Dict, Any, Optional
@@ -87,6 +88,17 @@ class FixturesView(ctk.CTkScrollableFrame):
             text_color=theme.TEXT_PRIMARY,
             height=32,
             command=self.handle_export
+        ).pack(side="left", padx=4)
+
+        ctk.CTkButton(
+            btn_box,
+            text="💬 Admin WhatsApp Desk",
+            fg_color="#064E3B",
+            hover_color="#065F46",
+            text_color="#6EE7B7",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            height=32,
+            command=lambda: webbrowser.open("https://wa.me/919746603975")
         ).pack(side="left", padx=4)
 
         # Conflict Alert Banner (dynamic)

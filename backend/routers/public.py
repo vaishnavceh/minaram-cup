@@ -17,8 +17,17 @@ from app.tournament_manager import TournamentManager
 from app.fixture_generator import FixtureGenerator
 from app.standings import StandingsCalculator
 from app.knockout_manager import KnockoutManager
+from app.number_to_whatsapp_link import make_whatsapp_link
 
 router = APIRouter(prefix="/api/public", tags=["Public Tournament Data"])
+
+def safe_whatsapp_link(number: Optional[str]) -> Optional[str]:
+    if not number:
+        return None
+    try:
+        return make_whatsapp_link(number)
+    except Exception:
+        return None
 
 db = Database()
 team_mgr = TeamManager(db)
@@ -203,8 +212,11 @@ def get_public_fixtures(stage: Optional[str] = None, group_id: Optional[int] = N
             "away_team_name": m.away_team_name,
             "home_captain": m.home_captain,
             "home_phone": m.home_phone,
+            "home_whatsapp_link": safe_whatsapp_link(m.home_phone),
             "away_captain": m.away_captain,
             "away_phone": m.away_phone,
+            "away_whatsapp_link": safe_whatsapp_link(m.away_phone),
+            "complaint_whatsapp_link": "https://wa.me/919746603975",
             "start_date": m.scheduled_date,
             "scheduled_date": m.scheduled_date,
             "end_date": m.end_date,
@@ -238,8 +250,11 @@ def get_public_results() -> List[Dict[str, Any]]:
             "away_team_name": m.away_team_name,
             "home_captain": m.home_captain,
             "home_phone": m.home_phone,
+            "home_whatsapp_link": safe_whatsapp_link(m.home_phone),
             "away_captain": m.away_captain,
             "away_phone": m.away_phone,
+            "away_whatsapp_link": safe_whatsapp_link(m.away_phone),
+            "complaint_whatsapp_link": "https://wa.me/919746603975",
             "start_date": m.scheduled_date,
             "scheduled_date": m.scheduled_date,
             "end_date": m.end_date,

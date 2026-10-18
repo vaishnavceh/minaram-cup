@@ -77,12 +77,133 @@ export const RulesPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Section 3: Eligibility & Student Integrity */}
+        {/* Section 3: Official Fixture Rules */}
+        <div className="bg-[#121212] border-2 border-brand-red/40 rounded-lg p-6 relative overflow-hidden shadow-glow-red/5">
+          <div className="flex items-center space-x-3 mb-6">
+            <Clock className="w-5 h-5 text-brand-red" />
+            <div>
+              <h2 className="font-display text-2xl text-white tracking-wide">
+                3. OFFICIAL FIXTURE RULES
+              </h2>
+              <span className="text-xs font-mono text-neutral-400">
+                Points system, walkovers, deadlines, and forfeiture policy
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {/* Rule 1: Points System */}
+            <div className="p-4 bg-black/60 rounded-lg border border-neutral-800">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-brand-red font-bold">
+                  1. POINTS SYSTEM
+                </span>
+                <span className="text-[10px] font-mono text-neutral-400 bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800">
+                  STANDARD ALLOCATION
+                </span>
+              </div>
+              <p className="text-xs text-neutral-300 mb-3">
+                Tournament standings and group rankings are determined based on the following match points:
+              </p>
+              <div className="grid grid-cols-3 gap-3 text-center font-mono">
+                <div className="p-2.5 bg-neutral-900/80 rounded border border-neutral-800">
+                  <span className="text-xs text-neutral-400 block uppercase">WIN</span>
+                  <span className="text-white font-bold text-lg text-emerald-400">3 Points</span>
+                </div>
+                <div className="p-2.5 bg-neutral-900/80 rounded border border-neutral-800">
+                  <span className="text-xs text-neutral-400 block uppercase">DRAW</span>
+                  <span className="text-white font-bold text-lg text-amber-400">1 Point</span>
+                  <span className="text-[10px] text-neutral-500 block">per team</span>
+                </div>
+                <div className="p-2.5 bg-neutral-900/80 rounded border border-neutral-800">
+                  <span className="text-xs text-neutral-400 block uppercase">LOSS</span>
+                  <span className="text-white font-bold text-lg text-rose-400">0 Points</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Rule 2: One Team Fails to Play */}
+            <div className="p-4 bg-black/60 rounded-lg border border-brand-red/30">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-brand-red font-bold">
+                  2. ONE TEAM FAILS TO PLAY
+                </span>
+                <span className="text-[10px] font-mono text-brand-red bg-brand-red/10 px-2 py-0.5 rounded border border-brand-red/30 font-bold">
+                  3–0 WALKOVER
+                </span>
+              </div>
+              <p className="text-sm text-neutral-200 leading-relaxed">
+                If one team fails to play within the given deadline, the opposing team will be awarded a{' '}
+                <strong className="text-white font-bold bg-neutral-900 px-1.5 py-0.5 rounded border border-neutral-700">3–0 walkover victory</strong>{' '}
+                and receive <strong className="text-emerald-400">3 points</strong>. The defaulting squad will be assessed a 0–3 loss and 0 points.
+              </p>
+            </div>
+
+            {/* Rule 3: Both Teams Fail to Play */}
+            <div className="p-4 bg-black/60 rounded-lg border border-neutral-800">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-neutral-300 font-bold">
+                  3. BOTH TEAMS FAIL TO PLAY
+                </span>
+                <span className="text-[10px] font-mono text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/30 font-bold">
+                  0–0 · 1 PT EACH
+                </span>
+              </div>
+              <p className="text-sm text-neutral-200 leading-relaxed">
+                If neither team plays within the given deadline, the match will be recorded as{' '}
+                <strong className="text-white font-bold bg-neutral-900 px-1.5 py-0.5 rounded border border-neutral-700">0–0</strong>,{' '}
+                and both teams will receive <strong className="text-amber-400">1 point each</strong>.
+              </p>
+            </div>
+
+            {/* Rule 4: Walkover Claims */}
+            <div className="p-4 bg-black/60 rounded-lg border border-neutral-800">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-neutral-300 font-bold">
+                  4. WALKOVER CLAIMS
+                </span>
+                <span className="text-[10px] font-mono text-neutral-400 bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800">
+                  VERIFICATION MANDATORY
+                </span>
+              </div>
+              <p className="text-sm text-neutral-200 leading-relaxed mb-3">
+                If Rule 2 applies, contact the admins <strong className="text-white underline underline-offset-2">only after the fixture deadline has passed</strong> and provide proof (e.g., chat logs, communication attempts, and proof of opponent unavailability or unresponsiveness).
+              </p>
+              <div>
+                <a
+                  href="https://wa.me/919746603975"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-2 px-3 py-1.5 rounded bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-400 font-mono text-xs font-bold transition-colors shadow-sm"
+                >
+                  <span>Submit Walkover Proof / Raise Complaint on WhatsApp (+91 97466 03975) ➔</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Rule 5: Deadline */}
+            <div className="p-4 bg-black/60 rounded-lg border border-neutral-800">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-neutral-300 font-bold">
+                  5. DEADLINE
+                </span>
+                <span className="text-[10px] font-mono text-neutral-400 bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800">
+                  STRICT TIMELINE
+                </span>
+              </div>
+              <p className="text-sm text-neutral-200 leading-relaxed">
+                All fixtures must be completed within the specified time. Teams are responsible for coordinating with their opponents and completing their matches before the deadline.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 4: Eligibility & Student Integrity */}
         <div className="bg-[#121212] border border-[#222222] rounded-lg p-6">
           <div className="flex items-center space-x-3 mb-4">
             <Users className="w-5 h-5 text-brand-red" />
             <h2 className="font-display text-2xl text-white tracking-wide">
-              3. PLAYER ELIGIBILITY
+              4. PLAYER ELIGIBILITY
             </h2>
           </div>
           <p className="text-sm text-neutral-300 leading-relaxed">
@@ -92,12 +213,12 @@ export const RulesPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Section 4: Disconnections & Network Issues */}
+        {/* Section 5: Disconnections & Network Issues */}
         <div className="bg-[#121212] border border-[#222222] rounded-lg p-6">
           <div className="flex items-center space-x-3 mb-4">
             <AlertTriangle className="w-5 h-5 text-amber-500" />
             <h2 className="font-display text-2xl text-white tracking-wide">
-              4. DISCONNECTIONS & DISPUTES
+              5. DISCONNECTIONS & DISPUTES
             </h2>
           </div>
           <p className="text-sm text-neutral-300 leading-relaxed mb-4">
@@ -134,12 +255,12 @@ export const RulesPage: React.FC = () => {
           </ul>
         </div>
 
-        {/* Section 5: Organizers & Sponsors */}
+        {/* Section 6: Organizers & Sponsors */}
         <div className="bg-[#121212] border border-[#222222] rounded-lg p-6">
           <div className="flex items-center space-x-3 mb-4">
             <CheckCircle className="w-5 h-5 text-emerald-500" />
             <h2 className="font-display text-2xl text-white tracking-wide">
-              5. ORGANIZATIONAL AUTHORITY
+              6. ORGANIZATIONAL AUTHORITY
             </h2>
           </div>
           <p className="text-sm text-neutral-300 leading-relaxed">

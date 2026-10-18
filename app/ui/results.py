@@ -240,7 +240,7 @@ class ResultsView(ctk.CTkScrollableFrame):
             messagebox.showwarning("Incomplete Match", "Both teams must be determined before entering a result.")
             return
 
-        modal = BaseModal(self, title=f"Enter Result — Match #{match.match_number}", width=480, height=440)
+        modal = BaseModal(self, title=f"Enter Result — Match #{match.match_number}", width=480, height=530)
 
         # Team Matchup Header
         match_box = ctk.CTkFrame(modal.body_frame, fg_color=theme.BG_INPUT, corner_radius=8)
@@ -261,7 +261,7 @@ class ResultsView(ctk.CTkScrollableFrame):
 
         # Score Inputs Row
         score_frame = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
-        score_frame.pack(fill="x", pady=(0, 12))
+        score_frame.pack(fill="x", pady=(0, 10))
         score_frame.columnconfigure(0, weight=1)
         score_frame.columnconfigure(1, weight=1)
 
@@ -311,14 +311,23 @@ class ResultsView(ctk.CTkScrollableFrame):
         # Match Status
         ctk.CTkLabel(modal.body_frame, text="Match Outcome / Status:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
         status_menu = ctk.CTkOptionMenu(modal.body_frame, values=["Completed", "Walkover", "Abandoned"], fg_color=theme.BG_INPUT)
-        status_menu.set("Completed")
+        status_menu.set(match.status if match.status in ("Completed", "Walkover", "Abandoned") else "Completed")
         status_menu.pack(fill="x", pady=(0, 6))
 
         # Walkover Winner dropdown (hidden unless Walkover selected)
         wo_frame = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
         ctk.CTkLabel(wo_frame, text="Walkover Awarded To:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w")
         wo_menu = ctk.CTkOptionMenu(wo_frame, values=[match.home_team_name, match.away_team_name], fg_color=theme.BG_INPUT)
+        if match.winner_team_id == match.away_team_id:
+            wo_menu.set(match.away_team_name)
+        else:
+            wo_menu.set(match.home_team_name)
         wo_menu.pack(fill="x")
+
+        notes_label = ctk.CTkLabel(modal.body_frame, text="Notes / Reason / Rule Reference:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY)
+        notes_entry = ctk.CTkEntry(modal.body_frame, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
+        if match.notes:
+            notes_entry.insert(0, match.notes)
 
         def on_status_change(choice):
             if choice == "Walkover":
@@ -327,10 +336,89 @@ class ResultsView(ctk.CTkScrollableFrame):
                 wo_frame.pack_forget()
 
         status_menu.configure(command=on_status_change)
+        if match.status == "Walkover":
+            wo_frame.pack(fill="x", pady=(0, 6), before=notes_label)
 
-        notes_label = ctk.CTkLabel(modal.body_frame, text="Notes / Reason:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY)
+        # Fixture Rules Quick Actions Box
+        rules_box = ctk.CTkFrame(modal.body_frame, fg_color=theme.BG_INPUT, corner_radius=6)
+        rules_box.pack(fill="x", pady=(0, 10))
+
+        ctk.CTkLabel(
+            rules_box,
+            text="Fixture Rules Presets (Rule 2 Walkover & Rule 3 Forfeit)",
+            font=ctk.CTkFont(size=10, weight="bold"),
+            text_color=theme.TEXT_MUTED
+        ).pack(anchor="w", padx=8, pady=(4, 2))
+
+        btn_row = ctk.CTkFrame(rules_box, fg_color="transparent")
+        btn_row.pack(fill="x", padx=4, pady=(0, 5))
+
+        def set_rule2_home():
+            home_score_e.delete(0, "end")
+            home_score_e.insert(0, "3")
+            away_score_e.delete(0, "end")
+            away_score_e.insert(0, "0")
+            status_menu.set("Walkover")
+            wo_menu.set(match.home_team_name)
+            wo_frame.pack(fill="x", pady=(0, 6), before=notes_label)
+            notes_entry.delete(0, "end")
+            notes_entry.insert(0, f"Rule 2 Walkover: 3–0 awarded to {match.home_team_name} (opponent failed to play within deadline)")
+
+        def set_rule2_away():
+            home_score_e.delete(0, "end")
+            home_score_e.insert(0, "0")
+            away_score_e.delete(0, "end")
+            away_score_e.insert(0, "3")
+            status_menu.set("Walkover")
+            wo_menu.set(match.away_team_name)
+            wo_frame.pack(fill="x", pady=(0, 6), before=notes_label)
+            notes_entry.delete(0, "end")
+            notes_entry.insert(0, f"Rule 2 Walkover: 3–0 awarded to {match.away_team_name} (opponent failed to play within deadline)")
+
+        def set_rule3_draw():
+            home_score_e.delete(0, "end")
+            home_score_e.insert(0, "0")
+            away_score_e.delete(0, "end")
+            away_score_e.insert(0, "0")
+            status_menu.set("Completed")
+            wo_frame.pack_forget()
+            notes_entry.delete(0, "end")
+            notes_entry.insert(0, "Rule 3: Both teams failed to play within deadline (0–0 recorded, 1 point awarded to each team)")
+
+        h_name_short = match.home_team_name[:12] if len(match.home_team_name) > 12 else match.home_team_name
+        a_name_short = match.away_team_name[:12] if len(match.away_team_name) > 12 else match.away_team_name
+
+        ctk.CTkButton(
+            btn_row,
+            text=f"Rule 2: 3-0 to {h_name_short}",
+            height=24,
+            font=ctk.CTkFont(size=10),
+            fg_color=theme.BG_CARD,
+            hover_color=theme.BG_CARD_HOVER,
+            command=set_rule2_home
+        ).pack(side="left", expand=True, fill="x", padx=2)
+
+        ctk.CTkButton(
+            btn_row,
+            text=f"Rule 2: 3-0 to {a_name_short}",
+            height=24,
+            font=ctk.CTkFont(size=10),
+            fg_color=theme.BG_CARD,
+            hover_color=theme.BG_CARD_HOVER,
+            command=set_rule2_away
+        ).pack(side="left", expand=True, fill="x", padx=2)
+
+        ctk.CTkButton(
+            btn_row,
+            text="Rule 3: 0-0 Draw",
+            height=24,
+            font=ctk.CTkFont(size=10),
+            fg_color=theme.BG_CARD,
+            hover_color=theme.BG_CARD_HOVER,
+            command=set_rule3_draw
+        ).pack(side="left", expand=True, fill="x", padx=2)
+
         notes_label.pack(anchor="w")
-        notes_entry = ctk.CTkEntry(modal.body_frame, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
         notes_entry.pack(fill="x", pady=(0, 14))
 
         def save_result():
