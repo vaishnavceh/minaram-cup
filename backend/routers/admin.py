@@ -84,6 +84,54 @@ class StandingsOverrideRequest(BaseModel):
     notes: Optional[str] = ""
 
 
+class KnockoutResultRequest(BaseModel):
+    home_score: int
+    away_score: int
+    home_penalty: Optional[int] = None
+    away_penalty: Optional[int] = None
+    winner_team_id: Optional[int] = None
+    winner_method: Optional[str] = "Regular Time"
+    notes: Optional[str] = ""
+
+
+class KnockoutStatusRequest(BaseModel):
+    status: str
+    notes: Optional[str] = ""
+
+
+class KnockoutWalkoverRequest(BaseModel):
+    winner_team_id: int
+    reason: str
+
+
+class KnockoutEditFixtureRequest(BaseModel):
+    home_team_id: Optional[int] = None
+    away_team_id: Optional[int] = None
+    scheduled_date: Optional[str] = ""
+    scheduled_time: Optional[str] = ""
+    venue: Optional[str] = ""
+    notes: Optional[str] = ""
+
+
+class KnockoutDirectOverrideRequest(BaseModel):
+    slot_index: int
+    team_id: int
+    reason: str
+
+
+class KnockoutDrawConfigRequest(BaseModel):
+    draw_method: str  # "seeded" or "random"
+
+
+class KnockoutRuleUpdateRequest(BaseModel):
+    key: str
+    value: str
+
+
+class ThirdPlaceToggleRequest(BaseModel):
+    enabled: bool
+
+
 # ----------------------------------------------------
 # Authentication
 # ----------------------------------------------------
@@ -451,4 +499,211 @@ async def upload_database_admin(
         "status": "synchronized",
         "message": f"Cloud database updated successfully ({len(content)} bytes). Live website updated."
     }
+
+
+# ----------------------------------------------------
+# Knockout Tournament Management (Protected)
+# ----------------------------------------------------
+@router.post("/knockout/recalculate")
+def recalculate_knockout_predictions_admin(admin: dict = Depends(get_current_admin)):
+    """Recalculate predicted qualifiers and knockout fixtures from latest group standings."""
+    try:
+        snap = ko_mgr.get_or_create_predicted_snapshot(force=True)
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "recalculated", "version": snap["version"]})
+        return {
+            "status": "recalculated",
+            "version": snap["version"],
+            "last_updated": snap["created_at"],
+            "is_provisional": snap["is_provisional"],
+            "message": "Knockout predictions updated from latest standings."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/knockout/preview")
+def preview_knockout_admin(admin: dict = Depends(get_current_admin)):
+    """Preview master knockout tournament data (predictions, direct qualifiers, official results)."""
+    return ko_mgr.get_knockout_tournament_data()
+
+
+@router.post("/knockout/draw-config")
+def update_draw_config_admin(req: KnockoutDrawConfigRequest, admin: dict = Depends(get_current_admin)):
+    """Update draw configuration (seeded vs random) and regenerate predictions."""
+    if req.draw_method not in ("seeded", "random"):
+        raise HTTPException(status_code=400, detail="draw_method must be 'seeded' or 'random'")
+    ko_mgr.update_rule("draw_method", req.draw_method, admin_username=admin["sub"])
+    snap = ko_mgr.get_or_create_predicted_snapshot(force=True, draw_method=req.draw_method)
+    from app.events import broadcaster
+    broadcaster.broadcast_from_thread("knockout_updated", {"action": "draw_config_updated"})
+    return {"status": "updated", "draw_method": req.draw_method, "version": snap["version"]}
+
+
+@router.post("/knockout/direct-qualifiers/override")
+def override_direct_qualifier_admin(req: KnockoutDirectOverrideRequest, admin: dict = Depends(get_current_admin)):
+    """Manually assign or replace one of the two direct Round of 16 qualifiers."""
+    try:
+        res = ko_mgr.set_direct_qualifier_override(
+            slot_index=req.slot_index,
+            team_id=req.team_id,
+            reason=req.reason,
+            admin_username=admin["sub"]
+        )
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "direct_qualifier_overridden"})
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.delete("/knockout/direct-qualifiers/override")
+def clear_direct_qualifier_override_admin(admin: dict = Depends(get_current_admin)):
+    """Clear manual direct qualifier overrides and restore automatically calculated recommendations."""
+    res = ko_mgr.clear_direct_qualifier_overrides(admin_username=admin["sub"])
+    from app.events import broadcaster
+    broadcaster.broadcast_from_thread("knockout_updated", {"action": "direct_overrides_cleared"})
+    return res
+
+
+@router.post("/knockout/fixtures/{bracket_slot}/confirm")
+def confirm_fixture_admin(bracket_slot: str, admin: dict = Depends(get_current_admin)):
+    """Officially approve a predicted fixture into the authoritative tournament bracket."""
+    try:
+        res = ko_mgr.confirm_fixture(bracket_slot, admin_username=admin["sub"])
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "fixture_confirmed", "bracket_slot": bracket_slot})
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/knockout/fixtures/batch-confirm")
+def batch_confirm_stage_admin(stage: str = Body(..., embed=True), admin: dict = Depends(get_current_admin)):
+    """Batch approve all predicted fixtures of a stage into official bracket."""
+    try:
+        cnt = ko_mgr.batch_confirm_stage(stage, admin_username=admin["sub"])
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "batch_confirmed", "stage": stage})
+        return {"status": "confirmed", "stage": stage, "count": cnt}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/knockout/fixtures/{bracket_slot}/unconfirm")
+def unconfirm_fixture_admin(bracket_slot: str, admin: dict = Depends(get_current_admin)):
+    """Revert an unplayed official fixture back to predicted."""
+    try:
+        res = ko_mgr.unconfirm_fixture(bracket_slot, admin_username=admin["sub"])
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "fixture_unconfirmed", "bracket_slot": bracket_slot})
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put("/knockout/fixtures/{bracket_slot}")
+def edit_fixture_admin(bracket_slot: str, req: KnockoutEditFixtureRequest, admin: dict = Depends(get_current_admin)):
+    """Edit teams, schedule, or venue for an official knockout fixture."""
+    try:
+        res = ko_mgr.edit_fixture(
+            bracket_slot=bracket_slot,
+            home_team_id=req.home_team_id,
+            away_team_id=req.away_team_id,
+            scheduled_date=req.scheduled_date or "",
+            scheduled_time=req.scheduled_time or "",
+            venue=req.venue or "",
+            notes=req.notes or "",
+            admin_username=admin["sub"]
+        )
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "fixture_edited", "bracket_slot": bracket_slot})
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/knockout/fixtures/{bracket_slot}/result")
+def record_knockout_result_admin(bracket_slot: str, req: KnockoutResultRequest, admin: dict = Depends(get_current_admin)):
+    """Record final score, determine winner, advance winner to next designated slot, mark loser eliminated."""
+    try:
+        res = ko_mgr.record_knockout_result(
+            bracket_slot=bracket_slot,
+            home_score=req.home_score,
+            away_score=req.away_score,
+            home_penalty=req.home_penalty,
+            away_penalty=req.away_penalty,
+            winner_team_id=req.winner_team_id,
+            winner_method=req.winner_method or "Regular Time",
+            notes=req.notes or "",
+            admin_username=admin["sub"]
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/knockout/fixtures/{bracket_slot}/status")
+def set_fixture_status_admin(bracket_slot: str, req: KnockoutStatusRequest, admin: dict = Depends(get_current_admin)):
+    """Update fixture status (LIVE, UNDER REVIEW, CONFIRMED)."""
+    try:
+        res = ko_mgr.set_fixture_status(
+            bracket_slot=bracket_slot,
+            status=req.status,
+            notes=req.notes or "",
+            admin_username=admin["sub"]
+        )
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "status_updated", "bracket_slot": bracket_slot})
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/knockout/fixtures/{bracket_slot}/walkover")
+def record_walkover_admin(bracket_slot: str, req: KnockoutWalkoverRequest, admin: dict = Depends(get_current_admin)):
+    """Record an official walkover with policy documentation."""
+    try:
+        res = ko_mgr.record_walkover(
+            bracket_slot=bracket_slot,
+            winner_team_id=req.winner_team_id,
+            reason=req.reason,
+            admin_username=admin["sub"]
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/knockout/rules")
+def update_knockout_rule_admin(req: KnockoutRuleUpdateRequest, admin: dict = Depends(get_current_admin)):
+    """Update a knockout rule or game setting."""
+    rules = ko_mgr.update_rule(req.key, req.value, admin_username=admin["sub"])
+    from app.events import broadcaster
+    broadcaster.broadcast_from_thread("knockout_updated", {"action": "rule_updated"})
+    return {"status": "saved", "rules": rules}
+
+
+@router.post("/knockout/rules/third-place-toggle")
+def toggle_third_place_admin(req: ThirdPlaceToggleRequest, admin: dict = Depends(get_current_admin)):
+    """Enable or disable third-place playoff."""
+    res = ko_mgr.toggle_third_place(req.enabled, admin_username=admin["sub"])
+    from app.events import broadcaster
+    broadcaster.broadcast_from_thread("knockout_updated", {"action": "third_place_toggled", "enabled": req.enabled})
+    return res
+
+
+@router.post("/knockout/reset-predictions")
+def reset_predictions_admin(admin: dict = Depends(get_current_admin)):
+    """Reset unconfirmed prediction snapshots without touching confirmed or completed fixtures."""
+    res = ko_mgr.reset_unconfirmed_predictions(admin_username=admin["sub"])
+    from app.events import broadcaster
+    broadcaster.broadcast_from_thread("knockout_updated", {"action": "predictions_reset"})
+    return res
+
+
+@router.get("/knockout/audit-log")
+def get_knockout_audit_log_admin(limit: int = 100, admin: dict = Depends(get_current_admin)):
+    """View administrative audit trail of all knockout actions."""
+    return ko_mgr.get_audit_logs(limit=limit)
 

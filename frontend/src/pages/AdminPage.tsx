@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../api';
 import { PublicMatch } from '../types';
 import { Lock, LogOut, CheckCircle, RefreshCw, AlertCircle, Trophy, Save, Shield } from 'lucide-react';
+import { AdminKnockoutManager } from '../components/AdminKnockoutManager';
 
 export const AdminPage: React.FC = () => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('minaram_admin_token'));
@@ -9,6 +10,7 @@ export const AdminPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'knockout' | 'matches'>('knockout');
 
   // Admin Dashboard State
   const [tournament, setTournament] = useState<any>(null);
@@ -330,22 +332,52 @@ export const AdminPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Notifications */}
-      {actionSuccess && (
-        <div className="mb-6 p-4 rounded-lg bg-emerald-950/40 border border-emerald-800 text-xs font-mono text-emerald-300 flex items-center space-x-2">
-          <CheckCircle className="w-4 h-4 shrink-0" />
-          <span>{actionSuccess}</span>
-        </div>
-      )}
-      {actionError && (
-        <div className="mb-6 p-4 rounded-lg bg-rose-950/40 border border-rose-800 text-xs font-mono text-rose-300 flex items-center space-x-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{actionError}</span>
-        </div>
-      )}
+      {/* Admin Tabs */}
+      <div className="flex border-b border-[#222222] mb-8">
+        <button
+          onClick={() => setActiveTab('knockout')}
+          className={`flex items-center space-x-2 px-6 py-3 font-display text-base tracking-wider transition-colors border-b-2 -mb-px ${
+            activeTab === 'knockout'
+              ? 'border-brand-red text-white bg-neutral-900/60'
+              : 'border-transparent text-neutral-400 hover:text-neutral-200'
+          }`}
+        >
+          <Trophy className="w-4 h-4 text-brand-gold" />
+          <span>LIVE KNOCKOUT MANAGEMENT</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('matches')}
+          className={`flex items-center space-x-2 px-6 py-3 font-display text-base tracking-wider transition-colors border-b-2 -mb-px ${
+            activeTab === 'matches'
+              ? 'border-brand-red text-white bg-neutral-900/60'
+              : 'border-transparent text-neutral-400 hover:text-neutral-200'
+          }`}
+        >
+          <Shield className="w-4 h-4 text-neutral-400" />
+          <span>GROUP MATCH SCORING</span>
+        </button>
+      </div>
 
-      {/* Match Management Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {activeTab === 'knockout' ? (
+        <AdminKnockoutManager token={token} onRefreshParent={loadMatches} />
+      ) : (
+        <>
+          {/* Notifications */}
+          {actionSuccess && (
+            <div className="mb-6 p-4 rounded-lg bg-emerald-950/40 border border-emerald-800 text-xs font-mono text-emerald-300 flex items-center space-x-2">
+              <CheckCircle className="w-4 h-4 shrink-0" />
+              <span>{actionSuccess}</span>
+            </div>
+          )}
+          {actionError && (
+            <div className="mb-6 p-4 rounded-lg bg-rose-950/40 border border-rose-800 text-xs font-mono text-rose-300 flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{actionError}</span>
+            </div>
+          )}
+
+          {/* Match Management Form */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Match Selector List */}
         <div className="bg-[#121212] border border-[#222222] rounded-lg p-4 max-h-[600px] overflow-y-auto">
           <h3 className="font-display text-lg text-white mb-3">SELECT MATCH</h3>
@@ -613,6 +645,8 @@ export const AdminPage: React.FC = () => {
           )}
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 };

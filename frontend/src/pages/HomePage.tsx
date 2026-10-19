@@ -1,39 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api';
-import { PublicTournament, PublicMatch, PublicGroupStandings, PublicBracket } from '../types';
-import { MatchCard } from '../components/MatchCard';
-import { StandingsTable } from '../components/StandingsTable';
-import { Ticker } from '../components/Ticker';
+import { PublicTournament } from '../types';
 import { GoldenBootShowcase } from '../components/GoldenBootShowcase';
-import { BracketTree } from '../components/BracketTree';
-import { Trophy, Swords, Calendar, BarChart3, ArrowRight, ShieldAlert, Sparkles, GitFork } from 'lucide-react';
+import { Ticker } from '../components/Ticker';
+import { Trophy, Calendar, BarChart3, ArrowRight, Sparkles, GitFork } from 'lucide-react';
 import { PRIZE_POOL, TOTAL_PRIZE_POOL } from '../constants';
 
 export const HomePage: React.FC = () => {
   const [tournament, setTournament] = useState<PublicTournament | null>(null);
-  const [recentMatches, setRecentMatches] = useState<PublicMatch[]>([]);
-  const [upcomingMatches, setUpcomingMatches] = useState<PublicMatch[]>([]);
-  const [standings, setStandings] = useState<PublicGroupStandings[]>([]);
-  const [bracket, setBracket] = useState<PublicBracket>({ rounds: [] });
   const [loading, setLoading] = useState(true);
 
   const loadData = async () => {
     try {
-      const [tData, rData, fData, sData, bData] = await Promise.all([
-        api.getTournament(),
-        api.getResults(6),
-        api.getFixtures(),
-        api.getStandings(),
-        api.getBracket(),
-      ]);
+      const tData = await api.getTournament();
       setTournament(tData);
-      setRecentMatches(Array.isArray(rData) ? rData : []);
-      const fixturesList = Array.isArray(fData) ? fData : [];
-      const upcoming = fixturesList.filter((m) => m.status === 'SCHEDULED');
-      setUpcomingMatches(upcoming.length > 0 ? upcoming.slice(0, 4) : fixturesList.slice(0, 4));
-      setStandings(Array.isArray(sData) ? sData : []);
-      setBracket(bData);
     } catch (err) {
       console.error('Failed to load homepage tournament data', err);
     } finally {
@@ -43,7 +24,6 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     loadData();
-    // Auto-refresh every 15s as backup to SSE
     const interval = setInterval(loadData, 15000);
     return () => clearInterval(interval);
   }, []);
@@ -83,15 +63,15 @@ export const HomePage: React.FC = () => {
           </h1>
 
           <p className="mt-6 max-w-2xl text-neutral-300 text-sm sm:text-base md:text-lg font-normal leading-relaxed drop-shadow">
-            Experience the pinnacle of college eFootball. {tournament?.team_count || 21} elite squads competing across{' '}
-            {tournament?.groups_count || (standings.length > 0 ? standings.length : 6)} groups and high-voltage knockout stages for eternal glory at TKM College of Engineering.
+            Experience the pinnacle of college eFootball. {tournament?.team_count || 58} elite squads competing across{' '}
+            {tournament?.groups_count || 15} groups and high-voltage knockout stages for eternal glory at TKM College of Engineering.
           </p>
 
           {/* Key Stat Cards: Live Dashboard Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-10 w-full max-w-3xl">
             <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center relative overflow-hidden group hover:border-brand-red transition-all shadow-lg">
               <span className="block font-display text-3xl sm:text-4xl text-white tabular-nums">
-                {tournament?.team_count ?? (standings.reduce((acc, g) => acc + g.standings.length, 0) || 21)}
+                {tournament?.team_count ?? 58}
               </span>
               <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
                 Teams Registered
@@ -104,7 +84,7 @@ export const HomePage: React.FC = () => {
 
             <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center relative overflow-hidden group hover:border-brand-red transition-all shadow-lg">
               <span className="block font-display text-3xl sm:text-4xl text-brand-red tabular-nums">
-                {tournament?.groups_count || (standings.length > 0 ? standings.length : 6)}
+                {tournament?.groups_count ?? 15}
               </span>
               <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
                 Groups Formed
@@ -116,13 +96,13 @@ export const HomePage: React.FC = () => {
 
             <div className="bg-black/60 border border-neutral-800 backdrop-blur-md p-3.5 rounded-lg text-center relative overflow-hidden group hover:border-brand-red transition-all shadow-lg">
               <span className="block font-display text-3xl sm:text-4xl text-white tabular-nums">
-                {tournament?.match_count || (recentMatches.length + upcomingMatches.length) || 0}
+                {tournament?.match_count ?? 90}
               </span>
               <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400">
                 Total Matches
               </span>
               <div className="flex items-center justify-center space-x-1 mt-1 text-[10px] text-neutral-400 font-mono">
-                <span>{tournament?.completed_matches || 0} COMPLETED</span>
+                <span>{tournament?.completed_matches || 51} COMPLETED</span>
               </div>
             </div>
 
@@ -186,7 +166,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* Live Ticker Bar */}
-      <Ticker recentMatches={recentMatches} upcomingMatches={upcomingMatches} />
+      <Ticker />
 
       {/* Main Content Layout */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
@@ -292,87 +272,131 @@ export const HomePage: React.FC = () => {
         {/* Golden Boot Top Scorers Section */}
         <GoldenBootShowcase />
 
-        {/* Knockout Championship Bracket Section */}
-        <section id="knockout-bracket" className="relative">
+        {/* Tournament Competition Directory Section */}
+        <section className="relative">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-[#222222] gap-4">
             <div>
               <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-brand-red mb-1">
-                <GitFork className="w-4 h-4" />
-                <span>CHAMPIONSHIP PLAYOFFS</span>
+                <Trophy className="w-4 h-4 text-brand-gold" />
+                <span>TOURNAMENT COMPETITION HUBS</span>
               </div>
               <h2 className="font-display text-4xl sm:text-5xl text-white tracking-wider">
-                KNOCKOUT BRACKET
+                EXPLORE CHAMPIONSHIP
               </h2>
               <p className="text-xs sm:text-sm font-mono text-neutral-400 max-w-xl mt-1">
-                Road to the Minaram Cup trophy. All slots are currently unseeded (yet to decide) while group stage matches are live.
+                Access official competition portals: 15-group standings, comprehensive fixtures, match reports, and the live knockout arena.
               </p>
             </div>
-            <Link
-              to="/bracket"
-              className="inline-flex items-center space-x-2 px-4 py-2 rounded bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700 text-white font-mono text-xs tracking-wider uppercase transition-all shrink-0"
-            >
-              <span>FULL BRACKET VIEW</span>
-              <ArrowRight className="w-4 h-4 text-brand-red" />
-            </Link>
           </div>
 
-          <BracketTree bracket={bracket} showTrophyPedestal={false} />
-        </section>
-
-        {/* Next Matches & Recent Results Split Grid */}
-        <section>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {/* Upcoming Fixtures */}
-            <div>
-              <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#222222]">
-                <div className="flex items-center space-x-2.5">
-                  <Calendar className="w-5 h-5 text-brand-red" />
-                  <h2 className="font-display text-2xl tracking-wider text-white">UPCOMING CLASHES</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Hub 1: Knockout / Qualifiers */}
+            <Link
+              to="/bracket"
+              className="group relative p-6 rounded-2xl bg-gradient-to-b from-[#161208] via-[#100d06] to-[#080808] border border-brand-gold/40 hover:border-brand-gold transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-brand-gold/10"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-brand-gold/10 border border-brand-gold/40 flex items-center justify-center text-brand-gold group-hover:scale-110 transition-transform">
+                    <Trophy className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold border border-brand-gold/30 uppercase tracking-widest animate-pulse">
+                    UCL DRAW
+                  </span>
                 </div>
-                <Link to="/fixtures" className="text-xs font-mono text-neutral-400 hover:text-white flex items-center space-x-1">
-                  <span>VIEW ALL</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                <h3 className="font-display text-2xl text-white tracking-wide group-hover:text-brand-gold transition-colors">
+                  KNOCKOUT / QUALIFIERS
+                </h3>
+                <p className="text-xs font-mono text-neutral-400 mt-2 leading-relaxed">
+                  30 qualified squads, 2 Direct R16 Byes, interactive UEFA Champions League style ceremonial draw simulator, and championship bracket.
+                </p>
               </div>
-
-              {upcomingMatches.length > 0 ? (
-                <div className="space-y-4">
-                  {upcomingMatches.map((m) => (
-                    <MatchCard key={m.id} match={m} />
-                  ))}
-                </div>
-              ) : (
-                <div className="p-8 bg-[#121212] border border-[#222222] rounded-lg text-center text-neutral-400 text-sm">
-                  No pending scheduled matches at this time.
-                </div>
-              )}
-            </div>
-
-            {/* Recent Results */}
-            <div>
-              <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#222222]">
-                <div className="flex items-center space-x-2.5">
-                  <Trophy className="w-5 h-5 text-brand-red" />
-                  <h2 className="font-display text-2xl tracking-wider text-white">LATEST RESULTS</h2>
-                </div>
-                <Link to="/results" className="text-xs font-mono text-neutral-400 hover:text-white flex items-center space-x-1">
-                  <span>FULL RESULTS</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+              <div className="mt-6 pt-3 border-t border-neutral-800 flex items-center justify-between text-xs font-mono text-brand-gold group-hover:text-white transition-colors">
+                <span>ENTER KNOCKOUT ARENA</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
+            </Link>
 
-              {recentMatches.length > 0 ? (
-                <div className="space-y-4">
-                  {recentMatches.slice(0, 4).map((m) => (
-                    <MatchCard key={m.id} match={m} />
-                  ))}
+            {/* Hub 2: Group Standings */}
+            <Link
+              to="/standings"
+              className="group relative p-6 rounded-2xl bg-gradient-to-b from-[#0e141a] via-[#090d12] to-[#080808] border border-neutral-800 hover:border-cyan-500/60 transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-cyan-900/10"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-cyan-950/40 border border-cyan-700/40 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                    <BarChart3 className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950/40 text-cyan-300 border border-cyan-800/40 uppercase tracking-widest">
+                    15 GROUPS
+                  </span>
                 </div>
-              ) : (
-                <div className="p-8 bg-[#121212] border border-[#222222] rounded-lg text-center text-neutral-400 text-sm">
-                  Tournament matches will appear here as results are recorded.
+                <h3 className="font-display text-2xl text-white tracking-wide group-hover:text-cyan-400 transition-colors">
+                  GROUP STANDINGS
+                </h3>
+                <p className="text-xs font-mono text-neutral-400 mt-2 leading-relaxed">
+                  Official points tables, goal differences, head-to-head records, and top-2 qualification cutoffs for Groups A through O.
+                </p>
+              </div>
+              <div className="mt-6 pt-3 border-t border-neutral-800 flex items-center justify-between text-xs font-mono text-cyan-400 group-hover:text-white transition-colors">
+                <span>VIEW STANDINGS</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            {/* Hub 3: Match Schedule & Fixtures */}
+            <Link
+              to="/fixtures"
+              className="group relative p-6 rounded-2xl bg-gradient-to-b from-[#181112] via-[#100b0c] to-[#080808] border border-neutral-800 hover:border-brand-red transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-brand-red/10"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/40 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
+                    <Calendar className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-red/20 text-brand-red border border-brand-red/30 uppercase tracking-widest">
+                    SCHEDULE
+                  </span>
                 </div>
-              )}
-            </div>
+                <h3 className="font-display text-2xl text-white tracking-wide group-hover:text-brand-red transition-colors">
+                  UPCOMING FIXTURES
+                </h3>
+                <p className="text-xs font-mono text-neutral-400 mt-2 leading-relaxed">
+                  Comprehensive fixture schedules, flexible matchweek windows, pitch assignments, and team clash schedules.
+                </p>
+              </div>
+              <div className="mt-6 pt-3 border-t border-neutral-800 flex items-center justify-between text-xs font-mono text-brand-red group-hover:text-white transition-colors">
+                <span>VIEW FIXTURES</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            {/* Hub 4: Results & Match Reports */}
+            <Link
+              to="/results"
+              className="group relative p-6 rounded-2xl bg-gradient-to-b from-[#13111c] via-[#0b0a10] to-[#080808] border border-neutral-800 hover:border-purple-500/60 transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-purple-900/10"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-purple-950/40 border border-purple-700/40 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                    <Sparkles className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-950/40 text-purple-300 border border-purple-800/40 uppercase tracking-widest">
+                    RESULTS
+                  </span>
+                </div>
+                <h3 className="font-display text-2xl text-white tracking-wide group-hover:text-purple-400 transition-colors">
+                  MATCH RESULTS
+                </h3>
+                <p className="text-xs font-mono text-neutral-400 mt-2 leading-relaxed">
+                  Full official results archive, penalty shootout outcomes, Rule 2 walkover verdicts, and completed tie histories.
+                </p>
+              </div>
+              <div className="mt-6 pt-3 border-t border-neutral-800 flex items-center justify-between text-xs font-mono text-purple-400 group-hover:text-white transition-colors">
+                <span>VIEW RESULTS</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
           </div>
         </section>
 
@@ -409,30 +433,6 @@ export const HomePage: React.FC = () => {
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-          </div>
-        </section>
-
-        {/* Group Standings Snapshot */}
-        <section>
-          <div className="flex items-center justify-between mb-8 pb-3 border-b border-[#222222]">
-            <div>
-              <h2 className="font-display text-3xl tracking-wider text-white">GROUP STAGE STANDINGS</h2>
-              <p className="text-xs font-mono text-neutral-400 mt-1 uppercase">
-                Real-time points table and qualification tracker
-              </p>
-            </div>
-            <Link
-              to="/standings"
-              className="px-4 py-2 rounded bg-neutral-900 border border-neutral-700 hover:border-neutral-500 text-xs font-mono text-neutral-300 hover:text-white transition-colors"
-            >
-              ALL GROUPS
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(Array.isArray(standings) ? standings : []).map((g) => (
-              <StandingsTable key={g.group_name} groupData={g} />
-            ))}
           </div>
         </section>
 

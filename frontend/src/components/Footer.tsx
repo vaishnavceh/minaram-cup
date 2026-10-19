@@ -55,7 +55,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <Link to="/bracket" className="hover:text-brand-red transition-colors">
-                  Knockout Championship Bracket
+                  Knockout / Qualifiers
                 </Link>
               </li>
               <li>

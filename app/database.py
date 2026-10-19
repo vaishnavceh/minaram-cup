@@ -274,6 +274,96 @@ class Database:
             );
             """)
 
+            # 9. Knockout Snapshots (Predicted tournament snapshots)
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS knockout_snapshots (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                version TEXT UNIQUE NOT NULL,
+                created_at TEXT NOT NULL,
+                standings_hash TEXT NOT NULL,
+                draw_method TEXT NOT NULL DEFAULT 'seeded',
+                is_provisional INTEGER NOT NULL DEFAULT 1,
+                is_current INTEGER NOT NULL DEFAULT 1,
+                direct_qualifiers_json TEXT NOT NULL,
+                fixtures_json TEXT NOT NULL,
+                notes TEXT DEFAULT ''
+            );
+            """)
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_snap_curr ON knockout_snapshots(is_current);")
+
+            # 10. Knockout Official Fixtures (Confirmed fixtures & results)
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS knockout_official_fixtures (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                stage TEXT NOT NULL,
+                round_number INTEGER DEFAULT 1,
+                match_number INTEGER NOT NULL,
+                bracket_slot TEXT NOT NULL UNIQUE,
+                home_team_id INTEGER REFERENCES teams(id) ON DELETE SET NULL,
+                away_team_id INTEGER REFERENCES teams(id) ON DELETE SET NULL,
+                home_placeholder TEXT DEFAULT '',
+                away_placeholder TEXT DEFAULT '',
+                scheduled_date TEXT DEFAULT '',
+                scheduled_time TEXT DEFAULT '',
+                scheduled_end_date TEXT DEFAULT '',
+                venue TEXT DEFAULT 'Minaram Stadium',
+                status TEXT NOT NULL DEFAULT 'PREDICTED',
+                home_score INTEGER DEFAULT NULL,
+                away_score INTEGER DEFAULT NULL,
+                home_penalty INTEGER DEFAULT NULL,
+                away_penalty INTEGER DEFAULT NULL,
+                winner_team_id INTEGER REFERENCES teams(id) ON DELETE SET NULL,
+                winner_method TEXT DEFAULT '',
+                notes TEXT DEFAULT '',
+                completed_at TEXT DEFAULT '',
+                confirmed_at TEXT DEFAULT '',
+                confirmed_by TEXT DEFAULT '',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+            """)
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_fix_slot ON knockout_official_fixtures(bracket_slot);")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_fix_stage ON knockout_official_fixtures(stage);")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_fix_status ON knockout_official_fixtures(status);")
+
+            # 11. Knockout Direct Overrides (Manual admin override of the 2 direct qualifiers)
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS knockout_direct_overrides (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                slot_index INTEGER NOT NULL UNIQUE,
+                team_id INTEGER NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+                reason TEXT DEFAULT '',
+                admin_username TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+            """)
+
+            # 12. Knockout Rules Configuration
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS knockout_rules_config (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                updated_by TEXT DEFAULT 'admin'
+            );
+            """)
+
+            # 13. Knockout Audit Logs
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS knockout_audit_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp TEXT NOT NULL,
+                admin_username TEXT NOT NULL,
+                action TEXT NOT NULL,
+                entity_type TEXT NOT NULL,
+                entity_id TEXT DEFAULT '',
+                old_value TEXT DEFAULT '',
+                new_value TEXT DEFAULT '',
+                reason TEXT DEFAULT ''
+            );
+            """)
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_audit_time ON knockout_audit_logs(timestamp);")
+
             # Default Settings Insertion
             default_settings = {
                 "tournament_name": "Minaram Cup",

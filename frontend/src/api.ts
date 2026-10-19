@@ -33,12 +33,18 @@ export function normalizeMatch(m: any): PublicMatch {
   const homeScore = m.home_score !== undefined ? m.home_score : m.team_a_score;
   const awayScore = m.away_score !== undefined ? m.away_score : m.team_b_score;
   const rawStatus = (m.status || 'SCHEDULED').toUpperCase();
-  const status =
-    rawStatus === 'COMPLETED' || rawStatus === 'WALKOVER'
-      ? 'COMPLETED'
-      : rawStatus === 'IN_PROGRESS' || rawStatus === 'LIVE'
-      ? 'IN_PROGRESS'
-      : 'SCHEDULED';
+  let status: any = 'SCHEDULED';
+  if (rawStatus === 'COMPLETED' || rawStatus === 'WALKOVER') {
+    status = 'COMPLETED';
+  } else if (rawStatus === 'LIVE' || rawStatus === 'IN_PROGRESS' || rawStatus === 'IN PROGRESS') {
+    status = 'LIVE';
+  } else if (rawStatus === 'UNDER REVIEW' || rawStatus === 'UNDER_REVIEW') {
+    status = 'UNDER REVIEW';
+  } else if (rawStatus === 'CONFIRMED') {
+    status = 'CONFIRMED';
+  } else if (rawStatus === 'PREDICTED') {
+    status = 'PREDICTED';
+  }
 
   const date = m.scheduled_date || m.date || m.start_date || '';
   const endDate = m.scheduled_end_date || m.end_date || '';
@@ -77,6 +83,11 @@ export function normalizeMatch(m: any): PublicMatch {
     winner_name: m.winner_team_name ?? m.winner_name ?? null,
     notes: m.notes || null,
     raw_status: m.status || null,
+    bracket_slot: m.bracket_slot || null,
+    home_group: m.home_group || null,
+    away_group: m.away_group || null,
+    is_official: Boolean(m.is_official),
+    winner_method: m.winner_method || null,
   };
 }
 
@@ -130,18 +141,35 @@ export function normalizeStandings(raw: any): PublicGroupStandings[] {
 
 export function normalizeBracket(raw: any): PublicBracket {
   if (!raw) return { rounds: [] };
+  const baseMeta = {
+    champion: raw.champion ? normalizeTeam(raw.champion) : null,
+    direct_qualifiers: raw.direct_qualifiers || [],
+    recommended_qualifiers: raw.recommended_qualifiers || [],
+    has_direct_override: Boolean(raw.has_direct_override),
+    snapshot_version: raw.snapshot_version,
+    last_updated: raw.last_updated,
+    is_provisional: Boolean(raw.is_provisional),
+    draw_method: raw.draw_method || 'seeded',
+    conflicts: raw.conflicts || [],
+    rules: raw.rules || {},
+    statuses_legend: raw.statuses_legend || {},
+  };
+
   if (Array.isArray(raw.rounds)) {
     return {
+      ...baseMeta,
       rounds: raw.rounds.map((r: any) => ({
         round_name: r.round_name || 'Round',
         matches: Array.isArray(r.matches) ? r.matches.map(normalizeMatch) : [],
       })),
-      champion: raw.champion ? normalizeTeam(raw.champion) : null,
     };
   }
   if (typeof raw === 'object') {
     const rounds = [];
     for (const [stageName, list] of Object.entries(raw)) {
+      if (['rounds', 'champion', 'direct_qualifiers', 'recommended_qualifiers', 'has_direct_override', 'snapshot_version', 'last_updated', 'is_provisional', 'draw_method', 'conflicts', 'rules', 'statuses_legend'].includes(stageName)) {
+        continue;
+      }
       if (Array.isArray(list) && list.length > 0) {
         rounds.push({
           round_name: stageName,
@@ -149,7 +177,7 @@ export function normalizeBracket(raw: any): PublicBracket {
         });
       }
     }
-    return { rounds, champion: raw.champion ? normalizeTeam(raw.champion) : null };
+    return { ...baseMeta, rounds };
   }
   return { rounds: [] };
 }
@@ -295,5 +323,212 @@ export const api = {
       },
     });
     return handleResponse(res);
+  },
+
+  // ----------------------------------------------------
+  // Dynamic Knockout Tournament Methods
+  // ----------------------------------------------------
+  async getKnockoutBracket(): Promise<PublicBracket> {
+    const res = await fetch(`${API_BASE}/public/knockout/bracket`);
+    const raw = await handleResponse<any>(res);
+    return normalizeBracket(raw);
+  },
+
+  async getKnockoutRules(): Promise<Record<string, string>> {
+    const res = await fetch(`${API_BASE}/public/knockout/rules`);
+    return handleResponse<Record<string, string>>(res);
+  },
+
+  async adminRecalculateKnockout(token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/recalculate`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return handleResponse(res);
+  },
+
+  async adminUpdateDrawConfig(drawMethod: string, token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/draw-config`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ draw_method: drawMethod }),
+    });
+    return handleResponse(res);
+  },
+
+  async adminOverrideDirectQualifier(
+    slotIndex: number,
+    teamId: number,
+    reason: string,
+    token: string
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/direct-qualifiers/override`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ slot_index: slotIndex, team_id: teamId, reason }),
+    });
+    return handleResponse(res);
+  },
+
+  async adminClearDirectOverride(token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/direct-qualifiers/override`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return handleResponse(res);
+  },
+
+  async adminConfirmFixture(slot: string, token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/fixtures/${slot}/confirm`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return handleResponse(res);
+  },
+
+  async adminBatchConfirmStage(stage: string, token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/fixtures/batch-confirm`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ stage }),
+    });
+    return handleResponse(res);
+  },
+
+  async adminUnconfirmFixture(slot: string, token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/fixtures/${slot}/unconfirm`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return handleResponse(res);
+  },
+
+  async adminEditFixture(
+    slot: string,
+    payload: {
+      home_team_id?: number | null;
+      away_team_id?: number | null;
+      scheduled_date?: string;
+      scheduled_time?: string;
+      venue?: string;
+      notes?: string;
+    },
+    token: string
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/fixtures/${slot}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+
+  async adminRecordKnockoutResult(
+    slot: string,
+    payload: {
+      home_score: number;
+      away_score: number;
+      home_penalty?: number | null;
+      away_penalty?: number | null;
+      winner_team_id?: number | null;
+      winner_method?: string;
+      notes?: string;
+    },
+    token: string
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/fixtures/${slot}/result`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+
+  async adminSetFixtureStatus(
+    slot: string,
+    status: string,
+    notes: string,
+    token: string
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/fixtures/${slot}/status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status, notes }),
+    });
+    return handleResponse(res);
+  },
+
+  async adminRecordWalkover(
+    slot: string,
+    winnerTeamId: number,
+    reason: string,
+    token: string
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/fixtures/${slot}/walkover`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ winner_team_id: winnerTeamId, reason }),
+    });
+    return handleResponse(res);
+  },
+
+  async adminUpdateRule(key: string, value: string, token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/rules`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ key, value }),
+    });
+    return handleResponse(res);
+  },
+
+  async adminToggleThirdPlace(enabled: boolean, token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/rules/third-place-toggle`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ enabled }),
+    });
+    return handleResponse(res);
+  },
+
+  async adminResetPredictions(token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/reset-predictions`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return handleResponse(res);
+  },
+
+  async adminGetKnockoutAuditLog(token: string): Promise<any[]> {
+    const res = await fetch(`${API_BASE}/admin/knockout/audit-log`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return handleResponse<any[]>(res);
   },
 };

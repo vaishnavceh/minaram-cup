@@ -301,170 +301,85 @@ def get_public_standings() -> Dict[str, Any]:
     return res
 
 
+@router.get("/knockout/bracket")
+def get_public_knockout_bracket() -> Dict[str, Any]:
+    """Retrieve full dynamic knockout tournament data (direct qualifiers, predictions, official results, rules, conflicts)."""
+    return ko_mgr.get_knockout_tournament_data()
+
+
+@router.get("/knockout/rules")
+def get_public_knockout_rules() -> Dict[str, Any]:
+    """Retrieve official knockout match rules, eFootball game settings, and penalty/walkover policies."""
+    return ko_mgr.get_rules()
+
+
 @router.get("/bracket")
 def get_public_bracket() -> Dict[str, Any]:
-    """Retrieve visual knockout bracket tree."""
-    bracket_tree = ko_mgr.get_bracket_structure()
-    res = {}
-    for stage, matches in bracket_tree.items():
-        res[stage] = [
+    """Retrieve visual knockout bracket tree with full preliminary to final support."""
+    ko_data = ko_mgr.get_knockout_tournament_data()
+
+    # Format both stage-based mapping (for legacy clients) and rounds array (for standard viewer)
+    res: Dict[str, Any] = {}
+    rounds = []
+
+    for stage_name, matches in ko_data["bracket"].items():
+        stage_match_list = [
             {
-                "id": m.id,
-                "match_number": m.match_number,
-                "bracket_slot": m.bracket_slot,
-                "home_team_name": (
-                    m.home_team_name
-                    if m.home_team_name and m.home_team_name != "TBD" and "Yet to decide" not in m.home_team_name
-                    else "Yet to decide"
-                ),
-                "away_team_name": (
-                    m.away_team_name
-                    if m.away_team_name and m.away_team_name != "TBD" and "Yet to decide" not in m.away_team_name
-                    else "Yet to decide"
-                ),
-                "home_score": m.home_score,
-                "away_score": m.away_score,
-                "home_penalty": m.home_penalty,
-                "away_penalty": m.away_penalty,
-                "status": "Yet to decide" if not m.is_completed and (not m.home_team_id or not m.away_team_id) else m.status,
-                "winner_team_name": m.winner_team_name,
-                "is_completed": m.is_completed,
-                "scheduled_date": m.scheduled_date or "TBD",
-                "scheduled_time": m.scheduled_time or "TBD",
-                "notes": m.notes or ""
+                "id": m.get("id") or m.get("match_number") or 0,
+                "tournament_id": 1,
+                "stage": stage_name,
+                "match_number": m.get("match_number"),
+                "bracket_slot": m.get("bracket_slot"),
+                "home_team_id": m.get("home_team_id"),
+                "away_team_id": m.get("away_team_id"),
+                "home_team_name": m.get("home_team_name") or m.get("home_placeholder") or "Yet to decide",
+                "away_team_name": m.get("away_team_name") or m.get("away_placeholder") or "Yet to decide",
+                "team_a_name": m.get("home_team_name") or m.get("home_placeholder") or "Yet to decide",
+                "team_b_name": m.get("away_team_name") or m.get("away_placeholder") or "Yet to decide",
+                "home_group": m.get("home_group", ""),
+                "away_group": m.get("away_group", ""),
+                "home_score": m.get("home_score"),
+                "away_score": m.get("away_score"),
+                "team_a_score": m.get("home_score"),
+                "team_b_score": m.get("away_score"),
+                "home_penalty": m.get("home_penalty"),
+                "away_penalty": m.get("away_penalty"),
+                "penalty_a": m.get("home_penalty"),
+                "penalty_b": m.get("away_penalty"),
+                "status": m.get("status", "PREDICTED"),
+                "winner_team_id": m.get("winner_team_id"),
+                "winner_team_name": m.get("winner_team_name"),
+                "winner_name": m.get("winner_team_name"),
+                "winner_method": m.get("winner_method", ""),
+                "is_completed": (m.get("status") == "COMPLETED"),
+                "scheduled_date": m.get("scheduled_date") or "TBD",
+                "scheduled_time": m.get("scheduled_time") or "Flexible (MW Window)",
+                "venue": m.get("venue") or "Minaram Stadium",
+                "pitch": m.get("venue") or "Minaram Stadium",
+                "notes": m.get("notes") or "",
+                "is_official": m.get("is_official", False)
             }
             for m in matches
         ]
+        res[stage_name] = stage_match_list
+        rounds.append({
+            "round_name": stage_name,
+            "matches": stage_match_list
+        })
 
-    # Fallback to standard 7-match knockout structure if no knockout fixtures exist
-    if not res:
-        res = {
-            "Quarter-Final": [
-                {
-                    "id": 85,
-                    "match_number": 85,
-                    "bracket_slot": "QF1",
-                    "home_team_name": "Yet to decide",
-                    "away_team_name": "Yet to decide",
-                    "home_score": None,
-                    "away_score": None,
-                    "home_penalty": None,
-                    "away_penalty": None,
-                    "status": "Yet to decide",
-                    "winner_team_name": None,
-                    "is_completed": False,
-                    "scheduled_date": "2026-10-26",
-                    "scheduled_time": "Flexible (MW Window)",
-                    "notes": "Quarter-Final 1"
-                },
-                {
-                    "id": 86,
-                    "match_number": 86,
-                    "bracket_slot": "QF2",
-                    "home_team_name": "Yet to decide",
-                    "away_team_name": "Yet to decide",
-                    "home_score": None,
-                    "away_score": None,
-                    "home_penalty": None,
-                    "away_penalty": None,
-                    "status": "Yet to decide",
-                    "winner_team_name": None,
-                    "is_completed": False,
-                    "scheduled_date": "2026-10-26",
-                    "scheduled_time": "Flexible (MW Window)",
-                    "notes": "Quarter-Final 2"
-                },
-                {
-                    "id": 87,
-                    "match_number": 87,
-                    "bracket_slot": "QF3",
-                    "home_team_name": "Yet to decide",
-                    "away_team_name": "Yet to decide",
-                    "home_score": None,
-                    "away_score": None,
-                    "home_penalty": None,
-                    "away_penalty": None,
-                    "status": "Yet to decide",
-                    "winner_team_name": None,
-                    "is_completed": False,
-                    "scheduled_date": "2026-10-27",
-                    "scheduled_time": "Flexible (MW Window)",
-                    "notes": "Quarter-Final 3"
-                },
-                {
-                    "id": 88,
-                    "match_number": 88,
-                    "bracket_slot": "QF4",
-                    "home_team_name": "Yet to decide",
-                    "away_team_name": "Yet to decide",
-                    "home_score": None,
-                    "away_score": None,
-                    "home_penalty": None,
-                    "away_penalty": None,
-                    "status": "Yet to decide",
-                    "winner_team_name": None,
-                    "is_completed": False,
-                    "scheduled_date": "2026-10-27",
-                    "scheduled_time": "Flexible (MW Window)",
-                    "notes": "Quarter-Final 4"
-                },
-            ],
-            "Semi-Final": [
-                {
-                    "id": 89,
-                    "match_number": 89,
-                    "bracket_slot": "SF1",
-                    "home_team_name": "Yet to decide",
-                    "away_team_name": "Yet to decide",
-                    "home_score": None,
-                    "away_score": None,
-                    "home_penalty": None,
-                    "away_penalty": None,
-                    "status": "Yet to decide",
-                    "winner_team_name": None,
-                    "is_completed": False,
-                    "scheduled_date": "2026-10-29",
-                    "scheduled_time": "Flexible (MW Window)",
-                    "notes": "Semi-Final 1"
-                },
-                {
-                    "id": 90,
-                    "match_number": 90,
-                    "bracket_slot": "SF2",
-                    "home_team_name": "Yet to decide",
-                    "away_team_name": "Yet to decide",
-                    "home_score": None,
-                    "away_score": None,
-                    "home_penalty": None,
-                    "away_penalty": None,
-                    "status": "Yet to decide",
-                    "winner_team_name": None,
-                    "is_completed": False,
-                    "scheduled_date": "2026-10-29",
-                    "scheduled_time": "Flexible (MW Window)",
-                    "notes": "Semi-Final 2"
-                },
-            ],
-            "Final": [
-                {
-                    "id": 91,
-                    "match_number": 91,
-                    "bracket_slot": "F",
-                    "home_team_name": "Yet to decide",
-                    "away_team_name": "Yet to decide",
-                    "home_score": None,
-                    "away_score": None,
-                    "home_penalty": None,
-                    "away_penalty": None,
-                    "status": "Yet to decide",
-                    "winner_team_name": None,
-                    "is_completed": False,
-                    "scheduled_date": "2026-10-31",
-                    "scheduled_time": "Flexible (MW Window)",
-                    "notes": "Minaram Cup Grand Final"
-                }
-            ]
-        }
+    res["rounds"] = rounds
+    res["champion"] = ko_data.get("champion")
+    res["direct_qualifiers"] = ko_data.get("direct_qualifiers", [])
+    res["recommended_qualifiers"] = ko_data.get("recommended_qualifiers", [])
+    res["has_direct_override"] = ko_data.get("has_direct_override", False)
+    res["snapshot_version"] = ko_data.get("snapshot_version")
+    res["last_updated"] = ko_data.get("last_updated")
+    res["is_provisional"] = ko_data.get("is_provisional", False)
+    res["draw_method"] = ko_data.get("draw_method", "seeded")
+    res["conflicts"] = ko_data.get("conflicts", [])
+    res["rules"] = ko_data.get("rules", {})
+    res["statuses_legend"] = ko_data.get("statuses_legend", {})
+
     return res
 
 

@@ -16,6 +16,7 @@ export interface PublicTeam {
   manager_name: string;
   department: string;
   year: string;
+  group_name?: string;
   registration_date?: string;
   matches_played: number;
   wins: number;
@@ -49,7 +50,7 @@ export interface PublicMatch {
   team_b_score?: number | null;
   penalty_a?: number | null;
   penalty_b?: number | null;
-  status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'PREDICTED' | 'CONFIRMED' | 'LIVE' | 'UNDER REVIEW';
   raw_status?: string | null;
   scheduled_time?: string | null;
   scheduled_date?: string | null;
@@ -60,6 +61,11 @@ export interface PublicMatch {
   winner_id?: number | null;
   winner_name?: string | null;
   notes?: string | null;
+  bracket_slot?: string | null;
+  home_group?: string | null;
+  away_group?: string | null;
+  is_official?: boolean;
+  winner_method?: string | null;
 }
 
 export interface GroupStandingRow {
@@ -81,6 +87,50 @@ export interface PublicGroupStandings {
   standings: GroupStandingRow[];
 }
 
+export interface DirectQualifier {
+  team_id: number;
+  team_name: string;
+  group_id: number;
+  group_name: string;
+  group_position: string;
+  rank_in_group: number;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goals_for: number;
+  goals_against: number;
+  goal_difference: number;
+  points: number;
+  points_per_match: number;
+  goals_per_match: number;
+  is_provisional: boolean;
+  criteria_summary: string;
+  is_override?: boolean;
+  override_reason?: string;
+  override_by?: string;
+  override_at?: string;
+}
+
+export interface KnockoutConflict {
+  bracket_slot: string;
+  team_id: number;
+  team_name: string;
+  message: string;
+}
+
+export interface KnockoutAuditEntry {
+  id: number;
+  timestamp: string;
+  admin_username: string;
+  action: string;
+  entity_type: string;
+  entity_id: string;
+  old_value: string;
+  new_value: string;
+  reason: string;
+}
+
 export interface PublicKnockoutRound {
   round_name: string;
   matches: PublicMatch[];
@@ -89,6 +139,16 @@ export interface PublicKnockoutRound {
 export interface PublicBracket {
   rounds: PublicKnockoutRound[];
   champion?: PublicTeam | null;
+  direct_qualifiers?: DirectQualifier[];
+  recommended_qualifiers?: DirectQualifier[];
+  has_direct_override?: boolean;
+  snapshot_version?: string;
+  last_updated?: string;
+  is_provisional?: boolean;
+  draw_method?: string;
+  conflicts?: KnockoutConflict[];
+  rules?: Record<string, string>;
+  statuses_legend?: Record<string, string>;
 }
 
 export interface AssetManifest {
