@@ -11,6 +11,7 @@ import { TeamDetailPage } from './pages/TeamDetailPage';
 import { BracketPage } from './pages/BracketPage';
 import { RulesPage } from './pages/RulesPage';
 import { AdminPage } from './pages/AdminPage';
+import { AudioPlayer } from './components/AudioPlayer';
 import { useLiveUpdates } from './hooks/useLiveUpdates';
 import { Radio } from 'lucide-react';
 
@@ -58,6 +59,7 @@ export const App: React.FC = () => {
         </main>
 
         <Footer />
+        <AudioPlayer />
       </div>
     </BrowserRouter>
   );
