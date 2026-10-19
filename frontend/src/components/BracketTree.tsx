@@ -52,9 +52,11 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
       lower === 'tbd' ||
       lower === 'yet to decide' ||
       lower.includes('yet to decide') ||
+      lower.includes('awaiting') ||
       lower.startsWith('winner of') ||
       lower.startsWith('runner-up of') ||
-      lower.startsWith('seed ')
+      lower.startsWith('seed ') ||
+      lower.startsWith('pot ')
     );
   };
 

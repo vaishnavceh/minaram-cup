@@ -736,6 +736,21 @@ def reset_ceremonial_draw_admin(admin: dict = Depends(get_current_admin)):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.post("/knockout/clear-fixtures")
+def clear_knockout_fixtures_admin(
+    mode: str = Body("ALL", embed=True),
+    admin: dict = Depends(get_current_admin)
+):
+    """Clear published knockout fixtures by mode ('ALL', 'PREDICTED', 'CONFIRMED')."""
+    try:
+        res = ko_mgr.clear_knockout_fixtures(mode=mode, admin_username=admin["sub"])
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "knockout_fixtures_cleared", "mode": mode})
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 @router.post("/knockout/set-fixtures-status")
 def set_knockout_fixtures_status_admin(
     stage: str = Body("Preliminary Round", embed=True),

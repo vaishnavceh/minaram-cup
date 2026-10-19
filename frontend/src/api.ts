@@ -145,6 +145,7 @@ export function normalizeBracket(raw: any): PublicBracket {
     champion: raw.champion ? normalizeTeam(raw.champion) : null,
     direct_qualifiers: raw.direct_qualifiers || [],
     recommended_qualifiers: raw.recommended_qualifiers || [],
+    preliminary_pool: raw.preliminary_pool || [],
     has_direct_override: Boolean(raw.has_direct_override),
     snapshot_version: raw.snapshot_version,
     last_updated: raw.last_updated,
@@ -167,7 +168,7 @@ export function normalizeBracket(raw: any): PublicBracket {
   if (typeof raw === 'object') {
     const rounds = [];
     for (const [stageName, list] of Object.entries(raw)) {
-      if (['rounds', 'champion', 'direct_qualifiers', 'recommended_qualifiers', 'has_direct_override', 'snapshot_version', 'last_updated', 'is_provisional', 'draw_method', 'conflicts', 'rules', 'statuses_legend'].includes(stageName)) {
+      if (['rounds', 'champion', 'direct_qualifiers', 'recommended_qualifiers', 'preliminary_pool', 'has_direct_override', 'snapshot_version', 'last_updated', 'is_provisional', 'draw_method', 'conflicts', 'rules', 'statuses_legend'].includes(stageName)) {
         continue;
       }
       if (Array.isArray(list) && list.length > 0) {
@@ -550,6 +551,18 @@ export const api = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+    });
+    return handleResponse(res);
+  },
+
+  async adminClearKnockoutFixtures(mode: string, token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/clear-fixtures`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ mode }),
     });
     return handleResponse(res);
   },

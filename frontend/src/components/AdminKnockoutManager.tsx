@@ -19,7 +19,8 @@ import {
   X,
   Shuffle,
   Users,
-  RotateCcw
+  RotateCcw,
+  ChevronDown
 } from 'lucide-react';
 import { UefaKnockoutDraw } from './UefaKnockoutDraw';
 
@@ -187,18 +188,31 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
     }
   };
 
-  const handleResetCeremonialDraw = async () => {
-    if (!window.confirm('Reset ceremonial draw? This will ROLL BACK all published preliminary fixtures from the official knockout bracket.')) return;
+  const [showClearDropdown, setShowClearDropdown] = useState(false);
+
+  const handleClearKnockoutFixtures = async (mode: 'ALL' | 'PREDICTED' | 'CONFIRMED') => {
+    const labels: Record<string, string> = {
+      ALL: 'ALL preliminary fixtures (both Predicted & Confirmed)',
+      PREDICTED: 'only unconfirmed PREDICTED / LIVE DRAW fixtures',
+      CONFIRMED: 'only CONFIRMED preliminary fixtures'
+    };
+    if (!window.confirm(`Clear ${labels[mode]} from the knockout bracket?`)) return;
     try {
       setLoading(true);
-      const res = await api.adminResetCeremonialDraw(token);
-      showSuccess(res.message || 'Published draw fixtures rolled back successfully.');
+      const res = await api.adminClearKnockoutFixtures(mode, token);
+      showSuccess(res.message || `Cleared ${mode} fixtures successfully.`);
+      setShowClearDropdown(false);
       await loadData();
+      if (onRefreshParent) onRefreshParent();
     } catch (err: any) {
-      showError(err.message || 'Failed to rollback draw fixtures.');
+      showError(err.message || `Failed to clear ${mode} fixtures.`);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleResetCeremonialDraw = async () => {
+    await handleClearKnockoutFixtures('ALL');
   };
 
   const handleBatchSetStatus = async (stage: string, statusMode: string) => {
@@ -488,16 +502,60 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
             <span>SET PRELIM AS PREDICTED</span>
           </button>
 
-          {/* Rollback Ceremonial Draw */}
-          <button
-            type="button"
-            onClick={handleResetCeremonialDraw}
-            className="px-3.5 py-2 rounded-lg bg-red-950/70 hover:bg-red-900/80 text-red-200 border border-red-700 text-xs font-mono font-bold flex items-center space-x-1.5 cursor-pointer shadow-sm"
-            title="Roll back all drawn preliminary fixtures from the knockout bracket"
-          >
-            <RotateCcw className="w-3.5 h-3.5 text-red-400" />
-            <span>ROLLBACK DRAW FIXTURES</span>
-          </button>
+          {/* Clear Fixtures Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowClearDropdown(!showClearDropdown)}
+              className="px-3.5 py-2 rounded-lg bg-red-950/70 hover:bg-red-900/80 text-red-200 border border-red-700 text-xs font-mono font-bold flex items-center space-x-1.5 cursor-pointer shadow-sm"
+              title="Clear preliminary knockout fixtures by status (All, Predicted, or Confirmed)"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-red-400" />
+              <span>CLEAR FIXTURES</span>
+              <ChevronDown className="w-3 h-3 text-red-300 ml-0.5" />
+            </button>
+
+            {showClearDropdown && (
+              <div className="absolute right-0 top-full mt-2 w-72 rounded-xl bg-[#101726] border-2 border-red-600/70 shadow-2xl p-2 z-50 space-y-1 animate-scale-in">
+                <div className="px-2.5 py-1.5 text-[10px] font-mono text-neutral-400 uppercase tracking-wider border-b border-neutral-800">
+                  Select Clear Mode
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleClearKnockoutFixtures('ALL')}
+                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-red-950/80 text-xs font-mono text-red-200 hover:text-white transition-colors cursor-pointer flex flex-col"
+                >
+                  <span className="font-bold flex items-center space-x-1.5">
+                    <Trash2 className="w-3 h-3 text-red-400" />
+                    <span>Clear All Preliminary Fixtures</span>
+                  </span>
+                  <span className="text-[10px] text-neutral-400 mt-0.5">Wipes both Predicted & Confirmed preliminary ties</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleClearKnockoutFixtures('PREDICTED')}
+                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-amber-950/80 text-xs font-mono text-amber-200 hover:text-white transition-colors cursor-pointer flex flex-col"
+                >
+                  <span className="font-bold flex items-center space-x-1.5">
+                    <Sparkles className="w-3 h-3 text-amber-400" />
+                    <span>Clear Predicted Only</span>
+                  </span>
+                  <span className="text-[10px] text-neutral-400 mt-0.5">Removes unconfirmed live draw fixtures</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleClearKnockoutFixtures('CONFIRMED')}
+                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-cyan-950/80 text-xs font-mono text-cyan-200 hover:text-white transition-colors cursor-pointer flex flex-col"
+                >
+                  <span className="font-bold flex items-center space-x-1.5">
+                    <Shield className="w-3 h-3 text-cyan-400" />
+                    <span>Clear Confirmed Only</span>
+                  </span>
+                  <span className="text-[10px] text-neutral-400 mt-0.5">Removes confirmed unplayed fixtures</span>
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* Reset Predictions */}
           <button

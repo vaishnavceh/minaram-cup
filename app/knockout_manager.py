@@ -229,8 +229,12 @@ class KnockoutManager:
                     dq_copy["is_override"] = False
                     final_direct_qualifiers.append(dq_copy)
 
+        final_dq_ids = {dq["team_id"] for dq in final_direct_qualifiers}
+        prelim_pool = [t for t in qualified_teams if t["team_id"] not in final_dq_ids]
+
         return {
             "direct_qualifiers": final_direct_qualifiers,
+            "preliminary_pool": prelim_pool,
             "recommended_qualifiers": recommended,
             "has_override": has_any_override,
             "all_ranked_candidates": ranked,
@@ -752,6 +756,15 @@ class KnockoutManager:
                     })
                 else:
                     m_copy = dict(m)
+                    # If this match is in Preliminary Round and NOT in official_by_slot,
+                    # it means it has not been officially drawn or published yet (or was rolled back/cleared).
+                    # Therefore, it should NOT display predicted team names on the bracket!
+                    if stage_name == "Preliminary Round":
+                        m_copy["home_team_id"] = None
+                        m_copy["away_team_id"] = None
+                        m_copy["home_team_name"] = m_copy.get("home_placeholder") or "Yet to decide"
+                        m_copy["away_team_name"] = m_copy.get("away_placeholder") or "Yet to decide"
+                        m_copy["status"] = "Awaiting Draw"
                     m_copy["is_official"] = False
                     merged_stage.append(m_copy)
             merged_tree[stage_name] = merged_stage
@@ -797,6 +810,8 @@ class KnockoutManager:
             "draw_method": snapshot["draw_method"],
             "is_provisional": snapshot["is_provisional"],
             "direct_qualifiers": dq_data["direct_qualifiers"],
+            "preliminary_pool": dq_data.get("preliminary_pool", []),
+            "qualified_teams": q_data["teams"],
             "recommended_qualifiers": dq_data["recommended_qualifiers"],
             "has_direct_override": dq_data["has_override"],
             "bracket": merged_tree,
@@ -1616,51 +1631,69 @@ class KnockoutManager:
             "message": f"Successfully published {applied_count} preliminary ties as {status_val} in knockout fixtures!"
         }
 
-    def reset_ceremonial_draw(self, admin_username: str = "admin") -> dict:
+    def clear_knockout_fixtures(self, mode: str = "ALL", admin_username: str = "admin") -> dict:
         """
-        Roll back all published preliminary/drawn fixtures from the knockout bracket.
-        Safely clears knockout_official_fixtures and unplayed matches from the matches table,
-        and regenerates fresh predictions.
+        Clear knockout fixtures based on mode:
+        - 'ALL': Clear all unplayed preliminary/drawn fixtures (both predicted & confirmed)
+        - 'PREDICTED': Clear only unconfirmed fixtures in PREDICTED / LIVE DRAW status
+        - 'CONFIRMED': Clear only confirmed unplayed preliminary fixtures
         """
+        mode_upper = str(mode).upper()
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        slots_to_remove = self.db.execute_query("""
+        if mode_upper == "PREDICTED":
+            condition = "status IN ('PREDICTED', 'LIVE_DRAW') AND status NOT IN ('COMPLETED', 'LIVE')"
+        elif mode_upper == "CONFIRMED":
+            condition = "status = 'CONFIRMED' AND status NOT IN ('COMPLETED', 'LIVE')"
+        else: # ALL
+            condition = "status NOT IN ('COMPLETED', 'LIVE')"
+
+        slots_to_remove = self.db.execute_query(f"""
             SELECT bracket_slot FROM knockout_official_fixtures
             WHERE (bracket_slot LIKE 'PR%' OR stage = 'Preliminary Round')
-              AND status NOT IN ('COMPLETED', 'LIVE');
+              AND {condition};
         """)
         slot_names = [s["bracket_slot"] for s in slots_to_remove]
 
         rolled_back_count = 0
-        with self.db.transaction(action="ceremonial_draw_reset") as conn:
+        with self.db.transaction(action="clear_knockout_fixtures") as conn:
             cursor = conn.cursor()
             for slot in slot_names:
                 cursor.execute("DELETE FROM knockout_official_fixtures WHERE bracket_slot = ?;", (slot,))
                 cursor.execute("DELETE FROM matches WHERE bracket_slot = ? AND status NOT IN ('Completed', 'In Progress');", (slot,))
                 rolled_back_count += 1
 
-            # Remove any orphan scheduled preliminary matches from general matches table
-            cursor.execute("""
-                DELETE FROM matches
-                WHERE (bracket_slot LIKE 'PR%' OR stage = 'Preliminary Round')
-                  AND status NOT IN ('Completed', 'In Progress');
-            """)
+            if mode_upper in ("ALL", "PREDICTED"):
+                cursor.execute("""
+                    DELETE FROM matches
+                    WHERE (bracket_slot LIKE 'PR%' OR stage = 'Preliminary Round')
+                      AND status NOT IN ('Completed', 'In Progress');
+                """)
 
-            # Clear cached prediction snapshots so bracket recalculates freshly
             cursor.execute("DELETE FROM knockout_snapshots;")
 
             cursor.execute("""
                 INSERT INTO knockout_audit_logs (timestamp, admin_username, action, entity_type, entity_id, old_value, new_value, reason)
-                VALUES (?, ?, 'RESET_CEREMONIAL_DRAW', 'PRELIMINARY_STAGE', 'ALL_PR', '', 'ROLLED_BACK', 'Admin rolled back ceremonial draw and published knockout fixtures');
-            """, (now_str, admin_username))
+                VALUES (?, ?, 'CLEAR_KNOCKOUT_FIXTURES', 'PRELIMINARY_STAGE', ?, '', ?, ?);
+            """, (now_str, admin_username, mode_upper, f"Cleared {rolled_back_count} fixtures", f"Admin cleared knockout fixtures (mode={mode_upper})"))
 
         # Re-initialize clean predicted snapshot
         self.get_or_create_predicted_snapshot(force=True)
 
         return {
+            "status": "cleared",
+            "mode": mode_upper,
+            "cleared_count": rolled_back_count,
+            "message": f"Successfully cleared {rolled_back_count} {mode_upper.lower()} fixtures from the knockout bracket."
+        }
+
+    def reset_ceremonial_draw(self, admin_username: str = "admin") -> dict:
+        """Roll back all published preliminary/drawn fixtures from the knockout bracket."""
+        res = self.clear_knockout_fixtures(mode="ALL", admin_username=admin_username)
+        return {
             "status": "reset",
-            "rolled_back_count": rolled_back_count,
-            "message": f"Successfully rolled back {rolled_back_count} published fixtures from the knockout bracket."
+            "rolled_back_count": res["cleared_count"],
+            "message": f"Successfully rolled back {res['cleared_count']} published fixtures from the knockout bracket."
         }
 
     def export_draw_to_desktop(self, admin_username: str = "admin") -> dict:

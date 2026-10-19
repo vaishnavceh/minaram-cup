@@ -141,6 +141,7 @@ export interface PublicBracket {
   champion?: PublicTeam | null;
   direct_qualifiers?: DirectQualifier[];
   recommended_qualifiers?: DirectQualifier[];
+  preliminary_pool?: any[];
   has_direct_override?: boolean;
   snapshot_version?: string;
   last_updated?: string;

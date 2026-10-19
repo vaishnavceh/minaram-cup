@@ -17,7 +17,10 @@ import {
   Shuffle,
   Save,
   Monitor,
-  Download
+  Download,
+  Trash2,
+  ChevronDown,
+  X
 } from 'lucide-react';
 
 interface UefaKnockoutDrawProps {
@@ -53,20 +56,28 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
   const [soundEnabled, setSoundEnabled] = useState(true);
   const audioCtxRef = useRef<AudioContext | null>(null);
 
+  const effectiveToken = token || (typeof window !== 'undefined' ? localStorage.getItem('minaram_admin_token') || localStorage.getItem('admin_token') || '' : '');
+  const isEffectiveAdmin = isAdmin || Boolean(effectiveToken);
+
   const [publishStatusMode, setPublishStatusMode] = useState<'CONFIRMED' | 'PREDICTED'>('CONFIRMED');
   const [isApplying, setIsApplying] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
+  const [showClearModal, setShowClearModal] = useState(false);
   const [isSyncingDesktop, setIsSyncingDesktop] = useState(false);
   const [adminMessage, setAdminMessage] = useState('');
 
   const handleApplyToOfficial = async () => {
-    if (!token || pairings.length === 0) return;
+    if (!effectiveToken || pairings.length === 0) {
+      alert('Admin authentication required or no pairings to publish. Please log in as tournament desk administrator.');
+      return;
+    }
     const modeLabel = publishStatusMode === 'PREDICTED' ? 'PREDICTED (LIVE DRAW)' : 'CONFIRMED (OFFICIAL)';
     if (!window.confirm(`Publish these ${pairings.length} drawn pairings into the knockout bracket as ${modeLabel}?`)) return;
     setIsApplying(true);
     setAdminMessage('');
     try {
-      const res = await api.adminApplyCeremonialDraw(pairings, token, publishStatusMode);
+      const res = await api.adminApplyCeremonialDraw(pairings, effectiveToken, publishStatusMode);
       setAdminMessage(res.message || `Knockout fixtures successfully published as ${publishStatusMode}!`);
       if (onRefreshBracket) onRefreshBracket();
       setTimeout(() => setAdminMessage(''), 5000);
@@ -78,17 +89,17 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
   };
 
   const handleResetDraw = async () => {
-    if (isDrawing || isAutoPlaying || isResetting) return;
-    const confirmMsg = isAdmin
-      ? 'Reset ceremonial draw? This will clear drawn pairings and ROLL BACK any published preliminary fixtures from the official knockout bracket.'
+    if (isDrawing || isAutoPlaying || isResetting || isClearing) return;
+    const confirmMsg = isEffectiveAdmin
+      ? 'Reset ceremonial draw? This will clear drawn pairings and ROLL BACK all published preliminary fixtures from the official knockout bracket.'
       : 'Reset ceremonial draw? This will reset all drawn ties back into the pots.';
     if (!window.confirm(confirmMsg)) return;
 
-    if (isAdmin && token) {
+    if (isEffectiveAdmin && effectiveToken) {
       setIsResetting(true);
       setAdminMessage('');
       try {
-        const res = await api.adminResetCeremonialDraw(token);
+        const res = await api.adminResetCeremonialDraw(effectiveToken);
         setAdminMessage(res.message || 'Draw reset and published fixtures rolled back successfully!');
         if (onRefreshBracket) onRefreshBracket();
         setTimeout(() => setAdminMessage(''), 5000);
@@ -102,12 +113,44 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
     initializeDrawPools();
   };
 
+  const handleClearFixtures = async (mode: 'ALL' | 'PREDICTED' | 'CONFIRMED') => {
+    if (isDrawing || isAutoPlaying || isClearing || isResetting) return;
+    if (!effectiveToken) {
+      alert('Admin token required to clear fixtures.');
+      return;
+    }
+    const labels: Record<string, string> = {
+      ALL: 'ALL preliminary fixtures (both Predicted & Confirmed)',
+      PREDICTED: 'only unconfirmed PREDICTED / LIVE DRAW fixtures',
+      CONFIRMED: 'only CONFIRMED preliminary fixtures'
+    };
+    if (!window.confirm(`Are you sure you want to clear ${labels[mode]} from the knockout bracket?`)) return;
+
+    setIsClearing(true);
+    setAdminMessage('');
+    try {
+      const res = await api.adminClearKnockoutFixtures(mode, effectiveToken);
+      setAdminMessage(res.message || `Successfully cleared ${mode} fixtures.`);
+      setShowClearModal(false);
+      if (onRefreshBracket) onRefreshBracket();
+      initializeDrawPools();
+      setTimeout(() => setAdminMessage(''), 5000);
+    } catch (err: any) {
+      alert(err.message || `Failed to clear ${mode} fixtures`);
+    } finally {
+      setIsClearing(false);
+    }
+  };
+
   const handleSyncToDesktop = async () => {
-    if (!token) return;
+    if (!effectiveToken) {
+      alert('Admin token required to sync draw to desktop.');
+      return;
+    }
     setIsSyncingDesktop(true);
     setAdminMessage('');
     try {
-      const res = await api.adminSyncDrawToDesktop(token);
+      const res = await api.adminSyncDrawToDesktop(effectiveToken);
       const blob = new Blob([res.content], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -209,62 +252,94 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
     setDirectQualifiers(direct);
     const directIds = new Set(direct.map((d: any) => d.team_id));
 
-    // Extract preliminary round matches from bracket (supporting both rounds array and bracket object)
-    let prelimMatches: any[] = [];
-    if (Array.isArray(bracket.rounds)) {
-      const pRound = bracket.rounds.find((r: any) => (r.round_name || '').toLowerCase().includes('preliminary'));
-      if (pRound && Array.isArray(pRound.matches)) {
-        prelimMatches = pRound.matches;
-      }
-    }
-    if (prelimMatches.length === 0 && (bracket as any).bracket) {
-      const bObj = (bracket as any).bracket;
-      if (Array.isArray(bObj['Preliminary Round'])) {
-        prelimMatches = bObj['Preliminary Round'];
-      } else {
-        const pKey = Object.keys(bObj).find((k) => k.toLowerCase().includes('preliminary'));
-        if (pKey && Array.isArray(bObj[pKey])) {
-          prelimMatches = bObj[pKey];
-        }
-      }
-    }
-
-    const p1List: DrawBall[] = [];
-    const p2List: DrawBall[] = [];
+    let p1List: DrawBall[] = [];
+    let p2List: DrawBall[] = [];
     const seenTeams = new Set<number>();
 
-    prelimMatches.forEach((m: any) => {
-      const hId = m.team_a_id || m.home_team_id;
-      const hName = m.team_a_name || m.home_team_name || m.home_name;
-      const hGroup = m.home_group || m.group_name || 'Group';
+    // 1. Primary Source: bracket.preliminary_pool from authoritative group standings
+    if (Array.isArray(bracket.preliminary_pool) && bracket.preliminary_pool.length > 0) {
+      const pool = bracket.preliminary_pool.filter((t: any) => {
+        const id = t.team_id || t.id;
+        return id && !directIds.has(id);
+      });
 
-      const aId = m.team_b_id || m.away_team_id;
-      const aName = m.team_b_name || m.away_team_name || m.away_name;
-      const aGroup = m.away_group || m.group_name || 'Group';
+      pool.forEach((t: any) => {
+        const id = t.team_id || t.id;
+        if (!seenTeams.has(id)) {
+          seenTeams.add(id);
+          const isWinner = t.rank_in_group === 1 || String(t.group_position || '').includes('1');
+          const ball: DrawBall = {
+            id,
+            name: t.team_name || t.name || `Team ${id}`,
+            group_name: t.group_name || 'Group',
+            seed: isWinner ? 1 : 2,
+            gf: t.goals_for,
+            gd: t.goal_difference,
+            captain: t.captain_name || t.manager_name || undefined
+          };
+          if (isWinner) {
+            p1List.push(ball);
+          } else {
+            p2List.push(ball);
+          }
+        }
+      });
+    }
 
-      if (hId && !seenTeams.has(hId) && !directIds.has(hId)) {
-        seenTeams.add(hId);
-        p1List.push({
-          id: hId,
-          name: hName || `Team ${hId}`,
-          group_name: hGroup,
-          seed: 1,
-          captain: m.team_a_captain || m.home_captain || undefined
-        });
+    // 2. Fallback: Extract from bracket preliminary matches if pool was empty
+    if (p1List.length === 0 && p2List.length === 0) {
+      let prelimMatches: any[] = [];
+      if (Array.isArray(bracket.rounds)) {
+        const pRound = bracket.rounds.find((r: any) => (r.round_name || '').toLowerCase().includes('preliminary'));
+        if (pRound && Array.isArray(pRound.matches)) {
+          prelimMatches = pRound.matches;
+        }
       }
-      if (aId && !seenTeams.has(aId) && !directIds.has(aId)) {
-        seenTeams.add(aId);
-        p2List.push({
-          id: aId,
-          name: aName || `Team ${aId}`,
-          group_name: aGroup,
-          seed: 2,
-          captain: m.team_b_captain || m.away_captain || undefined
-        });
+      if (prelimMatches.length === 0 && (bracket as any).bracket) {
+        const bObj = (bracket as any).bracket;
+        if (Array.isArray(bObj['Preliminary Round'])) {
+          prelimMatches = bObj['Preliminary Round'];
+        } else {
+          const pKey = Object.keys(bObj).find((k) => k.toLowerCase().includes('preliminary'));
+          if (pKey && Array.isArray(bObj[pKey])) {
+            prelimMatches = bObj[pKey];
+          }
+        }
       }
-    });
 
-    // If pots need more teams, draw real teams from allTeams to ensure valid database foreign keys
+      prelimMatches.forEach((m: any) => {
+        const hId = m.team_a_id || m.home_team_id;
+        const hName = m.team_a_name || m.home_team_name || m.home_name;
+        const hGroup = m.home_group || m.group_name || 'Group';
+
+        const aId = m.team_b_id || m.away_team_id;
+        const aName = m.team_b_name || m.away_team_name || m.away_name;
+        const aGroup = m.away_group || m.group_name || 'Group';
+
+        if (hId && !seenTeams.has(hId) && !directIds.has(hId)) {
+          seenTeams.add(hId);
+          p1List.push({
+            id: hId,
+            name: hName || `Team ${hId}`,
+            group_name: hGroup,
+            seed: 1,
+            captain: m.team_a_captain || m.home_captain || undefined
+          });
+        }
+        if (aId && !seenTeams.has(aId) && !directIds.has(aId)) {
+          seenTeams.add(aId);
+          p2List.push({
+            id: aId,
+            name: aName || `Team ${aId}`,
+            group_name: aGroup,
+            seed: 2,
+            captain: m.team_b_captain || m.away_captain || undefined
+          });
+        }
+      });
+    }
+
+    // 3. Fallback: If pots need more teams, draw real teams from allTeams to ensure valid DB keys
     if ((p1List.length < 14 || p2List.length < 14) && Array.isArray(allTeams) && allTeams.length > 0) {
       const available = allTeams.filter((t: any) => !directIds.has(t.id) && !seenTeams.has(t.id));
       available.forEach((t: any) => {
@@ -290,11 +365,23 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
       });
     }
 
-    // Ensure balanced pots
+    // Ensure balanced pots (14 Seeded in Pot 1, 14 Unseeded in Pot 2)
     const all = [...p1List, ...p2List];
-    const half = Math.ceil(all.length / 2);
-    setPot1(all.slice(0, half));
-    setPot2(all.slice(half));
+    if (all.length >= 28) {
+      while (p1List.length < 14 && p2List.length > 14) {
+        p1List.push(p2List.shift()!);
+      }
+      while (p1List.length > 14 && p2List.length < 14) {
+        p2List.push(p1List.pop()!);
+      }
+    } else {
+      const half = Math.ceil(all.length / 2);
+      p1List = all.slice(0, half);
+      p2List = all.slice(half);
+    }
+
+    setPot1(p1List);
+    setPot2(p2List);
     setPairings([]);
     setCurrentMatchNumber(1);
     setActiveStep('IDLE');
@@ -305,6 +392,10 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
   };
 
   useEffect(() => {
+    // If pairings have already been drawn or draw is actively ongoing, preserve drawn ties
+    if (pairings.length > 0 || isDrawing || isAutoPlaying) {
+      return;
+    }
     initializeDrawPools();
     return () => {
       if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
@@ -491,13 +582,25 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
 
             <button
               onClick={handleResetDraw}
-              disabled={isDrawing || isAutoPlaying || isResetting}
+              disabled={isDrawing || isAutoPlaying || isResetting || isClearing}
               className="inline-flex items-center space-x-1.5 px-3.5 py-2.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/50 border border-rose-800/60 text-xs font-mono text-rose-300 hover:text-white transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
               title="Reset draw and roll back published fixtures from the knockout bracket"
             >
               <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin' : ''}`} />
               <span>{isResetting ? 'ROLLING BACK...' : 'RESET DRAW'}</span>
             </button>
+
+            {isEffectiveAdmin && (
+              <button
+                onClick={() => setShowClearModal(true)}
+                disabled={isDrawing || isAutoPlaying || isClearing || isResetting}
+                className="inline-flex items-center space-x-1.5 px-3.5 py-2.5 rounded-lg bg-red-950/70 hover:bg-red-900/80 border border-red-600/70 text-xs font-mono font-bold text-red-200 hover:text-white transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
+                title="Open options to clear knockout fixtures (All, Predicted Only, or Confirmed Only)"
+              >
+                <Trash2 className={`w-3.5 h-3.5 text-red-400 ${isClearing ? 'animate-spin' : ''}`} />
+                <span>CLEAR FIXTURES</span>
+              </button>
+            )}
 
             <button
               onClick={() => setIsAutoPlaying(!isAutoPlaying)}
@@ -530,7 +633,7 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
               <span>DRAW TIE #{currentMatchNumber <= 14 ? currentMatchNumber : 14}</span>
             </button>
 
-            {isAdmin && (
+            {isEffectiveAdmin && (
               <>
                 {/* Publish Mode Toggle: PREDICTED (LIVE DRAW) vs CONFIRMED (OFFICIAL) */}
                 <div className="flex items-center bg-black/60 p-1 rounded-lg border border-neutral-700/80">
@@ -571,7 +674,7 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
                   title={`Publish ${pairings.length} drawn pairings into the official knockout bracket as ${publishStatusMode}`}
                 >
                   <Save className="w-3.5 h-3.5" />
-                  <span>{isApplying ? 'PUBLISHING...' : `PUBLISH AS ${publishStatusMode}`}</span>
+                  <span>{isApplying ? 'PUBLISHING...' : `APPLY TO FIXTURES (${publishStatusMode})`}</span>
                 </button>
 
                 <button
@@ -795,14 +898,70 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
           )}
 
           {activeStep === 'COMPLETE' && (
-            <div className="space-y-3 py-6 animate-fade-in">
-              <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 mx-auto flex items-center justify-center text-emerald-400">
+            <div className="space-y-4 py-4 animate-fade-in w-full max-w-lg mx-auto">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 mx-auto flex items-center justify-center text-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.3)]">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h4 className="font-display text-3xl text-white tracking-wide">DRAW COMPLETED!</h4>
-              <p className="text-xs font-mono text-neutral-300 max-w-xs mx-auto">
-                All 14 preliminary fixtures have been drawn. Winners advance directly to meet the 2 direct qualifiers in the Round of 16.
-              </p>
+              <div>
+                <h4 className="font-display text-3xl text-white tracking-wide">DRAW COMPLETED!</h4>
+                <p className="text-xs font-mono text-neutral-300 max-w-sm mx-auto mt-1">
+                  All 14 preliminary fixtures have been drawn. Winners advance directly to meet the 2 direct qualifiers in the Round of 16.
+                </p>
+              </div>
+
+              {isEffectiveAdmin && (
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+                  {/* Status Mode Toggle */}
+                  <div className="flex items-center bg-black/80 p-1 rounded-lg border border-neutral-700">
+                    <button
+                      type="button"
+                      onClick={() => setPublishStatusMode('PREDICTED')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                        publishStatusMode === 'PREDICTED'
+                          ? 'bg-amber-500/25 text-amber-300 border border-amber-500/60 shadow-sm'
+                          : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
+                    >
+                      ⚡ PREDICTED
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPublishStatusMode('CONFIRMED')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                        publishStatusMode === 'CONFIRMED'
+                          ? 'bg-cyan-500/25 text-cyan-300 border border-cyan-500/60 shadow-sm'
+                          : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
+                    >
+                      🛡️ CONFIRMED
+                    </button>
+                  </div>
+
+                  {/* Apply to Fixtures Button */}
+                  <button
+                    onClick={handleApplyToOfficial}
+                    disabled={isApplying || pairings.length === 0}
+                    className={`inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer shadow-lg border ${
+                      publishStatusMode === 'PREDICTED'
+                        ? 'bg-amber-500 text-black border-amber-400 hover:bg-amber-400'
+                        : 'bg-emerald-600 text-white border-emerald-400 hover:bg-emerald-500'
+                    }`}
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>{isApplying ? 'PUBLISHING...' : `APPLY TO FIXTURES (${publishStatusMode})`}</span>
+                  </button>
+
+                  {/* Sync Desktop Button */}
+                  <button
+                    onClick={handleSyncToDesktop}
+                    disabled={isSyncingDesktop}
+                    className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-indigo-950 hover:bg-indigo-900 border border-indigo-600 text-xs font-mono font-bold text-indigo-300 transition-colors cursor-pointer shadow-sm"
+                  >
+                    <Monitor className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>SYNC DESKTOP</span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -852,7 +1011,7 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
 
       {/* DRAWN PAIRINGS BOARD (The 14 Preliminary Matches) */}
       <div className="bg-[#0b0e14] border border-[#1e293b] rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-6 pb-3 border-b border-[#1e293b]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-3 border-b border-[#1e293b]">
           <div>
             <h3 className="font-display text-2xl text-white tracking-wider">
               OFFICIAL CEREMONIAL FIXTURE BOARD ({pairings.length} / 14 DRAWN)
@@ -861,6 +1020,50 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
               Preliminary Knockout Round pairings formed in ceremonial extraction order.
             </p>
           </div>
+
+          {isEffectiveAdmin && (
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setPublishStatusMode(publishStatusMode === 'PREDICTED' ? 'CONFIRMED' : 'PREDICTED')}
+                className="px-2.5 py-1.5 rounded text-[11px] font-mono font-bold bg-black/60 border border-neutral-700 text-neutral-300 hover:text-white transition-colors cursor-pointer"
+                title="Switch between PREDICTED and CONFIRMED publish status"
+              >
+                STATUS: <strong className={publishStatusMode === 'CONFIRMED' ? 'text-cyan-400' : 'text-amber-400'}>{publishStatusMode}</strong>
+              </button>
+
+              <button
+                onClick={handleApplyToOfficial}
+                disabled={isApplying || pairings.length === 0}
+                className={`inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer shadow-md border ${
+                  publishStatusMode === 'PREDICTED'
+                    ? 'bg-amber-950/80 hover:bg-amber-900 border-amber-600 text-amber-300'
+                    : 'bg-emerald-950/90 hover:bg-emerald-900 border-emerald-600 text-emerald-300'
+                } disabled:opacity-50`}
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>{isApplying ? 'PUBLISHING...' : `APPLY TO FIXTURES (${publishStatusMode})`}</span>
+              </button>
+
+              <button
+                onClick={handleSyncToDesktop}
+                disabled={isSyncingDesktop}
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-indigo-950 hover:bg-indigo-900 border border-indigo-600 text-xs font-mono font-bold text-indigo-300 transition-colors cursor-pointer shadow-sm disabled:opacity-50"
+              >
+                <Monitor className="w-3.5 h-3.5 text-indigo-400" />
+                <span>SYNC TO DESKTOP</span>
+              </button>
+
+              <button
+                onClick={() => setShowClearModal(true)}
+                disabled={isClearing || isResetting}
+                className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-rose-950/50 hover:bg-rose-900/60 border border-rose-800 text-xs font-mono font-bold text-rose-300 transition-colors cursor-pointer shadow-sm disabled:opacity-50"
+              >
+                <Trash2 className="w-3 h-3 text-rose-400" />
+                <span>CLEAR FIXTURES</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {pairings.length > 0 ? (
@@ -902,6 +1105,105 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
           </div>
         )}
       </div>
+
+      {/* Clear Knockout Fixtures Modal */}
+      {showClearModal && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0e131f] border-2 border-red-500/50 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5 animate-scale-in">
+            <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
+              <div className="flex items-center space-x-2 text-red-400 font-mono text-sm uppercase font-bold">
+                <Trash2 className="w-5 h-5" />
+                <span>CLEAR KNOCKOUT FIXTURES</span>
+              </div>
+              <button
+                onClick={() => setShowClearModal(false)}
+                className="p-1 rounded-lg hover:bg-neutral-800 text-neutral-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs font-mono text-neutral-300 leading-relaxed">
+              Select which fixtures you want to remove from the knockout bracket. Removing fixtures restores them back to <strong className="text-white">&apos;Yet to decide&apos; / &apos;Awaiting Draw&apos;</strong>.
+            </p>
+
+            <div className="space-y-3">
+              {/* Option 1: ALL */}
+              <button
+                type="button"
+                onClick={() => handleClearFixtures('ALL')}
+                disabled={isClearing}
+                className="w-full text-left p-4 rounded-xl bg-gradient-to-r from-red-950/60 to-neutral-900 border border-red-700/60 hover:border-red-500 hover:from-red-900/70 transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-display text-base text-red-200 group-hover:text-white flex items-center space-x-2">
+                    <Trash2 className="w-4 h-4 text-red-400" />
+                    <span>CLEAR ALL PRELIMINARY FIXTURES</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-red-900/60 text-[10px] font-mono text-red-300 border border-red-700">
+                    PREDICTED & CONFIRMED
+                  </span>
+                </div>
+                <p className="text-[11px] font-mono text-neutral-400 group-hover:text-neutral-300">
+                  Completely wipes all 14 preliminary round fixtures from the public bracket, rolling them back to unassigned slots and putting teams back into pots.
+                </p>
+              </button>
+
+              {/* Option 2: PREDICTED ONLY */}
+              <button
+                type="button"
+                onClick={() => handleClearFixtures('PREDICTED')}
+                disabled={isClearing}
+                className="w-full text-left p-4 rounded-xl bg-gradient-to-r from-amber-950/50 to-neutral-900 border border-amber-700/60 hover:border-amber-500 hover:from-amber-900/60 transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-display text-base text-amber-200 group-hover:text-white flex items-center space-x-2">
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <span>CLEAR PREDICTED LIVE DRAW ONLY</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-amber-900/60 text-[10px] font-mono text-amber-300 border border-amber-700">
+                    PREDICTED ONLY
+                  </span>
+                </div>
+                <p className="text-[11px] font-mono text-neutral-400 group-hover:text-neutral-300">
+                  Removes unconfirmed preliminary fixtures generated from live draws or predictions. Officially confirmed fixtures will remain locked in place.
+                </p>
+              </button>
+
+              {/* Option 3: CONFIRMED ONLY */}
+              <button
+                type="button"
+                onClick={() => handleClearFixtures('CONFIRMED')}
+                disabled={isClearing}
+                className="w-full text-left p-4 rounded-xl bg-gradient-to-r from-cyan-950/50 to-neutral-900 border border-cyan-700/60 hover:border-cyan-500 hover:from-cyan-900/60 transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-display text-base text-cyan-200 group-hover:text-white flex items-center space-x-2">
+                    <Shield className="w-4 h-4 text-cyan-400" />
+                    <span>CLEAR CONFIRMED FIXTURES ONLY</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-cyan-900/60 text-[10px] font-mono text-cyan-300 border border-cyan-700">
+                    CONFIRMED ONLY
+                  </span>
+                </div>
+                <p className="text-[11px] font-mono text-neutral-400 group-hover:text-neutral-300">
+                  Removes confirmed unplayed preliminary fixtures. Any matches already live or completed will remain untouched.
+                </p>
+              </button>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setShowClearModal(false)}
+                className="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-mono font-bold cursor-pointer"
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
