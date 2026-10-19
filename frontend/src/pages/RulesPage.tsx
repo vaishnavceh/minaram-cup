@@ -50,11 +50,11 @@ export const RulesPage: React.FC = () => {
             </li>
             <li className="flex items-start space-x-2">
               <span className="text-brand-red font-bold">•</span>
-              <span><strong>Qualification:</strong> The top two teams from each group qualify for the Quarter-Finals.</span>
+              <span><strong>Qualification:</strong> The top two teams from each group qualify for the Round of 16 (RO16).</span>
             </li>
             <li className="flex items-start space-x-2">
               <span className="text-brand-red font-bold">•</span>
-              <span><strong>Knockout Phase:</strong> Single-elimination bracket (Quarter-Finals ➔ Semi-Finals ➔ Grand Final).</span>
+              <span><strong>Knockout Phase:</strong> Single-elimination bracket (Round of 16 ➔ Quarter-Finals ➔ Semi-Finals ➔ Grand Final).</span>
             </li>
           </ul>
         </div>

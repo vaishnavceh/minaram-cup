@@ -167,7 +167,7 @@ export const AdminPage: React.FC = () => {
 
   const handleAdvanceStage = async () => {
     if (!token) return;
-    if (!window.confirm('Advance tournament to next stage? If Group Stage is completed, Quarter-Finals will be generated.')) return;
+    if (!window.confirm('Advance tournament to next stage? If Group Stage is completed, Round of 16 (RO16) knockouts will be generated.')) return;
     setActionError('');
     setActionSuccess('');
     setLoading(true);

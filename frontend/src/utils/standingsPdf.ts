@@ -100,7 +100,7 @@ export function exportAllStandingsPdf(
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
   doc.setTextColor(20, 20, 20);
-  doc.text('QUALIFICATION PROTOCOL: Top 2 teams from each group advance directly to the Playoff Knockouts.', 19, currentY + 5);
+  doc.text('QUALIFICATION PROTOCOL: Top 2 teams from each group advance directly to Round of 16 (RO16) Knockouts.', 19, currentY + 5);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);

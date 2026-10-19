@@ -143,7 +143,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({ groupData }) => 
 
       <div className="px-4 py-2 bg-black/40 border-t border-[#1a1a1a] flex items-center space-x-2 text-[10px] font-mono text-neutral-400">
         <span className="w-2 h-2 rounded bg-emerald-500/70 inline-block" />
-        <span>Top 2 advance directly to Quarter-Final knockouts</span>
+        <span>Top 2 advance directly to Round of 16 (RO16) knockouts</span>
       </div>
     </div>
   );
