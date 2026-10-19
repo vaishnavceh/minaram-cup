@@ -377,12 +377,21 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
       </div>
 
       {adminSection === 'draw_ceremony' ? (
-        <UefaKnockoutDraw
-          bracket={bracket}
-          token={token}
-          isAdmin={true}
-          onRefreshBracket={loadData}
-        />
+        <div className="space-y-4">
+          <div className="p-3.5 rounded-xl bg-blue-950/40 border border-blue-700/40 text-blue-200 text-xs font-mono flex items-start space-x-2">
+            <Shield className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold text-blue-100 block">ADMIN ONLY — UEFA CEREMONIAL DRAW DESK</span>
+              <span className="text-blue-300/70">Complete the ceremonial draw below, then click APPLY TO FIXTURES to sync results live to the public Knockout Bracket. Players do not have access to this draw.</span>
+            </div>
+          </div>
+          <UefaKnockoutDraw
+            bracket={bracket}
+            token={token}
+            isAdmin={true}
+            onRefreshBracket={loadData}
+          />
+        </div>
       ) : (
         <>
           {/* Knockout Master Toolbar */}

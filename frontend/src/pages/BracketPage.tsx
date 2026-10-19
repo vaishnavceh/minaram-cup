@@ -99,11 +99,13 @@ export const BracketPage: React.FC = () => {
   };
 
   const directQualifiers: DirectQualifier[] = bracket.direct_qualifiers || [];
-  const isProvisional = bracket.is_provisional ?? true;
   const conflicts: KnockoutConflict[] = bracket.conflicts || [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative">
+      {/* UCL Ambient Background Glow */}
+      <div className="ucl-ambient" aria-hidden />
+
       {/* Toast Notification */}
       {lastNotification && (
         <div className="mb-6 p-3.5 rounded-xl bg-amber-950/80 border border-amber-600/60 text-amber-300 text-xs font-mono flex items-center justify-between shadow-lg animate-fade-in">
@@ -154,12 +156,10 @@ export const BracketPage: React.FC = () => {
 
         {/* Action Controls */}
         <div className="flex flex-wrap items-center gap-3 shrink-0">
-          {/* Provisional vs Final Badge */}
-          <div className="flex items-center space-x-2 px-3.5 py-2 rounded bg-neutral-900 border border-neutral-800 text-xs font-mono text-neutral-300">
-            <span className={`w-2 h-2 rounded-full ${isProvisional ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
-            <span className={`${isProvisional ? 'text-amber-400' : 'text-emerald-400'} font-bold uppercase tracking-wider`}>
-              {isProvisional ? 'GROUP STAGE IN PROGRESS' : 'GROUP STAGE FINALIZED'}
-            </span>
+          {/* Bracket Sync Status Badge */}
+          <div className="flex items-center space-x-2 px-3.5 py-2 rounded bg-blue-950/50 border border-blue-700/40 text-xs font-mono text-blue-200">
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+            <span className="text-blue-300 font-bold uppercase tracking-wider">ADMIN DRAW SYNCED</span>
           </div>
 
           {/* Refresh Action */}
@@ -199,35 +199,26 @@ export const BracketPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Mandatory Prominent Predicted Bracket Banner (Section 7) */}
-      <div className="mb-8 p-5 rounded-2xl bg-gradient-to-r from-[#181105] via-[#120d04] to-[#0a0a0a] border border-amber-500/40 shadow-xl">
+      {/* Live Draw Sync Status Banner */}
+      <div className="mb-8 p-4 rounded-xl bg-gradient-to-r from-[#050f28] via-[#08143a] to-[#050f28] border border-blue-700/40 shadow-xl shadow-blue-950/30">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-start space-x-3.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
-              <Sparkles className="w-4 h-4" />
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0 mt-0.5">
+              <GitFork className="w-4 h-4" />
             </div>
             <div>
-              <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-                <h2 className="font-display text-lg sm:text-xl text-amber-300 tracking-wide">
-                  PREDICTED KNOCKOUT BRACKET — NOT OFFICIAL
-                </h2>
-                {isProvisional && (
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-widest">
-                    PROVISIONAL — GROUP STAGE IN PROGRESS
-                  </span>
-                )}
-              </div>
-              <p className="text-xs sm:text-sm font-mono text-neutral-300 mt-1 max-w-3xl leading-relaxed">
-                Fixtures, direct qualifiers and advancement scenarios are generated from the current standings. They remain predictions until confirmed or manually updated by the tournament administrator.
+              <h2 className="font-display text-lg sm:text-xl text-blue-200 tracking-wide">
+                OFFICIAL KNOCKOUT BRACKET
+              </h2>
+              <p className="text-xs font-mono text-blue-300/60 mt-0.5">
+                Fixtures are synced live from the official administrator draw. Draw method: <strong className="text-blue-300">{bracket.draw_method?.toUpperCase() || 'SEEDED'}</strong>
+                {bracket.last_updated && <span className="ml-2 text-neutral-500">· Snapshot: {bracket.last_updated}</span>}
               </p>
             </div>
           </div>
-
-          <div className="shrink-0 text-right font-mono text-[11px] text-neutral-400 pl-11 sm:pl-0">
-            <div>Draw Seed: <span className="text-amber-400 uppercase font-bold">{bracket.draw_method || 'Seeded'}</span></div>
-            {bracket.last_updated && (
-              <div className="text-[10px] text-neutral-400">Snapshot: {bracket.last_updated}</div>
-            )}
+          <div className="flex items-center space-x-2 shrink-0">
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+            <span className="text-[11px] font-mono text-blue-300 uppercase tracking-widest">Live Synced</span>
           </div>
         </div>
       </div>
@@ -284,12 +275,6 @@ export const BracketPage: React.FC = () => {
                     <span className="text-amber-400 font-bold">{dq.group_name}</span>
                     <span>·</span>
                     <span className="text-neutral-300">{dq.group_position} in Group</span>
-                    {dq.is_provisional && (
-                      <>
-                        <span>·</span>
-                        <span className="text-amber-500 italic text-[11px]">Matches Pending</span>
-                      </>
-                    )}
                   </div>
                 </div>
 
