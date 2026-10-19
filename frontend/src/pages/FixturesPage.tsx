@@ -93,15 +93,21 @@ export const FixturesPage: React.FC = () => {
   const stages = [
     { key: 'ALL', label: 'ALL STAGES' },
     { key: 'GROUP_STAGE', label: 'GROUP STAGE' },
-    { key: 'QUARTER_FINAL', label: 'QUARTER-FINAL' },
-    { key: 'SEMI_FINAL', label: 'SEMI-FINAL' },
+    { key: 'PRELIMINARY_ROUND', label: 'PRELIMINARY (14)' },
+    { key: 'ROUND_OF_16', label: 'ROUND OF 16 (8)' },
+    { key: 'QUARTER_FINAL', label: 'QUARTER-FINAL (4)' },
+    { key: 'SEMI_FINAL', label: 'SEMI-FINAL (2)' },
     { key: 'FINAL', label: 'FINAL' },
   ];
 
   const filteredMatches = fixtures.filter((m) => {
     if (selectedStage !== 'ALL') {
       const stageKey = normalizeStageKey(m.stage);
-      if (stageKey !== selectedStage) {
+      if (selectedStage === 'PRELIMINARY_ROUND') {
+        if (!stageKey.includes('PRELIMINARY')) return false;
+      } else if (selectedStage === 'ROUND_OF_16') {
+        if (!stageKey.includes('16') && !stageKey.includes('RO16')) return false;
+      } else if (stageKey !== selectedStage) {
         return false;
       }
     }

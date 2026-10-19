@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { api } from '../api';
 import { PublicBracket, DirectQualifier, KnockoutConflict } from '../types';
 import { BracketTree } from '../components/BracketTree';
+import { UefaKnockoutDraw } from '../components/UefaKnockoutDraw';
 import {
   GitFork,
   Trophy,
@@ -32,18 +33,22 @@ export const BracketPage: React.FC = () => {
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [activeStageTab, setActiveStageTab] = useState<string>('ALL');
   const [showRulesPanel, setShowRulesPanel] = useState(false);
+  const [showDrawDesk, setShowDrawDesk] = useState(false);
+  const [allTeams, setAllTeams] = useState<any[]>([]);
   const [lastNotification, setLastNotification] = useState<string>('');
   const exportRef = useRef<HTMLDivElement>(null);
 
   const loadData = async (isManualRefresh: boolean = false) => {
     if (isManualRefresh) setRefreshing(true);
     try {
-      const [bracketData, rulesData] = await Promise.all([
+      const [bracketData, rulesData, teamsData] = await Promise.all([
         api.getKnockoutBracket().catch(() => api.getBracket()),
         api.getKnockoutRules().catch(() => ({})),
+        api.getTeams().catch(() => []),
       ]);
       setBracket(bracketData);
       setRules(rulesData);
+      setAllTeams(teamsData);
       if (isManualRefresh) {
         setLastNotification('Prediction updated from latest standings.');
         setTimeout(() => setLastNotification(''), 4000);
@@ -158,6 +163,21 @@ export const BracketPage: React.FC = () => {
               <span className="text-blue-300 font-bold uppercase tracking-wider">ADMIN DRAW SYNCED</span>
             </div>
 
+            {/* Toggle Ceremonial Draw Desk Action */}
+            <button
+              type="button"
+              onClick={() => setShowDrawDesk(!showDrawDesk)}
+              className={`inline-flex items-center space-x-1.5 px-3.5 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase transition-all duration-200 border cursor-pointer select-none shadow-sm ${
+                showDrawDesk
+                  ? 'bg-amber-500/25 text-amber-300 border-amber-500/80 shadow-[0_0_15px_rgba(245,158,11,0.25)]'
+                  : 'bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white border-amber-500/60'
+              }`}
+              title="Open or close the interactive UEFA Ceremonial Draw Desk"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>{showDrawDesk ? 'HIDE DRAW DESK' : 'CEREMONIAL DRAW DESK'}</span>
+            </button>
+
             {/* Refresh Action */}
             <button
               type="button"
@@ -195,6 +215,19 @@ export const BracketPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Interactive UEFA Ceremonial Draw Desk (when toggled) */}
+      {showDrawDesk && (
+        <div className="mb-10 animate-fade-in">
+          <UefaKnockoutDraw
+            bracket={bracket}
+            token={typeof window !== 'undefined' ? localStorage.getItem('minaram_admin_token') || localStorage.getItem('admin_token') || '' : ''}
+            isAdmin={typeof window !== 'undefined' && Boolean(localStorage.getItem('minaram_admin_token') || localStorage.getItem('admin_token'))}
+            allTeams={allTeams}
+            onRefreshBracket={() => loadData(true)}
+          />
+        </div>
+      )}
 
       {/* Live Draw Sync Status Banner */}
       <div className="mb-8 p-4 rounded-xl bg-gradient-to-r from-[#050f28] via-[#08143a] to-[#050f28] border border-blue-700/40 shadow-xl shadow-blue-950/30">

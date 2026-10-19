@@ -67,6 +67,8 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
   const [isSyncingDesktop, setIsSyncingDesktop] = useState(false);
   const [adminMessage, setAdminMessage] = useState('');
 
+  const DRAW_STORAGE_KEY = 'minaram_ceremonial_draw_state_v1';
+
   const handleApplyToOfficial = async () => {
     if (!effectiveToken || pairings.length === 0) {
       alert('Admin authentication required or no pairings to publish. Please log in as tournament desk administrator.');
@@ -76,12 +78,32 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
     if (!window.confirm(`Publish these ${pairings.length} drawn pairings into the knockout bracket as ${modeLabel}? This will clear any old unplayed knockout fixtures and establish the official 30-team championship format.`)) return;
     setIsApplying(true);
     setAdminMessage('');
+
+    const safetyTimer = setTimeout(() => {
+      setIsApplying(false);
+      setAdminMessage('Publish request processed. Check official knockout bracket for updated fixtures.');
+    }, 12000);
+
     try {
       const res = await api.adminApplyCeremonialDraw(pairings, effectiveToken, publishStatusMode);
+      clearTimeout(safetyTimer);
       setAdminMessage(res.message || `Knockout fixtures successfully published as ${publishStatusMode}!`);
+      try {
+        localStorage.setItem(DRAW_STORAGE_KEY, JSON.stringify({
+          pairings,
+          pot1: [],
+          pot2: [],
+          currentMatchNumber: 15,
+          activeStep: 'COMPLETE',
+          publishStatusMode,
+          isPublished: true,
+          publishedAt: new Date().toISOString()
+        }));
+      } catch (e) {}
       if (onRefreshBracket) onRefreshBracket();
-      setTimeout(() => setAdminMessage(''), 6000);
+      setTimeout(() => setAdminMessage(''), 8000);
     } catch (err: any) {
+      clearTimeout(safetyTimer);
       alert(err.message || 'Failed to apply draw to official fixtures');
     } finally {
       setIsApplying(false);
@@ -94,6 +116,10 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
       ? 'Reset ceremonial draw? This will clear drawn pairings and completely DELETE all unplayed fixtures (including Quarter-Finals, Semi-Finals, and Preliminary ties) from the official knockout bracket.'
       : 'Reset ceremonial draw? This will reset all drawn ties back into the pots.';
     if (!window.confirm(confirmMsg)) return;
+
+    try {
+      localStorage.removeItem(DRAW_STORAGE_KEY);
+    } catch (e) {}
 
     if (isEffectiveAdmin && effectiveToken) {
       setIsResetting(true);
@@ -110,7 +136,7 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
       }
     }
 
-    initializeDrawPools();
+    initializeDrawPools(true);
   };
 
   const handleClearFixtures = async (mode: 'ALL' | 'PREDICTED' | 'CONFIRMED') => {
@@ -129,11 +155,12 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
     setIsClearing(true);
     setAdminMessage('');
     try {
+      localStorage.removeItem(DRAW_STORAGE_KEY);
       const res = await api.adminClearKnockoutFixtures(mode, effectiveToken);
       setAdminMessage(res.message || `Successfully cleared ${mode} fixtures.`);
       setShowClearModal(false);
       if (onRefreshBracket) onRefreshBracket();
-      initializeDrawPools();
+      initializeDrawPools(true);
       setTimeout(() => setAdminMessage(''), 5000);
     } catch (err: any) {
       alert(err.message || `Failed to clear ${mode} fixtures`);
@@ -246,8 +273,34 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
   const [currentMatchNumber, setCurrentMatchNumber] = useState<number>(1);
   const autoPlayTimerRef = useRef<any>(null);
 
+  // Restore previously saved draw state from localStorage if available
+  const restoreSavedDraw = (): boolean => {
+    try {
+      const saved = localStorage.getItem(DRAW_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed.pairings) && parsed.pairings.length > 0) {
+          setPairings(parsed.pairings);
+          if (Array.isArray(parsed.pot1)) setPot1(parsed.pot1);
+          if (Array.isArray(parsed.pot2)) setPot2(parsed.pot2);
+          if (parsed.currentMatchNumber) setCurrentMatchNumber(parsed.currentMatchNumber);
+          if (parsed.publishStatusMode) setPublishStatusMode(parsed.publishStatusMode);
+          setActiveStep(parsed.pairings.length >= 14 ? 'COMPLETE' : (parsed.activeStep || 'IDLE'));
+          return true;
+        }
+      }
+    } catch (e) {
+      console.warn('Could not restore saved draw state:', e);
+    }
+    return false;
+  };
+
   // Initialize pools from bracket data
-  const initializeDrawPools = () => {
+  const initializeDrawPools = (forceReset: boolean = false) => {
+    if (!forceReset && restoreSavedDraw()) {
+      return;
+    }
+
     const direct = bracket.direct_qualifiers || [];
     setDirectQualifiers(direct);
     const directIds = new Set(direct.map((d: any) => d.team_id));
@@ -396,11 +449,30 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
     if (pairings.length > 0 || isDrawing || isAutoPlaying) {
       return;
     }
-    initializeDrawPools();
+    initializeDrawPools(false);
     return () => {
       if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
     };
   }, [bracket]);
+
+  // Persist draw state automatically whenever pairings, pots, or status mode changes
+  useEffect(() => {
+    if (pairings.length > 0) {
+      try {
+        localStorage.setItem(DRAW_STORAGE_KEY, JSON.stringify({
+          pairings,
+          pot1,
+          pot2,
+          currentMatchNumber,
+          activeStep: pairings.length >= 14 ? 'COMPLETE' : activeStep,
+          publishStatusMode,
+          savedAt: new Date().toISOString()
+        }));
+      } catch (e) {
+        console.warn('Failed to persist ceremonial draw state:', e);
+      }
+    }
+  }, [pairings, pot1, pot2, currentMatchNumber, activeStep, publishStatusMode]);
 
   // Execute a single tie draw with UCL Ceremonial animation
   const drawNextTie = async (): Promise<boolean> => {
@@ -673,7 +745,7 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
                   }`}
                   title={`Publish ${pairings.length} drawn pairings into the official knockout bracket as ${publishStatusMode}`}
                 >
-                  <Save className="w-3.5 h-3.5" />
+                  <Save className={`w-3.5 h-3.5 ${isApplying ? 'animate-spin' : ''}`} />
                   <span>{isApplying ? 'PUBLISHING...' : `APPLY TO FIXTURES (${publishStatusMode})`}</span>
                 </button>
 
@@ -910,56 +982,77 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
               </div>
 
               {isEffectiveAdmin && (
-                <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
-                  {/* Status Mode Toggle */}
-                  <div className="flex items-center bg-black/80 p-1 rounded-lg border border-neutral-700">
-                    <button
-                      type="button"
-                      onClick={() => setPublishStatusMode('PREDICTED')}
-                      className={`px-2.5 py-1 rounded text-[11px] font-mono font-bold transition-all cursor-pointer ${
-                        publishStatusMode === 'PREDICTED'
-                          ? 'bg-amber-500/25 text-amber-300 border border-amber-500/60 shadow-sm'
-                          : 'text-neutral-400 hover:text-neutral-200'
-                      }`}
-                    >
-                      ⚡ PREDICTED
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPublishStatusMode('CONFIRMED')}
-                      className={`px-2.5 py-1 rounded text-[11px] font-mono font-bold transition-all cursor-pointer ${
-                        publishStatusMode === 'CONFIRMED'
-                          ? 'bg-cyan-500/25 text-cyan-300 border border-cyan-500/60 shadow-sm'
-                          : 'text-neutral-400 hover:text-neutral-200'
-                      }`}
-                    >
-                      🛡️ CONFIRMED
-                    </button>
+                <div className="pt-2 flex flex-col items-center justify-center gap-3 w-full">
+                  {/* Status Mode Toggle Row */}
+                  <div className="flex flex-col items-center gap-1.5 w-full">
+                    <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest font-semibold">
+                      PUBLISH DRAW AS:
+                    </span>
+                    <div className="inline-flex items-center bg-black/90 p-1.5 rounded-xl border border-neutral-700 shadow-md">
+                      <button
+                        type="button"
+                        onClick={() => setPublishStatusMode('PREDICTED')}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                          publishStatusMode === 'PREDICTED'
+                            ? 'bg-amber-500/25 text-amber-300 border border-amber-500/60 shadow-sm'
+                            : 'text-neutral-400 hover:text-neutral-200'
+                        }`}
+                      >
+                        ⚡ PREDICTED
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPublishStatusMode('CONFIRMED')}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                          publishStatusMode === 'CONFIRMED'
+                            ? 'bg-cyan-500/25 text-cyan-300 border border-cyan-500/60 shadow-sm'
+                            : 'text-neutral-400 hover:text-neutral-200'
+                        }`}
+                      >
+                        🛡️ CONFIRMED
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Apply to Fixtures Button */}
-                  <button
-                    onClick={handleApplyToOfficial}
-                    disabled={isApplying || pairings.length === 0}
-                    className={`inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer shadow-lg border ${
-                      publishStatusMode === 'PREDICTED'
-                        ? 'bg-amber-500 text-black border-amber-400 hover:bg-amber-400'
-                        : 'bg-emerald-600 text-white border-emerald-400 hover:bg-emerald-500'
-                    }`}
-                  >
-                    <Save className="w-3.5 h-3.5" />
-                    <span>{isApplying ? 'PUBLISHING...' : `APPLY TO FIXTURES (${publishStatusMode})`}</span>
-                  </button>
+                  {/* Action Buttons Row */}
+                  <div className="w-full flex flex-col gap-2 pt-1 max-w-sm mx-auto">
+                    {/* Apply to Fixtures Button */}
+                    <button
+                      onClick={handleApplyToOfficial}
+                      disabled={isApplying || pairings.length === 0}
+                      className={`w-full inline-flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer shadow-xl border ${
+                        publishStatusMode === 'PREDICTED'
+                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black border-amber-400 hover:brightness-110 shadow-[0_0_20px_rgba(245,158,11,0.35)]'
+                          : 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-emerald-400 hover:brightness-110 shadow-[0_0_20px_rgba(16,185,129,0.35)]'
+                      } disabled:opacity-50`}
+                    >
+                      <Save className={`w-4 h-4 ${isApplying ? 'animate-spin' : ''}`} />
+                      <span>{isApplying ? 'PUBLISHING FIXTURES...' : `APPLY TO FIXTURES (${publishStatusMode})`}</span>
+                    </button>
 
-                  {/* Sync Desktop Button */}
-                  <button
-                    onClick={handleSyncToDesktop}
-                    disabled={isSyncingDesktop}
-                    className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-indigo-950 hover:bg-indigo-900 border border-indigo-600 text-xs font-mono font-bold text-indigo-300 transition-colors cursor-pointer shadow-sm"
-                  >
-                    <Monitor className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>SYNC DESKTOP</span>
-                  </button>
+                    <div className="flex items-center justify-center gap-2 w-full">
+                      {/* Sync Desktop Button */}
+                      <button
+                        onClick={handleSyncToDesktop}
+                        disabled={isSyncingDesktop}
+                        className="flex-1 inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl bg-indigo-950/90 hover:bg-indigo-900 border border-indigo-600 text-xs font-mono font-bold text-indigo-300 transition-colors cursor-pointer shadow-sm disabled:opacity-50"
+                      >
+                        <Monitor className={`w-3.5 h-3.5 text-indigo-400 ${isSyncingDesktop ? 'animate-spin' : ''}`} />
+                        <span>SYNC DESKTOP</span>
+                      </button>
+
+                      {/* Reset Draw Button */}
+                      <button
+                        onClick={handleResetDraw}
+                        disabled={isResetting || isApplying}
+                        className="inline-flex items-center justify-center space-x-1 px-3 py-2 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700 text-xs font-mono font-bold text-neutral-300 hover:text-white transition-colors cursor-pointer disabled:opacity-50"
+                        title="Reset ceremonial draw"
+                      >
+                        <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin' : ''}`} />
+                        <span>RESET</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -1041,7 +1134,7 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
                     : 'bg-emerald-950/90 hover:bg-emerald-900 border-emerald-600 text-emerald-300'
                 } disabled:opacity-50`}
               >
-                <Save className="w-3.5 h-3.5" />
+                <Save className={`w-3.5 h-3.5 ${isApplying ? 'animate-spin' : ''}`} />
                 <span>{isApplying ? 'PUBLISHING...' : `APPLY TO FIXTURES (${publishStatusMode})`}</span>
               </button>
 

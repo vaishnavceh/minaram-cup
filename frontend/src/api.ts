@@ -535,37 +535,73 @@ export const api = {
   },
 
   async adminApplyCeremonialDraw(pairings: any[], token: string, statusMode: string = 'CONFIRMED'): Promise<any> {
-    const res = await fetch(`${API_BASE}/admin/knockout/apply-draw`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ pairings, status_mode: statusMode }),
-    });
-    return handleResponse(res);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    try {
+      const res = await fetch(`${API_BASE}/admin/knockout/apply-draw`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ pairings, status_mode: statusMode }),
+        signal: controller.signal,
+      });
+      return await handleResponse(res);
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        throw new Error('Request timed out while publishing fixtures to server. Please try again.');
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   },
 
   async adminResetCeremonialDraw(token: string): Promise<any> {
-    const res = await fetch(`${API_BASE}/admin/knockout/reset-draw`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return handleResponse(res);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    try {
+      const res = await fetch(`${API_BASE}/admin/knockout/reset-draw`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        signal: controller.signal,
+      });
+      return await handleResponse(res);
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        throw new Error('Request timed out while resetting draw. Please try again.');
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   },
 
   async adminClearKnockoutFixtures(mode: string, token: string): Promise<any> {
-    const res = await fetch(`${API_BASE}/admin/knockout/clear-fixtures`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ mode }),
-    });
-    return handleResponse(res);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    try {
+      const res = await fetch(`${API_BASE}/admin/knockout/clear-fixtures`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ mode }),
+        signal: controller.signal,
+      });
+      return await handleResponse(res);
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        throw new Error('Request timed out while clearing fixtures. Please try again.');
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   },
 
   async adminSetFixturesStatus(stage: string, statusMode: string, token: string): Promise<any> {
