@@ -31,23 +31,23 @@ export const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden border-b border-[#222222]">
+      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden border-b border-blue-900/40">
         {/* Background Image with Dark Vignette */}
         <div className="absolute inset-0 z-0">
           <img
-            src="/assets/backgrounds/bg_stadium_cinematic.webp"
-            alt="Cinematic Stadium Background"
-            className="w-full h-full object-cover object-center filter brightness-50 contrast-125 scale-105 transition-transform duration-1000"
+            src="/assets/backgrounds/ucl_4k_wallpaper.jpg"
+            alt="UEFA Champions League 4K Wallpaper"
+            className="w-full h-full object-cover object-center filter brightness-60 contrast-110 scale-105 transition-transform duration-1000"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/70 to-[#080808]/50" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#080808_90%)]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#020718] via-[#030d2a]/70 to-[#020718]/60" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#020718_85%)]" />
         </div>
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center flex flex-col items-center">
           {/* Badge */}
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-black/70 border border-brand-red/60 text-xs font-mono text-neutral-300 mb-6 backdrop-blur-md shadow-glow-red">
-            <span className="w-2 h-2 rounded-full bg-brand-red animate-ping" />
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#030d26]/80 border border-blue-500/50 text-xs font-mono text-blue-200 mb-6 backdrop-blur-md shadow-[0_0_20px_rgba(59,130,246,0.4)]">
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
             <span className="tracking-widest uppercase text-white font-bold">
               {tournament ? `${tournament.name} · ${tournament.edition}` : 'MINARAM CUP · EDITION 1'}
             </span>
@@ -56,7 +56,7 @@ export const HomePage: React.FC = () => {
           {/* Massive Display Title */}
           <h1 className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight text-white uppercase leading-[0.9] drop-shadow-2xl">
             THE DIGITAL <br />
-            <span className="text-stroke-red text-transparent hover:text-brand-red transition-colors duration-300">
+            <span className="text-stroke-ucl text-transparent hover:text-blue-400 transition-colors duration-300">
               ARENA
             </span>{' '}
             OF CHAMPIONS
@@ -400,26 +400,26 @@ export const HomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Editorial Poster Feature: Ronaldo Focus */}
-        <section className="relative rounded-2xl overflow-hidden border border-[#262626] bg-[#0c0c0c] min-h-[400px] flex items-center">
-          <div className="absolute right-0 top-0 bottom-0 w-full lg:w-1/2 opacity-35 lg:opacity-60 pointer-events-none">
+        {/* Editorial Feature: UEFA Champions League Spirit */}
+        <section className="relative rounded-2xl overflow-hidden border border-blue-800/40 bg-gradient-to-r from-[#030d24] via-[#05143a] to-[#020718] min-h-[400px] flex items-center shadow-2xl">
+          <div className="absolute right-0 top-0 bottom-0 w-full lg:w-3/5 opacity-40 lg:opacity-75 pointer-events-none">
             <img
-              src="/assets/backgrounds/bg_ronaldo_07.webp"
-              alt="Cristiano Ronaldo Iconic Number 7"
-              className="w-full h-full object-cover object-top filter grayscale contrast-150"
+              src="/assets/backgrounds/ucl_stars_dark.jpg"
+              alt="UEFA Champions League Stars"
+              className="w-full h-full object-cover object-center filter contrast-125"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0c] via-[#0c0c0c]/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#030d24] via-[#030d24]/80 to-transparent" />
           </div>
 
           <div className="relative z-10 p-8 sm:p-12 lg:p-16 max-w-2xl">
-            <div className="inline-block px-3 py-1 bg-brand-red text-white text-[11px] font-mono tracking-widest uppercase mb-4">
-              EDITORIAL FOCUS
+            <div className="inline-block px-3 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-mono tracking-widest uppercase mb-4 shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+              UEFA CHAMPIONS LEAGUE SPIRIT
             </div>
             <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[0.95]">
               TACTICS OVER TALK. <br />
               PRECISION UNDER PRESSURE.
             </h2>
-            <p className="mt-4 text-neutral-400 text-sm sm:text-base leading-relaxed">
+            <p className="mt-4 text-blue-200/80 text-sm sm:text-base leading-relaxed">
               In eFootball, a millisecond decides the line between triumph and heartbreak.
               From high-pressing 4-3-3 formations to disciplined defensive counters, every Minaram Cup
               competitor is tested under relentless campus competition.
@@ -427,7 +427,7 @@ export const HomePage: React.FC = () => {
             <div className="mt-6">
               <Link
                 to="/rules"
-                className="inline-flex items-center space-x-2 text-sm font-mono uppercase tracking-widest text-brand-red hover:text-white transition-colors"
+                className="inline-flex items-center space-x-2 text-sm font-mono uppercase tracking-widest text-blue-400 hover:text-white transition-colors"
               >
                 <span>Read the Competition Rulebook</span>
                 <ArrowRight className="w-4 h-4" />

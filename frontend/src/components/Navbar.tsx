@@ -111,32 +111,11 @@ export const Navbar: React.FC<NavbarProps> = ({ isLiveConnected }) => {
               </span>
             </div>
 
-            {/* Theme Toggle Button */}
-            <button
-              onClick={toggleTheme}
-              title={isUCL ? 'Switch to Classic Theme' : 'Switch to UCL Theme'}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border text-[11px] font-mono font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                isUCL
-                  ? 'bg-gradient-to-r from-blue-950 to-violet-950 border-blue-700/60 text-blue-200 hover:border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)]'
-                  : 'bg-neutral-900 border-neutral-700 text-neutral-300 hover:text-white hover:border-brand-red'
-              }`}
-            >
-              {isUCL ? (
-                <>
-                  <span className="text-blue-300">★</span>
-                  <span>UCL</span>
-                  <span className="text-neutral-500">|</span>
-                  <span className="text-neutral-500">Classic</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-neutral-500">UCL</span>
-                  <span className="text-neutral-500">|</span>
-                  <span className="text-brand-red">■</span>
-                  <span>Classic</span>
-                </>
-              )}
-            </button>
+            {/* UEFA Champions League Official Star Badge */}
+            <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full border border-blue-600/50 bg-gradient-to-r from-blue-950 to-indigo-950 text-[11px] font-mono font-bold tracking-wider text-blue-200 shadow-[0_0_15px_rgba(59,130,246,0.3)] select-none">
+              <span className="text-blue-400">★</span>
+              <span className="text-white uppercase tracking-widest">UCL OFFICIAL</span>
+            </div>
           </div>
 
           {/* Mobile menu button */}
@@ -178,17 +157,11 @@ export const Navbar: React.FC<NavbarProps> = ({ isLiveConnected }) => {
               </Link>
             );
           })}
-          {/* Mobile theme toggle */}
-          <button
-            onClick={toggleTheme}
-            className={`w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-md text-sm font-mono font-bold uppercase tracking-wider border cursor-pointer transition-all ${
-              isUCL
-                ? 'bg-blue-950/40 border-blue-700/40 text-blue-200'
-                : 'bg-neutral-900 border-neutral-700 text-neutral-300'
-            }`}
-          >
-            <span>{isUCL ? '★ Switch to Classic' : '■ Switch to UCL Theme'}</span>
-          </button>
+          {/* Mobile UCL Badge */}
+          <div className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-md text-sm font-mono font-bold uppercase tracking-wider border bg-blue-950/60 border-blue-700/50 text-blue-200 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+            <span className="text-blue-400">★</span>
+            <span>UEFA CHAMPIONS LEAGUE EDITION</span>
+          </div>
           <div className="pt-2 border-t border-neutral-800">
             <div className="flex items-center space-x-2 px-4 py-2 text-xs font-mono text-neutral-400">
               <Radio className={`w-4 h-4 ${isLiveConnected ? (isUCL ? 'text-blue-400 animate-pulse' : 'text-emerald-500 animate-pulse') : 'text-amber-500'}`} />

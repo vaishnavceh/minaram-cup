@@ -8,25 +8,29 @@ export default {
     extend: {
       colors: {
         pitch: {
-          950: '#080808',
-          900: '#0F0F0F',
-          850: '#141414',
-          800: '#181818',
-          700: '#242424',
-          600: '#333333',
+          950: '#020617',
+          900: '#030d26',
+          850: '#06143c',
+          800: '#0a1c52',
+          700: '#0f296f',
+          600: '#1d4ed8',
         },
         brand: {
-          red: '#B3121B',
-          'red-bright': '#D81924',
-          'red-dark': '#850B12',
-          gold: '#E5B842',
-          silver: '#C0C0C0',
-          bronze: '#CD7F32',
+          red: '#2563eb', // UCL Electric Blue replaces legacy red
+          'red-bright': '#38bdf8', // UCL Electric Cyan
+          'red-dark': '#1e40af', // Deep UCL Navy Blue
+          gold: '#fbbf24', // Trophy Gold
+          silver: '#e2e8f0', // Silver Starball Chrome
+          bronze: '#d97706',
+          ucl: '#2563eb',
+          'ucl-cyan': '#00f0ff',
+          'ucl-navy': '#020718',
+          'ucl-deep': '#030d28',
         },
         editorial: {
           white: '#F5F5F5',
-          muted: '#9A9A9A',
-          subtle: '#666666',
+          muted: '#94a3b8',
+          subtle: '#64748b',
         }
       },
       fontFamily: {
@@ -39,8 +43,11 @@ export default {
         tightest: '-.04em',
       },
       boxShadow: {
-        'glow-red': '0 0 25px rgba(179, 18, 27, 0.45)',
-        'glow-red-lg': '0 0 50px rgba(179, 18, 27, 0.3)',
+        'glow-red': '0 0 25px rgba(37, 99, 235, 0.55)',
+        'glow-red-lg': '0 0 50px rgba(56, 189, 248, 0.45)',
+        'glow-blue': '0 0 25px rgba(37, 99, 235, 0.55)',
+        'glow-cyan': '0 0 25px rgba(6, 182, 212, 0.55)',
+        'ucl-card': '0 8px 32px 0 rgba(2, 6, 23, 0.65)',
       }
     },
   },

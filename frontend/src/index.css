@@ -7,10 +7,22 @@
     color-scheme: dark;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    background-color: #080808;
-    color: #F5F5F5;
+    background-color: #020718;
+    background-image: 
+      linear-gradient(180deg, rgba(2, 7, 24, 0.78) 0%, rgba(3, 13, 36, 0.84) 40%, rgba(2, 7, 24, 0.92) 100%),
+      url('/assets/backgrounds/ucl_main_bg.jpg');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    color: #e2e8f0;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    min-height: 100vh;
   }
 
   /* Force tabular numbers in scoreboards, standings, and stat counters */
@@ -20,57 +32,60 @@
 }
 
 /* ================================================================
-   THEME: UCL (UEFA Champions League — Default)
-   Deep navy blue, electric blue/cyan accents, purple glow, silver
+   UEFA CHAMPIONS LEAGUE GLOBAL STYLING
+   Primary wallpapers provided by user:
+   - ucl_main_bg.jpg: 207722-1920x1080-desktop-full-hd-uefa-background.jpg
+   - ucl_4k_wallpaper.jpg: champions league 4K wallpaper.jpg
+   - ucl_stadium_bg.jpg: wp7192399-uefa-champions-league-wallpapers.jpg
+   - ucl_stars_dark.jpg: 1096908052983243477.jpg
    ================================================================ */
-.theme-ucl body,
-.theme-ucl .theme-bg {
-  background: linear-gradient(135deg, #030d1f 0%, #050f28 40%, #0a1628 60%, #030d1f 100%);
-  background-attachment: fixed;
-  color: #e8f4ff;
+
+.theme-bg {
+  background: transparent !important;
 }
 
-/* UCL: Navbar */
-.theme-ucl header.theme-header {
-  background: rgba(3, 13, 31, 0.92) !important;
-  border-bottom-color: rgba(30, 80, 180, 0.35) !important;
-  backdrop-filter: blur(16px);
+/* Glassmorphism card surfaces for UCL theme */
+.bg-\[\#080808\],
+.bg-\[\#0c0c0c\],
+.bg-\[\#101010\],
+.bg-\[\#111114\],
+.bg-\[\#121214\],
+.bg-\[\#181308\],
+.bg-\[\#161208\],
+.bg-\[\#181012\],
+.bg-\[\#141414\] {
+  background-color: rgba(4, 14, 38, 0.82) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-color: rgba(59, 130, 246, 0.28) !important;
 }
 
-/* UCL: Active nav underline */
-.theme-ucl .nav-active-bar {
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6) !important;
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+.border-\[\#222222\],
+.border-\[\#262626\],
+.border-\[\#1c1c1c\] {
+  border-color: rgba(59, 130, 246, 0.25) !important;
 }
 
-/* UCL: Brand red → UCL electric blue */
-.theme-ucl .brand-accent {
-  color: #60a5fa !important;
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-/* UCL: scrollbars */
-.theme-ucl ::-webkit-scrollbar-track { background: #030d1f; }
-.theme-ucl ::-webkit-scrollbar-thumb { background: #1e3a6e; border-radius: 4px; }
-.theme-ucl ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
-
-/* UCL: card panels */
-.theme-ucl .theme-card {
-  background: rgba(5, 15, 40, 0.85);
-  border-color: rgba(59, 130, 246, 0.25);
+::-webkit-scrollbar-track {
+  background: #020718;
 }
 
-/* UCL: star glow decoration keyframes */
-@keyframes ucl-star-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+::-webkit-scrollbar-thumb {
+  background: #1e3a8a;
+  border-radius: 4px;
 }
 
-@keyframes ucl-glow-pulse {
-  0%, 100% { opacity: 0.4; filter: blur(40px); }
-  50%       { opacity: 0.7; filter: blur(50px); }
+::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
 }
 
-/* UCL: background ambient orb decoration on pages */
+/* UCL ambient lighting effects */
 .ucl-ambient {
   pointer-events: none;
   position: fixed;
@@ -82,12 +97,12 @@
 .ucl-ambient::before {
   content: '';
   position: absolute;
-  top: -20%;
+  top: -15%;
   left: -10%;
-  width: 70vw;
-  height: 70vw;
+  width: 75vw;
+  height: 75vw;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(30,80,220,0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(30, 80, 220, 0.20) 0%, transparent 70%);
   animation: ucl-glow-pulse 8s ease-in-out infinite;
 }
 
@@ -96,81 +111,18 @@
   position: absolute;
   bottom: -20%;
   right: -10%;
-  width: 60vw;
-  height: 60vw;
+  width: 65vw;
+  height: 65vw;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(139,92,246,0.14) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.16) 0%, transparent 70%);
   animation: ucl-glow-pulse 10s ease-in-out infinite reverse;
 }
 
-/* ================================================================
-   THEME: CLASSIC (Original dark red — switched from legacy)
-   ================================================================ */
-.theme-classic body,
-.theme-classic .theme-bg {
-  background-color: #080808;
-  color: #F5F5F5;
+@keyframes ucl-glow-pulse {
+  0%, 100% { opacity: 0.45; filter: blur(50px); }
+  50%       { opacity: 0.75; filter: blur(65px); }
 }
 
-.theme-classic ::-webkit-scrollbar-track { background: #0d0d0d; }
-.theme-classic ::-webkit-scrollbar-thumb { background: #262626; border-radius: 4px; }
-.theme-classic ::-webkit-scrollbar-thumb:hover { background: #B3121B; }
-
-/* Default (initial ucl on load) */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-/* Custom Editorial Aesthetics */
-.editorial-grid-bg {
-  background-size: 40px 40px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-}
-
-.clip-slanted {
-  clip-path: polygon(0 0, 100% 0, 96% 100%, 0% 100%);
-}
-
-.clip-badge {
-  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-}
-
-.text-stroke-red {
-  -webkit-text-stroke: 1.5px #B3121B;
-  color: transparent;
-}
-
-.text-stroke-white {
-  -webkit-text-stroke: 1px rgba(245, 245, 245, 0.4);
-  color: transparent;
-}
-
-/* UCL text stroke accent */
-.text-stroke-ucl {
-  -webkit-text-stroke: 1.5px #3b82f6;
-  color: transparent;
-}
-
-/* UCL star ball decorative SVG background in sections */
-.ucl-starball-bg {
-  background-image: url('/assets/backgrounds/ucl_starball_bg.jpg');
-  background-size: cover;
-  background-position: center;
-}
-
-/* UCL glow shadows */
-.shadow-ucl-blue {
-  box-shadow: 0 0 25px rgba(59, 130, 246, 0.45), 0 0 60px rgba(59, 130, 246, 0.15);
-}
-
-.shadow-ucl-purple {
-  box-shadow: 0 0 25px rgba(139, 92, 246, 0.45), 0 0 60px rgba(139, 92, 246, 0.15);
-}
-
-/* UCL shimmer animation for silver elements */
 @keyframes ucl-shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
@@ -185,12 +137,22 @@
   animation: ucl-shimmer 3s linear infinite;
 }
 
-/* Theme toggle pill animation */
-@keyframes theme-fade {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
+/* Custom Editorial Aesthetics */
+.text-stroke-red,
+.text-stroke-ucl {
+  -webkit-text-stroke: 1.5px #3b82f6;
+  color: transparent;
 }
 
-.theme-fade-in {
-  animation: theme-fade 0.3s ease-out forwards;
+.text-stroke-white {
+  -webkit-text-stroke: 1px rgba(245, 245, 245, 0.4);
+  color: transparent;
+}
+
+.clip-badge {
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+
+.clip-slanted {
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 0% 100%);
 }

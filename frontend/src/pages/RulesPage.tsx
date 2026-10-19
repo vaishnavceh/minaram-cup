@@ -4,19 +4,29 @@ import { Shield, Clock, Award, Users, AlertTriangle, CheckCircle } from 'lucide-
 export const RulesPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header */}
-      <div className="mb-10 pb-6 border-b border-[#222222]">
-        <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-brand-red mb-2">
-          <Shield className="w-4 h-4" />
-          <span>GOVERNANCE & FAIR PLAY</span>
+      {/* Header Banner */}
+      <div className="mb-10 relative rounded-2xl overflow-hidden border border-blue-500/30 bg-gradient-to-r from-[#030d26] via-[#051336] to-[#020718] p-6 sm:p-8 shadow-2xl">
+        <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-25 sm:opacity-40 pointer-events-none">
+          <img
+            src="/assets/backgrounds/ucl_stadium_bg.jpg"
+            alt="UEFA Champions League Stadium"
+            className="w-full h-full object-cover object-center filter contrast-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#030d26] via-[#030d26]/80 to-transparent" />
         </div>
-        <h1 className="font-display text-4xl sm:text-5xl text-white tracking-wider">
-          OFFICIAL RULEBOOK
-        </h1>
-        <p className="text-sm text-neutral-400 mt-2">
-          Rules and regulations governing the MINARAM CUP eFootball Championship.
-          All participants must abide by these tournament directives.
-        </p>
+        <div className="relative z-10">
+          <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-blue-400 mb-2">
+            <Shield className="w-4 h-4 text-amber-400" />
+            <span>GOVERNANCE & FAIR PLAY · UEFA STAGE</span>
+          </div>
+          <h1 className="font-display text-4xl sm:text-5xl text-white tracking-wider">
+            OFFICIAL RULEBOOK
+          </h1>
+          <p className="text-sm text-blue-200/80 mt-2">
+            Rules and regulations governing the MINARAM CUP eFootball Championship.
+            All participants must abide by these tournament directives.
+          </p>
+        </div>
       </div>
 
       {/* Rules Content */}

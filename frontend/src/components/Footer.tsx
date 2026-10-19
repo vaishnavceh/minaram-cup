@@ -4,8 +4,18 @@ import { ShieldCheck, Heart, Sparkles, Lock } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-black border-t border-[#1c1c1c] text-neutral-400 mt-20 pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="relative overflow-hidden bg-gradient-to-t from-[#020514] via-[#030d2a]/95 to-[#020617] border-t border-blue-900/50 text-blue-200/80 mt-20 pt-16 pb-12">
+      {/* Background Star Texture */}
+      <div className="absolute inset-0 opacity-15 pointer-events-none">
+        <img
+          src="/assets/backgrounds/ucl_stars_dark.jpg"
+          alt="UEFA Champions League Background"
+          className="w-full h-full object-cover object-bottom"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#020514] via-transparent to-[#020617]" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand Info */}
           <div className="md:col-span-2 space-y-4">

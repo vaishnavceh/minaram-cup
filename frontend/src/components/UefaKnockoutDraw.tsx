@@ -381,21 +381,31 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
   return (
     <div className="space-y-8 animate-fade-in">
       {/* UEFA-Style Luxury Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#040814] via-[#09152e] to-[#040814] border-2 border-brand-gold/60 p-6 sm:p-8 shadow-[0_0_40px_rgba(212,175,55,0.15)]">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#030d26] via-[#051336] to-[#020718] border-2 border-blue-500/50 p-6 sm:p-8 shadow-[0_0_40px_rgba(37,99,235,0.25)]">
+        {/* Background Stadium Wallpaper */}
+        <div className="absolute inset-0 opacity-25 pointer-events-none">
+          <img
+            src="/assets/backgrounds/ucl_stadium_bg.jpg"
+            alt="UEFA Champions League Stadium"
+            className="w-full h-full object-cover object-center filter contrast-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#030d26] via-[#030d26]/80 to-[#020718]" />
+        </div>
+
         {/* Glow Spheres */}
-        <div className="absolute top-0 right-1/4 w-72 h-72 bg-brand-gold/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-gold/20 border border-brand-gold/40 text-xs font-mono text-brand-gold tracking-widest uppercase mb-3">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>OFFICIAL CEREMONIAL DRAW SIMULATOR</span>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-500/40 text-xs font-mono text-blue-300 tracking-widest uppercase mb-3 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+              <span>OFFICIAL CEREMONIAL DRAW DESK</span>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-white tracking-wider uppercase leading-none">
               UEFA-STYLE KNOCKOUT DRAW
             </h2>
-            <p className="mt-2 text-xs sm:text-sm font-mono text-neutral-300 max-w-2xl leading-relaxed">
+            <p className="mt-2 text-xs sm:text-sm font-mono text-blue-200/80 max-w-2xl leading-relaxed">
               Experience the suspense of the live preliminary draw ceremony. 28 group stage qualifiers seeded into 14 knockout fixtures with automatic same-group protection.
             </p>
           </div>
@@ -435,16 +445,16 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
             <button
               onClick={handleFastDrawAll}
               disabled={isDrawing || isAutoPlaying || activeStep === 'COMPLETE'}
-              className="inline-flex items-center space-x-1.5 px-3.5 py-2.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-brand-gold text-xs font-mono text-neutral-200 transition-colors disabled:opacity-50"
+              className="inline-flex items-center space-x-1.5 px-3.5 py-2.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-blue-500 text-xs font-mono text-neutral-200 transition-colors disabled:opacity-50"
             >
-              <Zap className="w-3.5 h-3.5 text-brand-gold" />
+              <Zap className="w-3.5 h-3.5 text-blue-400" />
               <span>FAST REVEAL</span>
             </button>
 
             <button
               onClick={() => drawNextTie()}
               disabled={isDrawing || isAutoPlaying || activeStep === 'COMPLETE'}
-              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-brand-red to-rose-700 hover:from-brand-red-bright hover:to-rose-600 text-white font-display text-sm tracking-wider uppercase transition-all shadow-glow-red disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-display text-sm tracking-wider uppercase transition-all shadow-[0_0_20px_rgba(37,99,235,0.5)] disabled:opacity-50 cursor-pointer"
             >
               <Shuffle className="w-4 h-4" />
               <span>DRAW TIE #{currentMatchNumber <= 14 ? currentMatchNumber : 14}</span>

@@ -43,19 +43,27 @@ export const StandingsPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header */}
-      <div className="mb-10 pb-6 border-b border-[#222222] flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-brand-red mb-2">
-            <BarChart3 className="w-4 h-4" />
-            <span>POINTS TABLES & RANKINGS</span>
+      {/* Header Banner */}
+      <div className="mb-10 relative rounded-2xl overflow-hidden border border-blue-500/30 bg-gradient-to-r from-[#030d26] via-[#051336] to-[#020718] p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-25 sm:opacity-40 pointer-events-none">
+          <img
+            src="/assets/backgrounds/ucl_stadium_bg.jpg"
+            alt="UEFA Champions League Stadium"
+            className="w-full h-full object-cover object-center filter contrast-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#030d26] via-[#030d26]/80 to-transparent" />
+        </div>
+        <div className="relative z-10">
+          <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-blue-400 mb-2">
+            <BarChart3 className="w-4 h-4 text-amber-400" />
+            <span>POINTS TABLES & RANKINGS · UEFA STAGE</span>
           </div>
           <h1 className="font-display text-4xl sm:text-5xl text-white tracking-wider">
             GROUP STANDINGS
           </h1>
-          <p className="text-sm text-neutral-400 mt-2 max-w-xl">
+          <p className="text-sm text-blue-200/80 mt-2 max-w-xl">
             Live group standings and points calculations. The top two teams from each group
-            earn a direct ticket into the championship knockout quarter-finals.
+            earn qualification into the championship knockout stage.
           </p>
         </div>
 

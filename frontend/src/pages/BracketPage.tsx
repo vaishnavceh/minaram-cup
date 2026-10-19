@@ -139,63 +139,74 @@ export const BracketPage: React.FC = () => {
         </div>
       )}
 
-      {/* Header */}
-      <div className="mb-8 pb-6 border-b border-[#222222] flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-brand-red mb-2">
-            <Trophy className="w-4 h-4 text-brand-gold" />
-            <span>MINARAM CUP 2026 PLAYOFFS</span>
-          </div>
-          <h1 className="font-display text-4xl sm:text-5xl text-white tracking-wider">
-            KNOCKOUT / QUALIFIERS
-          </h1>
-          <p className="text-sm text-neutral-400 mt-2 max-w-2xl">
-            Complete 30-team championship structure: 28 preliminary contenders battle through 14 matches to join the 2 Direct Round of 16 Qualifiers.
-          </p>
+      {/* Knockout Banner with UCL Stadium Wallpaper */}
+      <div className="mb-8 relative rounded-2xl overflow-hidden border border-blue-500/30 bg-gradient-to-r from-[#030d26] via-[#051336] to-[#020718] p-6 sm:p-8 shadow-2xl">
+        <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-30 sm:opacity-50 pointer-events-none">
+          <img
+            src="/assets/backgrounds/ucl_stadium_bg.jpg"
+            alt="UEFA Champions League Stadium"
+            className="w-full h-full object-cover object-center filter contrast-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#030d26] via-[#030d26]/80 to-transparent" />
         </div>
 
-        {/* Action Controls */}
-        <div className="flex flex-wrap items-center gap-3 shrink-0">
-          {/* Bracket Sync Status Badge */}
-          <div className="flex items-center space-x-2 px-3.5 py-2 rounded bg-blue-950/50 border border-blue-700/40 text-xs font-mono text-blue-200">
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-            <span className="text-blue-300 font-bold uppercase tracking-wider">ADMIN DRAW SYNCED</span>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-blue-400 mb-2">
+              <Trophy className="w-4 h-4 text-amber-400" />
+              <span>MINARAM CUP 2026 PLAYOFFS · UEFA CHAMPIONS LEAGUE STAGE</span>
+            </div>
+            <h1 className="font-display text-4xl sm:text-5xl text-white tracking-wider">
+              KNOCKOUT / QUALIFIERS
+            </h1>
+            <p className="text-sm text-blue-200/80 mt-2 max-w-2xl">
+              Complete 30-team championship structure: 28 preliminary contenders battle through 14 matches to join the 2 Direct Round of 16 Qualifiers.
+            </p>
           </div>
 
-          {/* Refresh Action */}
-          <button
-            type="button"
-            onClick={() => loadData(true)}
-            disabled={refreshing}
-            className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase transition-colors bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 hover:border-neutral-700 cursor-pointer"
-            title="Recalculate predictions from latest standings"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 text-neutral-400 ${refreshing ? 'animate-spin' : ''}`} />
-            <span>{refreshing ? 'CALCULATING...' : 'REFRESH'}</span>
-          </button>
+          {/* Action Controls */}
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            {/* Bracket Sync Status Badge */}
+            <div className="flex items-center space-x-2 px-3.5 py-2 rounded bg-blue-950/80 border border-blue-500/50 text-xs font-mono text-blue-200 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+              <span className="text-blue-300 font-bold uppercase tracking-wider">ADMIN DRAW SYNCED</span>
+            </div>
 
-          {/* Download PNG Action */}
-          <button
-            type="button"
-            onClick={handleDownloadPng}
-            disabled={isExporting}
-            className={`inline-flex items-center space-x-2 px-4 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase transition-all duration-200 border cursor-pointer select-none shadow-sm ${
-              downloadSuccess
-                ? 'bg-emerald-950/90 text-emerald-300 border-emerald-600/80 shadow-emerald-900/30'
-                : 'bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border-neutral-700 hover:border-amber-500/60'
-            } disabled:opacity-50`}
-            title="Download tournament knockout bracket as a PNG image"
-            aria-label="Download Knockout Bracket as PNG"
-          >
-            {isExporting ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
-            ) : downloadSuccess ? (
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
-            ) : (
-              <Download className="w-3.5 h-3.5 text-amber-400" />
-            )}
-            <span>{downloadSuccess ? 'PNG SAVED' : 'DOWNLOAD PNG'}</span>
-          </button>
+            {/* Refresh Action */}
+            <button
+              type="button"
+              onClick={() => loadData(true)}
+              disabled={refreshing}
+              className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase transition-colors bg-blue-950/60 hover:bg-blue-900/60 text-blue-200 hover:text-white border border-blue-700/50 cursor-pointer"
+              title="Recalculate predictions from latest standings"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-blue-400 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>{refreshing ? 'CALCULATING...' : 'REFRESH'}</span>
+            </button>
+
+            {/* Download PNG Action */}
+            <button
+              type="button"
+              onClick={handleDownloadPng}
+              disabled={isExporting}
+              className={`inline-flex items-center space-x-2 px-4 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase transition-all duration-200 border cursor-pointer select-none shadow-sm ${
+                downloadSuccess
+                  ? 'bg-emerald-950/90 text-emerald-300 border-emerald-600/80 shadow-emerald-900/30'
+                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border-blue-500/60 shadow-[0_0_20px_rgba(37,99,235,0.4)]'
+              } disabled:opacity-50`}
+              title="Download tournament knockout bracket as a PNG image"
+              aria-label="Download Knockout Bracket as PNG"
+            >
+              {isExporting ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+              ) : downloadSuccess ? (
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+              ) : (
+                <Download className="w-3.5 h-3.5 text-white" />
+              )}
+              <span>{downloadSuccess ? 'PNG SAVED' : 'DOWNLOAD PNG'}</span>
+            </button>
+          </div>
         </div>
       </div>
 
