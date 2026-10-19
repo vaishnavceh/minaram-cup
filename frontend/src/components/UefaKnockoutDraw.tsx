@@ -24,6 +24,7 @@ interface UefaKnockoutDrawProps {
   bracket: PublicBracket;
   token?: string;
   isAdmin?: boolean;
+  allTeams?: any[];
   onDrawComplete?: (pairings: any[]) => void;
   onRefreshBracket?: () => void;
 }
@@ -47,7 +48,7 @@ interface DrawnPairing {
   timestamp: string;
 }
 
-export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, token, isAdmin = false, onRefreshBracket }) => {
+export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, token, isAdmin = false, allTeams, onRefreshBracket }) => {
   // Sound synthesizer using Web Audio API (zero external assets needed)
   const [soundEnabled, setSoundEnabled] = useState(true);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -178,46 +179,86 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
   const initializeDrawPools = () => {
     const direct = bracket.direct_qualifiers || [];
     setDirectQualifiers(direct);
-    const directIds = new Set(direct.map((d) => d.team_id));
+    const directIds = new Set(direct.map((d: any) => d.team_id));
 
-    // Extract preliminary round matches from bracket
-    const prelimRound = (bracket.rounds || []).find((r) => (r.round_name || '').toLowerCase().includes('preliminary'));
+    // Extract preliminary round matches from bracket (supporting both rounds array and bracket object)
+    let prelimMatches: any[] = [];
+    if (Array.isArray(bracket.rounds)) {
+      const pRound = bracket.rounds.find((r: any) => (r.round_name || '').toLowerCase().includes('preliminary'));
+      if (pRound && Array.isArray(pRound.matches)) {
+        prelimMatches = pRound.matches;
+      }
+    }
+    if (prelimMatches.length === 0 && (bracket as any).bracket) {
+      const bObj = (bracket as any).bracket;
+      if (Array.isArray(bObj['Preliminary Round'])) {
+        prelimMatches = bObj['Preliminary Round'];
+      } else {
+        const pKey = Object.keys(bObj).find((k) => k.toLowerCase().includes('preliminary'));
+        if (pKey && Array.isArray(bObj[pKey])) {
+          prelimMatches = bObj[pKey];
+        }
+      }
+    }
+
     const p1List: DrawBall[] = [];
     const p2List: DrawBall[] = [];
     const seenTeams = new Set<number>();
 
-    if (prelimRound && prelimRound.matches) {
-      prelimRound.matches.forEach((m) => {
-        if (m.team_a_id && !seenTeams.has(m.team_a_id) && !directIds.has(m.team_a_id)) {
-          seenTeams.add(m.team_a_id);
-          p1List.push({
-            id: m.team_a_id,
-            name: m.team_a_name || `Team ${m.team_a_id}`,
-            group_name: m.group_name || 'Group',
-            seed: 1,
-            captain: m.team_a_captain || undefined
-          });
-        }
-        if (m.team_b_id && !seenTeams.has(m.team_b_id) && !directIds.has(m.team_b_id)) {
-          seenTeams.add(m.team_b_id);
-          p2List.push({
-            id: m.team_b_id,
-            name: m.team_b_name || `Team ${m.team_b_id}`,
-            group_name: m.group_name || 'Group',
-            seed: 2,
-            captain: m.team_b_captain || undefined
-          });
-        }
-      });
-    }
+    prelimMatches.forEach((m: any) => {
+      const hId = m.team_a_id || m.home_team_id;
+      const hName = m.team_a_name || m.home_team_name || m.home_name;
+      const hGroup = m.home_group || m.group_name || 'Group';
 
-    // If less than 14 per pot (e.g. Incomplete data), generate placeholders or balance
-    if (p1List.length === 0 && p2List.length === 0) {
-      // Fallback sample pools for simulation
-      const groups = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'];
-      groups.slice(0, 14).forEach((g, idx) => {
-        p1List.push({ id: 100 + idx, name: `Winner Group ${g}`, group_name: `Group ${g}`, seed: 1 });
-        p2List.push({ id: 200 + idx, name: `Runner-up Group ${g}`, group_name: `Group ${g}`, seed: 2 });
+      const aId = m.team_b_id || m.away_team_id;
+      const aName = m.team_b_name || m.away_team_name || m.away_name;
+      const aGroup = m.away_group || m.group_name || 'Group';
+
+      if (hId && !seenTeams.has(hId) && !directIds.has(hId)) {
+        seenTeams.add(hId);
+        p1List.push({
+          id: hId,
+          name: hName || `Team ${hId}`,
+          group_name: hGroup,
+          seed: 1,
+          captain: m.team_a_captain || m.home_captain || undefined
+        });
+      }
+      if (aId && !seenTeams.has(aId) && !directIds.has(aId)) {
+        seenTeams.add(aId);
+        p2List.push({
+          id: aId,
+          name: aName || `Team ${aId}`,
+          group_name: aGroup,
+          seed: 2,
+          captain: m.team_b_captain || m.away_captain || undefined
+        });
+      }
+    });
+
+    // If pots need more teams, draw real teams from allTeams to ensure valid database foreign keys
+    if ((p1List.length < 14 || p2List.length < 14) && Array.isArray(allTeams) && allTeams.length > 0) {
+      const available = allTeams.filter((t: any) => !directIds.has(t.id) && !seenTeams.has(t.id));
+      available.forEach((t: any) => {
+        if (p1List.length < 14) {
+          seenTeams.add(t.id);
+          p1List.push({
+            id: t.id,
+            name: t.name,
+            group_name: t.group_name || 'Group',
+            seed: 1,
+            captain: t.captain_name
+          });
+        } else if (p2List.length < 14) {
+          seenTeams.add(t.id);
+          p2List.push({
+            id: t.id,
+            name: t.name,
+            group_name: t.group_name || 'Group',
+            seed: 2,
+            captain: t.captain_name
+          });
+        }
       });
     }
 

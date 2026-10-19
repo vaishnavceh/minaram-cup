@@ -389,6 +389,7 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
             bracket={bracket}
             token={token}
             isAdmin={true}
+            allTeams={allTeams}
             onRefreshBracket={loadData}
           />
         </div>

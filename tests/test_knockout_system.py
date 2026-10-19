@@ -360,15 +360,16 @@ def test_apply_custom_ceremonial_draw_and_desktop_export(temp_db):
     setup_15_groups_tournament(temp_db)
     km = KnockoutManager(temp_db)
 
-    # 1. Custom ceremonial pairings
+    # 1. Custom ceremonial pairings (including an invalid team ID that must not cause Foreign Key Constraint Failed)
     pairings = [
         {"match_number": 1, "home_team_id": 1, "away_team_id": 2},
         {"match_number": 2, "home_team_id": 3, "away_team_id": 4},
+        {"match_number": 3, "home_team_id": 9999, "away_team_id": 8888}, # Non-existent IDs
     ]
 
     res = km.apply_custom_draw(pairings=pairings, admin_username="admin")
     assert res["status"] == "applied"
-    assert res["count"] == 2
+    assert res["count"] == 2 # Only the 2 valid pairings applied, foreign key error prevented!
 
     # Check database fixtures
     pr1 = temp_db.execute_one("SELECT * FROM knockout_official_fixtures WHERE bracket_slot = 'PR1';")

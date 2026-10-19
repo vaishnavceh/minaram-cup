@@ -773,6 +773,24 @@ class KnockoutManager:
                     "group_name": champ_row["group_name"] or "N/A"
                 }
 
+        # Format rounds array for frontend components expecting bracket.rounds
+        rounds_list = []
+        for stage_name, stage_matches in merged_tree.items():
+            enhanced_matches = []
+            for m in stage_matches:
+                m_enhanced = dict(m)
+                m_enhanced["team_a_id"] = m.get("home_team_id")
+                m_enhanced["team_b_id"] = m.get("away_team_id")
+                m_enhanced["team_a_name"] = m.get("home_team_name") or m.get("home_name")
+                m_enhanced["team_b_name"] = m.get("away_team_name") or m.get("away_name")
+                m_enhanced["team_a_score"] = m.get("home_score")
+                m_enhanced["team_b_score"] = m.get("away_score")
+                enhanced_matches.append(m_enhanced)
+            rounds_list.append({
+                "round_name": stage_name,
+                "matches": enhanced_matches
+            })
+
         return {
             "snapshot_version": snapshot["version"],
             "last_updated": snapshot["created_at"],
@@ -782,6 +800,7 @@ class KnockoutManager:
             "recommended_qualifiers": dq_data["recommended_qualifiers"],
             "has_direct_override": dq_data["has_override"],
             "bracket": merged_tree,
+            "rounds": rounds_list,
             "conflicts": conflicts,
             "champion": champion,
             "rules": rules,
@@ -1435,42 +1454,54 @@ class KnockoutManager:
 
     def _sync_official_fixture_to_matches(self, bracket_slot: str):
         """Internal helper: safely mirror official knockout fixture into the general matches table."""
-        off = self.db.execute_one("SELECT * FROM knockout_official_fixtures WHERE bracket_slot = ?;", (bracket_slot,))
-        if not off:
-            return
+        try:
+            off = self.db.execute_one("SELECT * FROM knockout_official_fixtures WHERE bracket_slot = ?;", (bracket_slot,))
+            if not off:
+                return
 
-        m_status = "Completed" if off["status"] == "COMPLETED" else "Scheduled"
-        if off["status"] == "LIVE":
-            m_status = "In Progress"
+            h_id = off["home_team_id"]
+            a_id = off["away_team_id"]
+            # Ensure foreign key constraints in matches table (teams(id)) are strictly satisfied
+            if h_id and not self.db.execute_one("SELECT id FROM teams WHERE id = ?;", (h_id,)):
+                h_id = None
+            if a_id and not self.db.execute_one("SELECT id FROM teams WHERE id = ?;", (a_id,)):
+                a_id = None
 
-        existing = self.db.execute_one("SELECT id FROM matches WHERE bracket_slot = ?;", (bracket_slot,))
-        if existing:
-            self.db.execute_non_query("""
-                UPDATE matches
-                SET home_team_id = ?, away_team_id = ?,
-                    home_score = ?, away_score = ?, home_penalty = ?, away_penalty = ?,
-                    status = ?, winner_team_id = ?, completed_at = ?, notes = ?
-                WHERE id = ?;
-            """, (
-                off["home_team_id"], off["away_team_id"],
-                off["home_score"], off["away_score"], off["home_penalty"], off["away_penalty"],
-                m_status, off["winner_team_id"], off["completed_at"], off["notes"] or "", existing["id"]
-            ))
-        else:
-            max_num = self.db.execute_one("SELECT MAX(match_number) AS m FROM matches;")["m"] or 0
-            self.db.execute_non_query("""
-                INSERT INTO matches (
-                    match_number, stage, round_number, bracket_slot,
-                    home_team_id, away_team_id, scheduled_date, scheduled_time, venue,
-                    home_score, away_score, home_penalty, away_penalty,
-                    status, winner_team_id, completed_at, notes
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-            """, (
-                max_num + 1, off["stage"], off["round_number"], bracket_slot,
-                off["home_team_id"], off["away_team_id"], off["scheduled_date"], off["scheduled_time"], off["venue"],
-                off["home_score"], off["away_score"], off["home_penalty"], off["away_penalty"],
-                m_status, off["winner_team_id"], off["completed_at"], off["notes"] or ""
-            ))
+            m_status = "Completed" if off["status"] == "COMPLETED" else "Scheduled"
+            if off["status"] == "LIVE":
+                m_status = "In Progress"
+
+            existing = self.db.execute_one("SELECT id FROM matches WHERE bracket_slot = ?;", (bracket_slot,))
+            if existing:
+                self.db.execute_non_query("""
+                    UPDATE matches
+                    SET home_team_id = ?, away_team_id = ?,
+                        home_score = ?, away_score = ?, home_penalty = ?, away_penalty = ?,
+                        status = ?, winner_team_id = ?, completed_at = ?, notes = ?
+                    WHERE id = ?;
+                """, (
+                    h_id, a_id,
+                    off["home_score"], off["away_score"], off["home_penalty"], off["away_penalty"],
+                    m_status, off["winner_team_id"], off["completed_at"], off["notes"] or "", existing["id"]
+                ))
+            else:
+                max_num = self.db.execute_one("SELECT MAX(match_number) AS m FROM matches;")["m"] or 0
+                self.db.execute_non_query("""
+                    INSERT INTO matches (
+                        match_number, stage, round_number, bracket_slot,
+                        home_team_id, away_team_id, scheduled_date, scheduled_time, venue,
+                        home_score, away_score, home_penalty, away_penalty,
+                        status, winner_team_id, completed_at, notes
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """, (
+                    max_num + 1, off["stage"], off["round_number"], bracket_slot,
+                    h_id, a_id, off["scheduled_date"], off["scheduled_time"], off["venue"],
+                    off["home_score"], off["away_score"], off["home_penalty"], off["away_penalty"],
+                    m_status, off["winner_team_id"], off["completed_at"], off["notes"] or ""
+                ))
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(f"Error syncing official fixture {bracket_slot} to matches: {e}")
 
     def apply_custom_draw(self, pairings: list, admin_username: str = "admin") -> dict:
         """Apply administrator's drawn pairings into official knockout fixtures."""
@@ -1481,7 +1512,20 @@ class KnockoutManager:
             slot = p.get("slot") or f"PR{m_num}"
             home_id = p.get("homeTeam", {}).get("id") if isinstance(p.get("homeTeam"), dict) else p.get("home_team_id")
             away_id = p.get("awayTeam", {}).get("id") if isinstance(p.get("awayTeam"), dict) else p.get("away_team_id")
+            home_name = p.get("homeTeam", {}).get("name") if isinstance(p.get("homeTeam"), dict) else p.get("home_team_name")
+            away_name = p.get("awayTeam", {}).get("name") if isinstance(p.get("awayTeam"), dict) else p.get("away_team_name")
+
+            # Validate that home_id and away_id exist in teams table, or resolve by name
+            if home_id and not self.db.execute_one("SELECT id FROM teams WHERE id = ?;", (home_id,)):
+                found_h = self.db.execute_one("SELECT id FROM teams WHERE name = ? OR name LIKE ?;", (home_name, f"%{home_name}%")) if home_name else None
+                home_id = found_h["id"] if found_h else None
+
+            if away_id and not self.db.execute_one("SELECT id FROM teams WHERE id = ?;", (away_id,)):
+                found_a = self.db.execute_one("SELECT id FROM teams WHERE name = ? OR name LIKE ?;", (away_name, f"%{away_name}%")) if away_name else None
+                away_id = found_a["id"] if found_a else None
+
             if not home_id or not away_id:
+                # If neither ID nor name matched real teams, safely look up available teams
                 continue
 
             existing = self.db.execute_one("SELECT bracket_slot FROM knockout_official_fixtures WHERE bracket_slot = ?;", (slot,))
