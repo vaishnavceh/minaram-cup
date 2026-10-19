@@ -23,6 +23,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { UefaKnockoutDraw } from './UefaKnockoutDraw';
+import { useLiveUpdates } from '../hooks/useLiveUpdates';
 
 interface AdminKnockoutManagerProps {
   token: string;
@@ -84,6 +85,13 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
   useEffect(() => {
     loadData();
   }, []);
+
+  useLiveUpdates((evt) => {
+    const evType = evt.event || (evt as any).type;
+    if (['knockout_updated', 'standings_updated', 'ceremonial_draw_applied', 'ceremonial_draw_reset', 'knockout_fixtures_cleared', 'fixtures_status_updated'].includes(evType)) {
+      loadData();
+    }
+  });
 
   const showSuccess = (msg: string) => {
     setSuccessMessage(msg);

@@ -21,6 +21,7 @@ import {
   Flame,
   Scale
 } from 'lucide-react';
+import { useLiveUpdates } from '../hooks/useLiveUpdates';
 
 export const BracketPage: React.FC = () => {
   const [bracket, setBracket] = useState<PublicBracket>({ rounds: [] });
@@ -57,31 +58,16 @@ export const BracketPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
-
-    // Listen for live Server-Sent Events updates
-    const RAW_BASE = (import.meta.env.VITE_API_URL as string) || '';
-    const sseUrl = RAW_BASE ? `${RAW_BASE.replace(/\/+$/, '')}/api/events` : '/api/events';
-    let es: EventSource | null = null;
-    try {
-      es = new EventSource(sseUrl);
-      es.addEventListener('knockout_updated', () => {
-        loadData();
-        setLastNotification('Prediction updated from latest standings.');
-        setTimeout(() => setLastNotification(''), 4500);
-      });
-      es.addEventListener('standings_updated', () => {
-        loadData();
-        setLastNotification('Prediction updated from latest standings.');
-        setTimeout(() => setLastNotification(''), 4500);
-      });
-    } catch (e) {
-      // Fallback
-    }
-
-    return () => {
-      if (es) es.close();
-    };
   }, []);
+
+  useLiveUpdates((evt) => {
+    const evType = evt.event || (evt as any).type;
+    if (['knockout_updated', 'standings_updated', 'ceremonial_draw_applied', 'ceremonial_draw_reset', 'knockout_fixtures_cleared', 'fixtures_status_updated', 'result_updated'].includes(evType)) {
+      loadData();
+      setLastNotification('Live update received: tournament bracket refreshed.');
+      setTimeout(() => setLastNotification(''), 4500);
+    }
+  });
 
   const handleDownloadPng = async () => {
     if (!exportRef.current || isExporting) return;

@@ -5,6 +5,7 @@ import { MatchCard } from '../components/MatchCard';
 import { Calendar, Filter, Search, Clock, Shield, ChevronDown, ChevronUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getMatchTimeline } from '../utils/fixtureDates';
+import { useLiveUpdates } from '../hooks/useLiveUpdates';
 
 export const FixturesPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<PublicMatch[]>([]);
@@ -29,6 +30,13 @@ export const FixturesPage: React.FC = () => {
   useEffect(() => {
     loadFixtures();
   }, []);
+
+  useLiveUpdates((evt) => {
+    const evType = evt.event || (evt as any).type;
+    if (['fixtures_updated', 'match_updated', 'result_updated', 'knockout_updated', 'fixtures_status_updated'].includes(evType)) {
+      loadFixtures();
+    }
+  });
 
   const normalizeStageKey = (s?: string | null): string => {
     if (!s) return '';

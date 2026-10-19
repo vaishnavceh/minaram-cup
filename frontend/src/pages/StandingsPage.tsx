@@ -4,6 +4,7 @@ import { PublicGroupStandings } from '../types';
 import { StandingsTable } from '../components/StandingsTable';
 import { GoldenBootShowcase } from '../components/GoldenBootShowcase';
 import { BarChart3, HelpCircle, ShieldCheck, FileDown, Check, Loader2 } from 'lucide-react';
+import { useLiveUpdates } from '../hooks/useLiveUpdates';
 
 export const StandingsPage: React.FC = () => {
   const [standings, setStandings] = useState<PublicGroupStandings[]>([]);
@@ -25,6 +26,13 @@ export const StandingsPage: React.FC = () => {
   useEffect(() => {
     loadStandings();
   }, []);
+
+  useLiveUpdates((evt) => {
+    const evType = evt.event || (evt as any).type;
+    if (['standings_updated', 'result_updated', 'match_updated'].includes(evType)) {
+      loadStandings();
+    }
+  });
 
   const handleExportAllPdf = async () => {
     if (isExportingPdf || standings.length === 0) return;

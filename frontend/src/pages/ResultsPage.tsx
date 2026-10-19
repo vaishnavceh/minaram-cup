@@ -3,6 +3,7 @@ import { api } from '../api';
 import { PublicMatch } from '../types';
 import { MatchCard } from '../components/MatchCard';
 import { Trophy, CheckCircle, Search } from 'lucide-react';
+import { useLiveUpdates } from '../hooks/useLiveUpdates';
 
 export const ResultsPage: React.FC = () => {
   const [results, setResults] = useState<PublicMatch[]>([]);
@@ -23,6 +24,13 @@ export const ResultsPage: React.FC = () => {
   useEffect(() => {
     loadResults();
   }, []);
+
+  useLiveUpdates((evt) => {
+    const evType = evt.event || (evt as any).type;
+    if (['result_updated', 'match_updated', 'knockout_updated'].includes(evType)) {
+      loadResults();
+    }
+  });
 
   const filteredResults = results.filter((m) => {
     if (!searchTerm.trim()) return true;

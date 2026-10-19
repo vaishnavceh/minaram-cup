@@ -436,3 +436,35 @@ def test_ceremonial_draw_reset_and_status_modes(temp_db):
         assert m["is_official"] is False
 
 
+def test_clear_knockout_fixtures_modes(temp_db):
+    """Test clear_knockout_fixtures with mode='PREDICTED', 'CONFIRMED', and 'ALL'."""
+    setup_15_groups_tournament(temp_db)
+    km = KnockoutManager(temp_db)
+
+    # 1. Apply two fixtures: PR1 as PREDICTED, PR2 as CONFIRMED
+    km.apply_custom_draw(
+        pairings=[{"match_number": 1, "home_team_id": 1, "away_team_id": 2}],
+        admin_username="admin",
+        status_mode="PREDICTED"
+    )
+    km.apply_custom_draw(
+        pairings=[{"match_number": 2, "home_team_id": 3, "away_team_id": 4}],
+        admin_username="admin",
+        status_mode="CONFIRMED"
+    )
+
+    # Clear PREDICTED only
+    res_pred = km.clear_knockout_fixtures(mode="PREDICTED", admin_username="admin")
+    assert res_pred["cleared_count"] == 1
+    # PR2 (CONFIRMED) should still exist!
+    assert temp_db.execute_one("SELECT * FROM knockout_official_fixtures WHERE bracket_slot = 'PR2';") is not None
+    # PR1 (PREDICTED) should be gone!
+    assert temp_db.execute_one("SELECT * FROM knockout_official_fixtures WHERE bracket_slot = 'PR1';") is None
+
+    # Clear CONFIRMED only
+    res_conf = km.clear_knockout_fixtures(mode="CONFIRMED", admin_username="admin")
+    assert res_conf["cleared_count"] == 1
+    assert temp_db.execute_one("SELECT * FROM knockout_official_fixtures WHERE bracket_slot = 'PR2';") is None
+
+
+

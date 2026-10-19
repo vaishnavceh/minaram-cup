@@ -20,12 +20,21 @@ export const App: React.FC = () => {
   const [liveToast, setLiveToast] = useState<string | null>(null);
 
   const { isConnected } = useLiveUpdates((evt) => {
-    if (evt.event === 'result_updated') {
-      const match = evt.data;
-      setLiveToast(`MATCH UPDATE: ${match.team_a_name} ${match.team_a_score} - ${match.team_b_score} ${match.team_b_name}`);
+    const evType = evt.event || (evt as any).type;
+    if (evType === 'result_updated' || evType === 'match_updated') {
+      const match = evt.data || {};
+      const home = match.team_a_name || match.home_team_name || 'Home';
+      const away = match.team_b_name || match.away_team_name || 'Away';
+      const hScore = match.team_a_score ?? match.home_score ?? 0;
+      const aScore = match.team_b_score ?? match.away_score ?? 0;
+      setLiveToast(`MATCH UPDATE: ${home} ${hScore} - ${aScore} ${away}`);
       setTimeout(() => setLiveToast(null), 5000);
-    } else if (evt.event === 'standings_updated') {
-      setLiveToast('STANDINGS UPDATED: Group table recalculated.');
+    } else if (evType === 'standings_updated') {
+      setLiveToast('STANDINGS UPDATED: Group tables recalculated.');
+      setTimeout(() => setLiveToast(null), 4000);
+    } else if (evType === 'knockout_updated' || evType === 'ceremonial_draw_applied' || evType === 'knockout_fixtures_cleared') {
+      const action = evt.data?.action || 'updated';
+      setLiveToast(`KNOCKOUT UPDATE: Bracket ${String(action).replace(/_/g, ' ')}.`);
       setTimeout(() => setLiveToast(null), 4000);
     }
   });

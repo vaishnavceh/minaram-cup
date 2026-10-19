@@ -147,3 +147,21 @@ def test_static_asset_serving():
     resp_bg = client.get("/assets/backgrounds/bg_stadium_cinematic.webp")
     assert resp_bg.status_code == 200
     assert resp_bg.headers["content-type"] in ["image/webp"]
+
+
+def test_live_events_broadcaster():
+    """Verify that EventBroadcaster publishes real-time events with both type and event keys."""
+    import json
+    from app.events import broadcaster
+
+    q = broadcaster.subscribe()
+    broadcaster.broadcast("knockout_updated", entity_id=1, data={"action": "test_broadcast"})
+    assert not q.empty()
+    msg = q.get_nowait()
+    broadcaster.unsubscribe(q)
+
+    data = json.loads(msg)
+    assert data["type"] == "knockout_updated"
+    assert data["event"] == "knockout_updated"
+    assert data["data"]["action"] == "test_broadcast"
+

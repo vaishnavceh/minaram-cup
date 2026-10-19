@@ -6,6 +6,7 @@ import { GoldenBootShowcase } from '../components/GoldenBootShowcase';
 import { Ticker } from '../components/Ticker';
 import { Trophy, Calendar, BarChart3, ArrowRight, Sparkles, GitFork } from 'lucide-react';
 import { PRIZE_POOL, TOTAL_PRIZE_POOL } from '../constants';
+import { useLiveUpdates } from '../hooks/useLiveUpdates';
 
 export const HomePage: React.FC = () => {
   const [tournament, setTournament] = useState<PublicTournament | null>(null);
@@ -24,9 +25,16 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 15000);
+    const interval = setInterval(loadData, 20000);
     return () => clearInterval(interval);
   }, []);
+
+  useLiveUpdates((evt) => {
+    const evType = evt.event || (evt as any).type;
+    if (['standings_updated', 'result_updated', 'match_updated', 'knockout_updated'].includes(evType)) {
+      loadData();
+    }
+  });
 
   return (
     <div className="min-h-screen">

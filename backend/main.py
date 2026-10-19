@@ -5,6 +5,7 @@ and live Server-Sent Events (SSE) synchronization.
 """
 
 import asyncio
+import json
 import logging
 from pathlib import Path
 from contextlib import asynccontextmanager
@@ -93,6 +94,14 @@ async def tournament_live_events(request: Request):
                 try:
                     # Wait for next event with 15s heartbeat timeout
                     msg = await asyncio.wait_for(queue.get(), timeout=15.0)
+                    try:
+                        parsed = json.loads(msg)
+                        evt_type = parsed.get("type") or parsed.get("event") or "message"
+                        # Emit named SSE event so EventSource.addEventListener(evt_type) triggers
+                        yield f"event: {evt_type}\ndata: {msg}\n\n"
+                    except Exception:
+                        pass
+                    # Also emit standard data event so EventSource.onmessage triggers
                     yield f"data: {msg}\n\n"
                 except asyncio.TimeoutError:
                     # Keep-alive heartbeat comment

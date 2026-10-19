@@ -29,6 +29,7 @@ class EventBroadcaster:
         """Broadcast a tournament update event to all connected clients."""
         payload = {
             "type": event_type,
+            "event": event_type,
             "entity_id": entity_id,
             "data": data or {},
             "timestamp": datetime.now().isoformat(),

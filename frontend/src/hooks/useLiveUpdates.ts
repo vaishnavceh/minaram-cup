@@ -7,6 +7,8 @@ export function useLiveUpdates(onEvent?: (event: LiveEventPayload) => void) {
   const callbackRef = useRef(onEvent);
   callbackRef.current = onEvent;
 
+  const lastProcessedRef = useRef<string>('');
+
   useEffect(() => {
     let es: EventSource | null = null;
     let reconnectTimeout: any = null;
@@ -26,11 +28,29 @@ export function useLiveUpdates(onEvent?: (event: LiveEventPayload) => void) {
         const handleMsg = (e: MessageEvent) => {
           if (!e.data || !isMounted) return;
           try {
-            const data = JSON.parse(e.data);
-            if (data.status === 'listening' || data.event === 'heartbeat') return;
-            setLastEvent(data);
+            const rawData = JSON.parse(e.data);
+            if (rawData.status === 'listening' || rawData.event === 'heartbeat' || rawData.type === 'heartbeat') return;
+
+            const evType = rawData.event || rawData.type || 'update';
+            const timestamp = rawData.timestamp || new Date().toISOString();
+            const dedupeKey = `${evType}_${timestamp}_${JSON.stringify(rawData.data || {})}`;
+
+            // Deduplicate if identical event received in quick succession
+            if (lastProcessedRef.current === dedupeKey) return;
+            lastProcessedRef.current = dedupeKey;
+            setTimeout(() => {
+              if (lastProcessedRef.current === dedupeKey) lastProcessedRef.current = '';
+            }, 600);
+
+            const normalized: LiveEventPayload = {
+              event: evType,
+              timestamp,
+              data: rawData.data || rawData,
+            };
+
+            setLastEvent(normalized);
             if (callbackRef.current) {
-              callbackRef.current(data);
+              callbackRef.current(normalized);
             }
           } catch {
             // Ignore non-json comments
@@ -39,6 +59,15 @@ export function useLiveUpdates(onEvent?: (event: LiveEventPayload) => void) {
 
         es.onmessage = handleMsg;
         es.addEventListener('update', handleMsg);
+        es.addEventListener('knockout_updated', handleMsg);
+        es.addEventListener('standings_updated', handleMsg);
+        es.addEventListener('result_updated', handleMsg);
+        es.addEventListener('match_updated', handleMsg);
+        es.addEventListener('fixtures_updated', handleMsg);
+        es.addEventListener('fixtures_status_updated', handleMsg);
+        es.addEventListener('ceremonial_draw_applied', handleMsg);
+        es.addEventListener('ceremonial_draw_reset', handleMsg);
+        es.addEventListener('knockout_fixtures_cleared', handleMsg);
 
         es.onerror = () => {
           if (isMounted) setIsConnected(false);
@@ -47,13 +76,13 @@ export function useLiveUpdates(onEvent?: (event: LiveEventPayload) => void) {
             es = null;
           }
           if (isMounted) {
-            reconnectTimeout = setTimeout(connect, 5000);
+            reconnectTimeout = setTimeout(connect, 3000);
           }
         };
       } catch (err) {
         if (isMounted) {
           setIsConnected(false);
-          reconnectTimeout = setTimeout(connect, 6000);
+          reconnectTimeout = setTimeout(connect, 4000);
         }
       }
     }
