@@ -73,14 +73,14 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
       return;
     }
     const modeLabel = publishStatusMode === 'PREDICTED' ? 'PREDICTED (LIVE DRAW)' : 'CONFIRMED (OFFICIAL)';
-    if (!window.confirm(`Publish these ${pairings.length} drawn pairings into the knockout bracket as ${modeLabel}?`)) return;
+    if (!window.confirm(`Publish these ${pairings.length} drawn pairings into the knockout bracket as ${modeLabel}? This will clear any old unplayed knockout fixtures and establish the official 30-team championship format.`)) return;
     setIsApplying(true);
     setAdminMessage('');
     try {
       const res = await api.adminApplyCeremonialDraw(pairings, effectiveToken, publishStatusMode);
       setAdminMessage(res.message || `Knockout fixtures successfully published as ${publishStatusMode}!`);
       if (onRefreshBracket) onRefreshBracket();
-      setTimeout(() => setAdminMessage(''), 5000);
+      setTimeout(() => setAdminMessage(''), 6000);
     } catch (err: any) {
       alert(err.message || 'Failed to apply draw to official fixtures');
     } finally {
@@ -91,7 +91,7 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
   const handleResetDraw = async () => {
     if (isDrawing || isAutoPlaying || isResetting || isClearing) return;
     const confirmMsg = isEffectiveAdmin
-      ? 'Reset ceremonial draw? This will clear drawn pairings and ROLL BACK all published preliminary fixtures from the official knockout bracket.'
+      ? 'Reset ceremonial draw? This will clear drawn pairings and completely DELETE all unplayed fixtures (including Quarter-Finals, Semi-Finals, and Preliminary ties) from the official knockout bracket.'
       : 'Reset ceremonial draw? This will reset all drawn ties back into the pots.';
     if (!window.confirm(confirmMsg)) return;
 
@@ -100,7 +100,7 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
       setAdminMessage('');
       try {
         const res = await api.adminResetCeremonialDraw(effectiveToken);
-        setAdminMessage(res.message || 'Draw reset and published fixtures rolled back successfully!');
+        setAdminMessage(res.message || 'Draw reset and all knockout fixtures rolled back successfully!');
         if (onRefreshBracket) onRefreshBracket();
         setTimeout(() => setAdminMessage(''), 5000);
       } catch (err: any) {
@@ -120,9 +120,9 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
       return;
     }
     const labels: Record<string, string> = {
-      ALL: 'ALL preliminary fixtures (both Predicted & Confirmed)',
+      ALL: 'ALL knockout fixtures (including Preliminary, Round of 16, Quarter-Finals, Semi-Finals, Final)',
       PREDICTED: 'only unconfirmed PREDICTED / LIVE DRAW fixtures',
-      CONFIRMED: 'only CONFIRMED preliminary fixtures'
+      CONFIRMED: 'only CONFIRMED unplayed fixtures'
     };
     if (!window.confirm(`Are you sure you want to clear ${labels[mode]} from the knockout bracket?`)) return;
 

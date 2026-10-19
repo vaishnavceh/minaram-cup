@@ -65,6 +65,7 @@ export interface PublicMatch {
   home_group?: string | null;
   away_group?: string | null;
   is_official?: boolean;
+  is_published?: boolean;
   winner_method?: string | null;
 }
 

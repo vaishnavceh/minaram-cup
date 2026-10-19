@@ -718,9 +718,11 @@ def apply_ceremonial_draw_admin(
 ):
     """Apply administrator's UEFA ceremonial draw pairings to official knockout fixtures."""
     try:
-        res = ko_mgr.apply_custom_draw(pairings=pairings, admin_username=admin["sub"], status_mode=status_mode)
+        res = ko_mgr.apply_custom_draw(pairings=pairings, admin_username=admin["sub"], status_mode=status_mode, clear_existing=True)
         from app.events import broadcaster
         broadcaster.broadcast_from_thread("knockout_updated", {"action": "ceremonial_draw_applied", "status_mode": status_mode})
+        broadcaster.broadcast_from_thread("ceremonial_draw_applied", {"status_mode": status_mode})
+        broadcaster.broadcast_from_thread("fixtures_updated", {})
         return res
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -733,6 +735,8 @@ def reset_ceremonial_draw_admin(admin: dict = Depends(get_current_admin)):
         res = ko_mgr.reset_ceremonial_draw(admin_username=admin["sub"])
         from app.events import broadcaster
         broadcaster.broadcast_from_thread("knockout_updated", {"action": "ceremonial_draw_reset"})
+        broadcaster.broadcast_from_thread("ceremonial_draw_reset", {})
+        broadcaster.broadcast_from_thread("fixtures_updated", {})
         return res
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -748,6 +752,8 @@ def clear_knockout_fixtures_admin(
         res = ko_mgr.clear_knockout_fixtures(mode=mode, admin_username=admin["sub"])
         from app.events import broadcaster
         broadcaster.broadcast_from_thread("knockout_updated", {"action": "knockout_fixtures_cleared", "mode": mode})
+        broadcaster.broadcast_from_thread("ceremonial_draw_reset", {})
+        broadcaster.broadcast_from_thread("fixtures_updated", {})
         return res
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

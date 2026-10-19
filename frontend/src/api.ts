@@ -87,6 +87,7 @@ export function normalizeMatch(m: any): PublicMatch {
     home_group: m.home_group || null,
     away_group: m.away_group || null,
     is_official: Boolean(m.is_official),
+    is_published: Boolean(m.is_published),
     winner_method: m.winner_method || null,
   };
 }

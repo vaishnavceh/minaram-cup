@@ -185,3 +185,69 @@ def test_new_admin_login():
     assert health_resp.status_code == 200
 
 
+def test_draw_apply_and_reset_workflow():
+    """Verify applying ceremonial draw moves fixtures to knockout, and reset wipes clean."""
+    # 1. Admin login
+    form_resp = client.post("/api/admin/auth/token", data={"username": "admin", "password": "minaram2026"})
+    assert form_resp.status_code == 200
+    token = form_resp.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 2. Reset any previous test fixtures to ensure clean initial un-drawn state
+    client.post("/api/admin/knockout/reset-draw", headers=headers)
+    b_resp = client.get("/api/public/knockout/bracket")
+    assert b_resp.status_code == 200
+    rounds = b_resp.json().get("rounds", [])
+    if rounds:
+        for r in rounds:
+            for m in r.get("matches", []):
+                assert m.get("is_published") is False
+                assert m.get("team_a_name") == "Yet to decide"
+
+    # 3. Apply custom ceremonial draw pairings with real team IDs
+    teams_resp = client.get("/api/public/teams")
+    assert teams_resp.status_code == 200
+    teams_list = teams_resp.json()
+    assert len(teams_list) >= 4
+    t1, t2, t3, t4 = [t["id"] for t in teams_list[:4]]
+
+    pairings = [
+        {"match_number": 1, "home_team_id": t1, "away_team_id": t2},
+        {"match_number": 2, "home_team_id": t3, "away_team_id": t4},
+    ]
+    apply_resp = client.post(
+        "/api/admin/knockout/apply-draw",
+        json={"pairings": pairings, "status_mode": "CONFIRMED"},
+        headers=headers
+    )
+    assert apply_resp.status_code == 200
+    assert apply_resp.json()["status"] == "applied"
+    assert apply_resp.json()["count"] >= 2
+
+    # 4. Check bracket has published fixtures
+    b_after = client.get("/api/public/knockout/bracket")
+    assert b_after.status_code == 200
+    rounds_after = b_after.json().get("rounds", [])
+    pr_round = next((r for r in rounds_after if "preliminary" in r["round_name"].lower()), None)
+    assert pr_round is not None
+    m1 = next((m for m in pr_round["matches"] if m.get("bracket_slot") == "PR1"), None)
+    assert m1 is not None
+    assert m1.get("is_published") is True
+
+    # 5. Reset ceremonial draw: verify complete rollback of all knockout fixtures
+    reset_resp = client.post("/api/admin/knockout/reset-draw", headers=headers)
+    assert reset_resp.status_code == 200
+    assert reset_resp.json()["status"] == "reset"
+    assert reset_resp.json()["rolled_back_count"] >= 2
+
+    # 6. Verify clean state after reset
+    b_clean = client.get("/api/public/knockout/bracket")
+    assert b_clean.status_code == 200
+    rounds_clean = b_clean.json().get("rounds", [])
+    if rounds_clean:
+        for r in rounds_clean:
+            for m in r.get("matches", []):
+                assert m.get("is_published") is False
+
+
+

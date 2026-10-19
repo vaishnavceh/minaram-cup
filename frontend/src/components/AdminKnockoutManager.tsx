@@ -366,10 +366,14 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
   };
 
   // Flatten all matches for fixture manager table
+  // ONLY include matches that are published / official fixtures from the draw!
   const allMatchesList: any[] = [];
   (bracket.rounds || []).forEach((r) => {
     (r.matches || []).forEach((m) => {
-      allMatchesList.push({ ...m, round_name: r.round_name });
+      // Must be an officially published fixture in the tournament (not an un-drawn placeholder)
+      if (m.is_published || m.is_official || (m.team_a_id && m.team_b_id)) {
+        allMatchesList.push({ ...m, round_name: r.round_name });
+      }
     });
   });
 
@@ -685,9 +689,36 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
 
         {/* Fixtures List */}
         <div className="space-y-3">
-          {filteredMatches.map((m) => (
-            <div
-              key={m.bracket_slot}
+          {filteredMatches.length === 0 ? (
+            <div className="py-14 text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-blue-950/60 border border-blue-500/40 text-blue-400 mx-auto flex items-center justify-center shadow-lg shadow-blue-950/40">
+                <Trophy className="w-8 h-8 text-brand-gold" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-display text-2xl text-white tracking-wide">
+                  {allMatchesList.length === 0 ? 'NO KNOCKOUT FIXTURES PUBLISHED YET' : 'NO FIXTURES MATCH FILTER'}
+                </h3>
+                <p className="text-xs font-mono text-neutral-400 max-w-md mx-auto">
+                  {allMatchesList.length === 0
+                    ? 'No fixtures have been published to the knockout bracket. Open the UEFA Ceremonial Draw Desk, review the extracted ties, and click "Apply to Fixtures" to move them here.'
+                    : `No fixtures found matching Stage: "${activeStage}" and Status: "${statusFilter}".`}
+                </p>
+              </div>
+              {allMatchesList.length === 0 && (
+                <button
+                  type="button"
+                  onClick={() => setAdminSection('draw_ceremony')}
+                  className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-gold to-amber-600 hover:from-brand-gold-bright hover:to-amber-500 text-black font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-amber-950/40"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>OPEN UEFA CEREMONIAL DRAW DESK</span>
+                </button>
+              )}
+            </div>
+          ) : (
+            filteredMatches.map((m) => (
+              <div
+                key={m.bracket_slot}
               className="p-3.5 rounded-xl bg-black/40 border border-neutral-800/90 flex flex-col md:flex-row md:items-center justify-between gap-4"
             >
               {/* Fixture Identifiers & Teams */}
@@ -778,7 +809,7 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
                 </button>
               </div>
             </div>
-          ))}
+          )))}
         </div>
       </div>
       </>

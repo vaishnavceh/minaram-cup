@@ -339,6 +339,11 @@ class KnockoutManager:
             for idx, (h, a) in enumerate(paired, start=1):
                 assigned_matches.append((idx, h, a))
 
+        # Ensure all 14 preliminary slots are formed (PR1 to PR14)
+        while len(assigned_matches) < 14:
+            next_idx = len(assigned_matches) + 1
+            assigned_matches.append((next_idx, {"team_id": None, "team_name": "TBD", "group_name": "TBD"}, {"team_id": None, "team_name": "TBD", "group_name": "TBD"}))
+
         # Build 14 match structures
         for match_num, home_t, away_t in assigned_matches:
             slot = f"PR{match_num}"
@@ -721,8 +726,10 @@ class KnockoutManager:
         merged_tree: Dict[str, List[Dict[str, Any]]] = {}
         for stage_name, matches in snapshot["rounds"].items():
             merged_stage = []
+            seen_slots = set()
             for m in matches:
                 slot = m["bracket_slot"]
+                seen_slots.add(slot)
                 if slot in official_by_slot:
                     off = official_by_slot[slot]
                     merged_stage.append({
@@ -752,21 +759,57 @@ class KnockoutManager:
                         "notes": off["notes"] or "",
                         "completed_at": off["completed_at"] or "",
                         "confirmed_at": off["confirmed_at"] or "",
-                        "is_official": (off["status"] == "CONFIRMED")
+                        "is_official": (off["status"] == "CONFIRMED"),
+                        "is_published": True
                     })
                 else:
                     m_copy = dict(m)
-                    # If this match is in Preliminary Round and NOT in official_by_slot,
-                    # it means it has not been officially drawn or published yet (or was rolled back/cleared).
-                    # Therefore, it should NOT display predicted team names on the bracket!
-                    if stage_name == "Preliminary Round":
-                        m_copy["home_team_id"] = None
-                        m_copy["away_team_id"] = None
-                        m_copy["home_team_name"] = m_copy.get("home_placeholder") or "Yet to decide"
-                        m_copy["away_team_name"] = m_copy.get("away_placeholder") or "Yet to decide"
-                        m_copy["status"] = "Awaiting Draw"
+                    # If this match is NOT in official_by_slot, it means it has not been officially drawn or published yet.
+                    # Never display predicted team names on the bracket; show 'Yet to decide' / 'Awaiting Draw'.
+                    m_copy["home_team_id"] = None
+                    m_copy["away_team_id"] = None
+                    m_copy["home_team_name"] = "Yet to decide"
+                    m_copy["away_team_name"] = "Yet to decide"
+                    m_copy["status"] = "Awaiting Draw"
                     m_copy["is_official"] = False
+                    m_copy["is_published"] = False
                     merged_stage.append(m_copy)
+
+            # Include any official fixture for this stage that was not present in snapshot rounds
+            for slot, off in official_by_slot.items():
+                if off["stage"] == stage_name and slot not in seen_slots:
+                    seen_slots.add(slot)
+                    merged_stage.append({
+                        "id": off["id"],
+                        "stage": off["stage"],
+                        "round_number": off["round_number"],
+                        "match_number": off["match_number"],
+                        "bracket_slot": slot,
+                        "home_team_id": off["home_team_id"],
+                        "away_team_id": off["away_team_id"],
+                        "home_team_name": off["home_name"] or off["home_placeholder"] or "Yet to decide",
+                        "away_team_name": off["away_name"] or off["away_placeholder"] or "Yet to decide",
+                        "home_placeholder": off["home_placeholder"],
+                        "away_placeholder": off["away_placeholder"],
+                        "scheduled_date": off["scheduled_date"],
+                        "scheduled_time": off["scheduled_time"],
+                        "scheduled_end_date": off["scheduled_end_date"],
+                        "venue": off["venue"],
+                        "status": off["status"],
+                        "home_score": off["home_score"],
+                        "away_score": off["away_score"],
+                        "home_penalty": off["home_penalty"],
+                        "away_penalty": off["away_penalty"],
+                        "winner_team_id": off["winner_team_id"],
+                        "winner_team_name": off["winner_name"],
+                        "winner_method": off["winner_method"],
+                        "notes": off["notes"] or "",
+                        "completed_at": off["completed_at"] or "",
+                        "confirmed_at": off["confirmed_at"] or "",
+                        "is_official": (off["status"] == "CONFIRMED"),
+                        "is_published": True
+                    })
+
             merged_tree[stage_name] = merged_stage
 
         # Identify champion if Final is completed
@@ -798,6 +841,8 @@ class KnockoutManager:
                 m_enhanced["team_b_name"] = m.get("away_team_name") or m.get("away_name")
                 m_enhanced["team_a_score"] = m.get("home_score")
                 m_enhanced["team_b_score"] = m.get("away_score")
+                m_enhanced["is_published"] = m.get("is_published", False)
+                m_enhanced["is_official"] = m.get("is_official", False)
                 enhanced_matches.append(m_enhanced)
             rounds_list.append({
                 "round_name": stage_name,
@@ -1538,17 +1583,18 @@ class KnockoutManager:
             if existing:
                 self.db.execute_non_query("""
                     UPDATE matches
-                    SET home_team_id = ?, away_team_id = ?,
+                    SET match_number = ?, stage = ?, round_number = ?,
+                        home_team_id = ?, away_team_id = ?,
                         home_score = ?, away_score = ?, home_penalty = ?, away_penalty = ?,
                         status = ?, winner_team_id = ?, completed_at = ?, notes = ?
                     WHERE id = ?;
                 """, (
+                    off["match_number"], off["stage"], off["round_number"],
                     h_id, a_id,
                     off["home_score"], off["away_score"], off["home_penalty"], off["away_penalty"],
                     m_status, off["winner_team_id"], off["completed_at"], off["notes"] or "", existing["id"]
                 ))
             else:
-                max_num = self.db.execute_one("SELECT MAX(match_number) AS m FROM matches;")["m"] or 0
                 self.db.execute_non_query("""
                     INSERT INTO matches (
                         match_number, stage, round_number, bracket_slot,
@@ -1557,7 +1603,7 @@ class KnockoutManager:
                         status, winner_team_id, completed_at, notes
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """, (
-                    max_num + 1, off["stage"], off["round_number"], bracket_slot,
+                    off["match_number"], off["stage"], off["round_number"], bracket_slot,
                     h_id, a_id, off["scheduled_date"], off["scheduled_time"], off["venue"],
                     off["home_score"], off["away_score"], off["home_penalty"], off["away_penalty"],
                     m_status, off["winner_team_id"], off["completed_at"], off["notes"] or ""
@@ -1566,20 +1612,38 @@ class KnockoutManager:
             import logging
             logging.getLogger(__name__).warning(f"Error syncing official fixture {bracket_slot} to matches: {e}")
 
-    def apply_custom_draw(self, pairings: list, admin_username: str = "admin", status_mode: str = "CONFIRMED") -> dict:
-        """Apply administrator's drawn pairings into official knockout fixtures."""
+    def apply_custom_draw(self, pairings: list, admin_username: str = "admin", status_mode: str = "CONFIRMED", clear_existing: bool = False) -> dict:
+        """
+        Apply administrator's drawn pairings into official knockout fixtures.
+        Clears existing unplayed knockout fixtures when requested (e.g. from admin desk),
+        then applies the drawn preliminary pairings and establishes all designated IDs for the 30-team championship format.
+        """
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         status_val = "PREDICTED" if "PREDICT" in str(status_mode).upper() else "CONFIRMED"
+
+        # 1. Clean existing unplayed fixtures when requested (e.g. from admin desk)
+        if clear_existing:
+            self.clear_knockout_fixtures(mode="ALL", admin_username=admin_username)
+
+        # 2. Determine base match number after group stage (matches 1..84)
+        base_match_res = self.db.execute_one("SELECT COALESCE(MAX(match_number), 0) AS m FROM matches WHERE stage = 'Group Stage';")
+        base_match_num = base_match_res["m"] if base_match_res and base_match_res["m"] else 0
+
+        # 3. Apply Preliminary Round pairings
         applied_count = 0
-        for p in pairings:
-            m_num = p.get("match_number") or p.get("matchNumber") or (applied_count + 1)
-            slot = p.get("slot") or f"PR{m_num}"
+        for idx, p in enumerate(pairings, 1):
+            m_param = p.get("match_number") or p.get("matchNumber")
+            slot = p.get("slot") or (f"PR{m_param}" if m_param else f"PR{idx}")
+            try:
+                m_num = base_match_num + int(m_param if m_param else idx)
+            except (ValueError, TypeError):
+                m_num = base_match_num + idx
             home_id = p.get("homeTeam", {}).get("id") if isinstance(p.get("homeTeam"), dict) else p.get("home_team_id")
             away_id = p.get("awayTeam", {}).get("id") if isinstance(p.get("awayTeam"), dict) else p.get("away_team_id")
             home_name = p.get("homeTeam", {}).get("name") if isinstance(p.get("homeTeam"), dict) else p.get("home_team_name")
             away_name = p.get("awayTeam", {}).get("name") if isinstance(p.get("awayTeam"), dict) else p.get("away_team_name")
 
-            # Validate that home_id and away_id exist in teams table, or resolve by name
+            # Validate home_id and away_id exist in teams table, or resolve by name
             if home_id and not self.db.execute_one("SELECT id FROM teams WHERE id = ?;", (home_id,)):
                 found_h = self.db.execute_one("SELECT id FROM teams WHERE name = ? OR name LIKE ?;", (home_name, f"%{home_name}%")) if home_name else None
                 home_id = found_h["id"] if found_h else None
@@ -1589,52 +1653,159 @@ class KnockoutManager:
                 away_id = found_a["id"] if found_a else None
 
             if not home_id or not away_id:
-                # If neither ID nor name matched real teams, safely look up available teams
                 continue
 
             existing = self.db.execute_one("SELECT bracket_slot FROM knockout_official_fixtures WHERE bracket_slot = ?;", (slot,))
             if existing:
                 self.db.execute_non_query("""
                     UPDATE knockout_official_fixtures
-                    SET home_team_id = ?, away_team_id = ?, status = ?, notes = ?, updated_at = ?
+                    SET home_team_id = ?, away_team_id = ?, home_placeholder = ?, away_placeholder = ?,
+                        match_number = ?, status = ?, notes = ?, updated_at = ?
                     WHERE bracket_slot = ?;
-                """, (home_id, away_id, status_val, f"Drawn via Official Ceremonial Draw ({status_val}) on {now_str}", now_str, slot))
+                """, (home_id, away_id, home_name or f"Seed {idx}A", away_name or f"Seed {idx}B",
+                      m_num, status_val, f"Drawn via Official Ceremonial Draw ({status_val}) on {now_str}", now_str, slot))
             else:
-                try:
-                    num_val = int(str(slot).replace("PR", "")) if "PR" in str(slot) else int(m_num)
-                except (ValueError, TypeError):
-                    num_val = applied_count + 1
                 self.db.execute_non_query("""
                     INSERT INTO knockout_official_fixtures (
                         bracket_slot, stage, match_number, round_number,
-                        home_team_id, away_team_id, scheduled_date, scheduled_time, venue,
+                        home_team_id, away_team_id, home_placeholder, away_placeholder,
+                        scheduled_date, scheduled_time, venue,
                         status, notes, created_at, updated_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """, (
-                    slot, "Preliminary Round", num_val, 0,
-                    home_id, away_id, "2026-10-22", "Flexible (MW Window)", "Online / Mobile Lobby",
+                    slot, "Preliminary Round", m_num, 1,
+                    home_id, away_id, home_name or f"Seed {idx}A", away_name or f"Seed {idx}B",
+                    "2026-10-24", "Flexible (MW Window)", "Online / Mobile Lobby",
                     status_val, f"Drawn via Official Ceremonial Draw ({status_val}) on {now_str}",
                     now_str, now_str
                 ))
             self._sync_official_fixture_to_matches(slot)
             applied_count += 1
 
+        # 4. Generate designated downstream tournament slots for the 30-team format
+        if applied_count >= 14:
+            q_data = self.get_qualified_teams()
+            dq_data = self.get_direct_qualifiers(q_data.get("teams", []))
+            direct = dq_data.get("direct_qualifiers", [])
+            dq1_id = direct[0]["team_id"] if len(direct) > 0 and self.db.execute_one("SELECT id FROM teams WHERE id = ?;", (direct[0]["team_id"],)) else None
+            dq1_name = direct[0]["team_name"] if len(direct) > 0 else "Direct Qualifier #1"
+            dq2_id = direct[1]["team_id"] if len(direct) > 1 and self.db.execute_one("SELECT id FROM teams WHERE id = ?;", (direct[1]["team_id"],)) else None
+            dq2_name = direct[1]["team_name"] if len(direct) > 1 else "Direct Qualifier #2"
+
+            downstream_status = "PREDICTED" if status_val == "PREDICTED" else "Scheduled"
+
+            # Round of 16 (8 matches: M#99 to M#106)
+            r16_slots = [
+                ("R16_1", base_match_num + 15, dq1_id, None, dq1_name, "Winner of PR1"),
+                ("R16_2", base_match_num + 16, None, None, "Winner of PR2", "Winner of PR3"),
+                ("R16_3", base_match_num + 17, None, None, "Winner of PR4", "Winner of PR5"),
+                ("R16_4", base_match_num + 18, None, None, "Winner of PR6", "Winner of PR7"),
+                ("R16_5", base_match_num + 19, dq2_id, None, dq2_name, "Winner of PR8"),
+                ("R16_6", base_match_num + 20, None, None, "Winner of PR9", "Winner of PR10"),
+                ("R16_7", base_match_num + 21, None, None, "Winner of PR11", "Winner of PR12"),
+                ("R16_8", base_match_num + 22, None, None, "Winner of PR13", "Winner of PR14"),
+            ]
+            for slot, m_num, h_id, a_id, h_ph, a_ph in r16_slots:
+                self.db.execute_non_query("""
+                    INSERT INTO knockout_official_fixtures (
+                        bracket_slot, stage, match_number, round_number,
+                        home_team_id, away_team_id, home_placeholder, away_placeholder,
+                        scheduled_date, scheduled_time, venue,
+                        status, notes, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """, (
+                    slot, "Round of 16", m_num, 2,
+                    h_id, a_id, h_ph, a_ph,
+                    "2026-10-26", "Flexible (MW Window)", "Minaram Pitch 1",
+                    downstream_status, f"Round of 16 ({slot})",
+                    now_str, now_str
+                ))
+                self._sync_official_fixture_to_matches(slot)
+
+            # Quarter-Finals (4 matches: M#107 to M#110)
+            qf_slots = [
+                ("QF1", base_match_num + 23, "Winner of R16_1", "Winner of R16_2"),
+                ("QF2", base_match_num + 24, "Winner of R16_3", "Winner of R16_4"),
+                ("QF3", base_match_num + 25, "Winner of R16_5", "Winner of R16_6"),
+                ("QF4", base_match_num + 26, "Winner of R16_7", "Winner of R16_8"),
+            ]
+            for slot, m_num, h_ph, a_ph in qf_slots:
+                self.db.execute_non_query("""
+                    INSERT INTO knockout_official_fixtures (
+                        bracket_slot, stage, match_number, round_number,
+                        home_team_id, away_team_id, home_placeholder, away_placeholder,
+                        scheduled_date, scheduled_time, venue,
+                        status, notes, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """, (
+                    slot, "Quarter-Final", m_num, 3,
+                    None, None, h_ph, a_ph,
+                    "2026-10-28", "Flexible (MW Window)", "Minaram Pitch 1",
+                    downstream_status, f"Quarter-Final ({slot})",
+                    now_str, now_str
+                ))
+                self._sync_official_fixture_to_matches(slot)
+
+            # Semi-Finals (2 matches: M#111 to M#112)
+            sf_slots = [
+                ("SF1", base_match_num + 27, "Winner of QF1", "Winner of QF2"),
+                ("SF2", base_match_num + 28, "Winner of QF3", "Winner of QF4"),
+            ]
+            for slot, m_num, h_ph, a_ph in sf_slots:
+                self.db.execute_non_query("""
+                    INSERT INTO knockout_official_fixtures (
+                        bracket_slot, stage, match_number, round_number,
+                        home_team_id, away_team_id, home_placeholder, away_placeholder,
+                        scheduled_date, scheduled_time, venue,
+                        status, notes, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """, (
+                    slot, "Semi-Final", m_num, 4,
+                    None, None, h_ph, a_ph,
+                    "2026-10-30", "Flexible (MW Window)", "Minaram Stadium",
+                    downstream_status, f"Semi-Final ({slot})",
+                    now_str, now_str
+                ))
+                self._sync_official_fixture_to_matches(slot)
+
+            # 3rd Place & Grand Final (M#113 & M#114)
+            finals = [
+                ("3RD", "Third-Place Playoff", base_match_num + 29, 5, "Runner-up of SF1", "Runner-up of SF2", "3rd Place Playoff"),
+                ("F", "Final", base_match_num + 30, 5, "Winner of SF1", "Winner of SF2", "Minaram Cup Grand Final"),
+            ]
+            for slot, stg, m_num, r_num, h_ph, a_ph, notes in finals:
+                self.db.execute_non_query("""
+                    INSERT INTO knockout_official_fixtures (
+                        bracket_slot, stage, match_number, round_number,
+                        home_team_id, away_team_id, home_placeholder, away_placeholder,
+                        scheduled_date, scheduled_time, venue,
+                        status, notes, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """, (
+                    slot, stg, m_num, r_num,
+                    None, None, h_ph, a_ph,
+                    "2026-11-01", "Flexible (MW Window)", "Minaram Stadium",
+                    downstream_status, notes,
+                    now_str, now_str
+                ))
+                self._sync_official_fixture_to_matches(slot)
+
         self.db.execute_non_query("""
             INSERT INTO knockout_audit_logs (timestamp, admin_username, action, entity_type, entity_id, old_value, new_value, reason)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-        """, (now_str, admin_username, "APPLY_CEREMONIAL_DRAW", "PRELIMINARY_STAGE", "PR1-PR14", "", f"{applied_count} ties ({status_val})", f"Applied UEFA Ceremonial Draw to fixtures as {status_val}"))
+        """, (now_str, admin_username, "APPLY_CEREMONIAL_DRAW", "KNOCKOUT_STAGE", "PR1-F", "", f"{applied_count} ties ({status_val})", f"Applied UEFA Ceremonial Draw to fixtures as {status_val} with designated IDs for all 30 tournament matches"))
 
         return {
             "status": "applied",
             "status_mode": status_val,
             "count": applied_count,
-            "message": f"Successfully published {applied_count} preliminary ties as {status_val} in knockout fixtures!"
+            "message": f"Successfully published {applied_count} preliminary ties as {status_val} and initialized all 30 knockout tournament matches with designated IDs!"
         }
 
     def clear_knockout_fixtures(self, mode: str = "ALL", admin_username: str = "admin") -> dict:
         """
         Clear knockout fixtures based on mode:
-        - 'ALL': Clear all unplayed preliminary/drawn fixtures (both predicted & confirmed)
+        - 'ALL': Clear ALL unplayed knockout fixtures across ALL rounds (Preliminary, R16, Quarter-Finals, Semi-Finals, Final, 3RD)
         - 'PREDICTED': Clear only unconfirmed fixtures in PREDICTED / LIVE DRAW status
         - 'CONFIRMED': Clear only confirmed unplayed preliminary fixtures
         """
@@ -1642,16 +1813,18 @@ class KnockoutManager:
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         if mode_upper == "PREDICTED":
-            condition = "status IN ('PREDICTED', 'LIVE_DRAW') AND status NOT IN ('COMPLETED', 'LIVE')"
+            off_condition = "status IN ('PREDICTED', 'LIVE_DRAW') AND status NOT IN ('COMPLETED', 'LIVE')"
+            matches_condition = "status IN ('PREDICTED', 'LIVE_DRAW', 'Scheduled') AND status NOT IN ('Completed', 'In Progress')"
         elif mode_upper == "CONFIRMED":
-            condition = "status = 'CONFIRMED' AND status NOT IN ('COMPLETED', 'LIVE')"
+            off_condition = "status = 'CONFIRMED' AND status NOT IN ('COMPLETED', 'LIVE')"
+            matches_condition = "status = 'Scheduled' AND status NOT IN ('Completed', 'In Progress')"
         else: # ALL
-            condition = "status NOT IN ('COMPLETED', 'LIVE')"
+            off_condition = "status NOT IN ('COMPLETED', 'LIVE')"
+            matches_condition = "status NOT IN ('Completed', 'In Progress')"
 
         slots_to_remove = self.db.execute_query(f"""
             SELECT bracket_slot FROM knockout_official_fixtures
-            WHERE (bracket_slot LIKE 'PR%' OR stage = 'Preliminary Round')
-              AND {condition};
+            WHERE {off_condition};
         """)
         slot_names = [s["bracket_slot"] for s in slots_to_remove]
 
@@ -1660,13 +1833,27 @@ class KnockoutManager:
             cursor = conn.cursor()
             for slot in slot_names:
                 cursor.execute("DELETE FROM knockout_official_fixtures WHERE bracket_slot = ?;", (slot,))
-                cursor.execute("DELETE FROM matches WHERE bracket_slot = ? AND status NOT IN ('Completed', 'In Progress');", (slot,))
+                cursor.execute(f"DELETE FROM matches WHERE bracket_slot = ? AND {matches_condition};", (slot,))
                 rolled_back_count += 1
 
-            if mode_upper in ("ALL", "PREDICTED"):
+            if mode_upper == "ALL":
+                # Wipe ALL non-group matches and bracket matches that are not completed or live
                 cursor.execute("""
                     DELETE FROM matches
-                    WHERE (bracket_slot LIKE 'PR%' OR stage = 'Preliminary Round')
+                    WHERE stage != 'Group Stage'
+                      AND status NOT IN ('Completed', 'In Progress');
+                """)
+                cursor.execute("""
+                    DELETE FROM matches
+                    WHERE bracket_slot IS NOT NULL AND bracket_slot != ''
+                      AND status NOT IN ('Completed', 'In Progress');
+                """)
+                cursor.execute("DELETE FROM knockout_official_fixtures WHERE status NOT IN ('COMPLETED', 'LIVE');")
+            elif mode_upper == "PREDICTED":
+                cursor.execute("""
+                    DELETE FROM matches
+                    WHERE stage != 'Group Stage'
+                      AND status IN ('PREDICTED', 'LIVE_DRAW', 'Scheduled')
                       AND status NOT IN ('Completed', 'In Progress');
                 """)
 
@@ -1674,7 +1861,7 @@ class KnockoutManager:
 
             cursor.execute("""
                 INSERT INTO knockout_audit_logs (timestamp, admin_username, action, entity_type, entity_id, old_value, new_value, reason)
-                VALUES (?, ?, 'CLEAR_KNOCKOUT_FIXTURES', 'PRELIMINARY_STAGE', ?, '', ?, ?);
+                VALUES (?, ?, 'CLEAR_KNOCKOUT_FIXTURES', 'KNOCKOUT_STAGE', ?, '', ?, ?);
             """, (now_str, admin_username, mode_upper, f"Cleared {rolled_back_count} fixtures", f"Admin cleared knockout fixtures (mode={mode_upper})"))
 
         # Re-initialize clean predicted snapshot
