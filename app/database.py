@@ -4,6 +4,7 @@ SQLite database engine and transaction manager for Minaram Cup Tournament Manage
 
 import sqlite3
 import os
+import shutil
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -72,6 +73,88 @@ class Database:
                 self._backup_service.stop()
             except Exception:
                 pass
+
+    def replace_database_file(self, new_db_bytes: bytes) -> None:
+        """
+        Safely replace the database file on disk, removing stale WAL/SHM files
+        and verifying database integrity.
+        """
+        # 1. Close/stop auto backup if active
+        if self._backup_service:
+            try:
+                self._backup_service.stop()
+            except Exception:
+                pass
+
+        # 2. Checkpoint and close any current connection if possible
+        try:
+            conn = sqlite3.connect(str(self.db_path), timeout=5.0)
+            conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+            conn.close()
+        except Exception:
+            pass
+
+        # 3. Target file and sidecar paths
+        wal_path = Path(str(self.db_path) + "-wal")
+        shm_path = Path(str(self.db_path) + "-shm")
+
+        # 4. Remove stale WAL and SHM files before writing
+        for p in (wal_path, shm_path):
+            try:
+                if p.exists():
+                    p.unlink()
+            except Exception as e:
+                logger.warning(f"Could not unlink stale file {p}: {e}")
+
+        # 5. Write new database file safely
+        tmp_path = Path(str(self.db_path) + ".tmp_upload")
+        try:
+            with open(tmp_path, "wb") as f:
+                f.write(new_db_bytes)
+            if os.name == "nt" and self.db_path.exists():
+                shutil.copyfile(tmp_path, self.db_path)
+                try:
+                    tmp_path.unlink()
+                except Exception:
+                    pass
+            else:
+                tmp_path.replace(self.db_path)
+        except Exception:
+            with open(self.db_path, "wb") as f:
+                f.write(new_db_bytes)
+            if tmp_path.exists():
+                try:
+                    tmp_path.unlink()
+                except Exception:
+                    pass
+
+        # 6. Remove any sidecars that may have been generated during replacement
+        for p in (wal_path, shm_path):
+            try:
+                if p.exists():
+                    p.unlink()
+            except Exception:
+                pass
+
+        # 7. Verify integrity and establish fresh WAL checkpoint
+        test_conn = sqlite3.connect(str(self.db_path), timeout=10.0)
+        try:
+            cur = test_conn.cursor()
+            cur.execute("PRAGMA integrity_check;")
+            res = cur.fetchone()
+            if not res or res[0] != "ok":
+                raise ValueError(f"Database integrity check failed: {res[0] if res else 'unknown'}")
+            cur.execute("PRAGMA journal_mode = WAL;")
+            cur.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+        finally:
+            test_conn.close()
+
+        # 8. Re-initialize auto backup if needed
+        self.init_auto_backup()
+
+        # 9. Notify listeners
+        self.notify_change("database_replaced")
+
 
     def get_connection(self) -> sqlite3.Connection:
         """Create and configure a SQLite database connection."""

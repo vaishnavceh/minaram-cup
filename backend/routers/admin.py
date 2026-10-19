@@ -490,12 +490,33 @@ async def upload_database_admin(
     except Exception:
         pass
 
-    # 2. Write new database
-    with open(db.db_path, "wb") as f:
-        f.write(content)
+    # 2. Write new database cleanly with WAL/SHM flushing and integrity verification
+    try:
+        db.replace_database_file(content)
+    except Exception as e:
+        logger.error(f"Failed to replace cloud database: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Database replacement failed: {e}")
 
-    # 3. Broadcast live update to website
+    # 3. Ensure schema and registrations reconciliation
+    try:
+        db.init_db()
+        reg_svc.reconcile_registrations_to_teams()
+    except Exception as e:
+        logger.warning(f"Post-upload reconciliation notice: {e}")
+
+    # 4. Refresh knockout predicted snapshot so tournament views reflect new standings
+    try:
+        ko_mgr.get_or_create_predicted_snapshot(force=True)
+    except Exception as e:
+        logger.warning(f"Post-upload knockout recalculation notice: {e}")
+
+    # 5. Broadcast live updates across all tournament channels
     broadcaster.broadcast_from_thread("standings_updated", {"source": "cloud_sync"})
+    broadcaster.broadcast_from_thread("fixtures_updated", {"source": "cloud_sync"})
+    broadcaster.broadcast_from_thread("match_updated", {"source": "cloud_sync"})
+    broadcaster.broadcast_from_thread("knockout_updated", {"source": "cloud_sync", "action": "database_synced"})
+    broadcaster.broadcast_from_thread("teams_updated", {"source": "cloud_sync"})
+    broadcaster.broadcast_from_thread("ceremonial_draw_applied", {"source": "cloud_sync"})
 
     return {
         "status": "synchronized",

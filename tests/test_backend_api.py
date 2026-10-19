@@ -250,4 +250,39 @@ def test_draw_apply_and_reset_workflow():
                 assert m.get("is_published") is False
 
 
+def test_upload_database_sync():
+    """Test pushing database file via admin sync endpoint with WAL clearing and integrity check."""
+    # 1. Admin login
+    form_resp = client.post("/api/admin/auth/token", data={"username": "admin", "password": "minaram2026"})
+    assert form_resp.status_code == 200
+    token = form_resp.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 2. Download authoritative db bytes
+    dl_resp = client.get("/api/admin/sync/download-database", headers=headers)
+    assert dl_resp.status_code == 200
+    db_bytes = dl_resp.content
+    assert len(db_bytes) > 100
+    assert db_bytes.startswith(b"SQLite format 3")
+
+    # 3. Upload database back to cloud sync endpoint
+    files = {"file": ("minaram_cup.db", db_bytes, "application/x-sqlite3")}
+    up_resp = client.post("/api/admin/sync/upload-database", files=files, headers=headers)
+    assert up_resp.status_code == 200
+    assert up_resp.json()["status"] == "synchronized"
+
+    # 4. Verify public endpoints function cleanly without malformed disk errors
+    pub_teams = client.get("/api/public/teams")
+    assert pub_teams.status_code == 200
+    assert len(pub_teams.json()) >= 4
+
+    pub_fix = client.get("/api/public/fixtures")
+    assert pub_fix.status_code == 200
+
+    health = client.get("/api/admin/health", headers=headers)
+    assert health.status_code == 200
+    assert health.json()["status"] == "healthy"
+
+
+
 
