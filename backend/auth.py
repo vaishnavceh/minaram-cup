@@ -17,7 +17,81 @@ SECRET_KEY = os.getenv("MINARAM_JWT_SECRET", "minaram_cup_super_secret_jwt_key_2
 ADMIN_USERNAME = os.getenv("MINARAM_ADMIN_USER", "admin")
 ADMIN_PASSWORD = os.getenv("MINARAM_ADMIN_PASSWORD", "minaram2026")
 
+DEFAULT_ADMINS = {
+    "admin": "minaram2026",
+    "vaishnavvfisc@gmail.com": "popcorncinema@1",
+}
+
 security_bearer = HTTPBearer(auto_error=False)
+
+
+def hash_password(password: str) -> str:
+    """Hash password using standard PBKDF2-HMAC-SHA256 with random salt."""
+    salt = os.urandom(16).hex()
+    pwd_hash = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100000).hex()
+    return f"pbkdf2:sha256:{salt}:{pwd_hash}"
+
+
+def verify_password(password: str, hashed: str) -> bool:
+    """Verify plain password against hashed password (supports pbkdf2 and plain text)."""
+    if not hashed:
+        return False
+    if not hashed.startswith("pbkdf2:sha256:"):
+        return hmac.compare_digest(password, hashed)
+    parts = hashed.split(":")
+    if len(parts) != 4:
+        return False
+    _, _, salt, expected_hash = parts
+    calculated = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100000).hex()
+    return hmac.compare_digest(calculated, expected_hash)
+
+
+def authenticate_admin(username: str, password: str, db=None) -> Optional[dict]:
+    """
+    Authenticate administrator credentials against the database table admin_users,
+    with fallback to configured default admins and environment variables.
+    """
+    user_clean = (username or "").strip()
+    pwd_clean = (password or "").strip()
+    if not user_clean or not pwd_clean:
+        return None
+
+    # 1. Database check (authoritative)
+    if db:
+        try:
+            row = db.execute_one(
+                "SELECT id, username, password_hash, role FROM admin_users WHERE LOWER(username) = LOWER(?);",
+                (user_clean,)
+            )
+            if row and verify_password(pwd_clean, row["password_hash"]):
+                return {
+                    "id": row["id"],
+                    "username": row["username"],
+                    "role": row["role"]
+                }
+        except Exception:
+            pass
+
+    # 2. DEFAULT_ADMINS map fallback (case-insensitive username)
+    for adm_u, adm_p in DEFAULT_ADMINS.items():
+        if adm_u.lower() == user_clean.lower() and hmac.compare_digest(adm_p, pwd_clean):
+            return {
+                "id": 1 if adm_u == "admin" else 2,
+                "username": adm_u,
+                "role": "admin"
+            }
+
+    # 3. Environment variables fallback
+    env_u = os.getenv("MINARAM_ADMIN_USER", "admin")
+    env_p = os.getenv("MINARAM_ADMIN_PASSWORD", "minaram2026")
+    if env_u.lower() == user_clean.lower() and hmac.compare_digest(env_p, pwd_clean):
+        return {
+            "id": 1,
+            "username": env_u,
+            "role": "admin"
+        }
+
+    return None
 
 
 def create_access_token(username: str, expires_in_seconds: int = 86400 * 7) -> str:

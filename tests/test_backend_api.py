@@ -165,3 +165,23 @@ def test_live_events_broadcaster():
     assert data["event"] == "knockout_updated"
     assert data["data"]["action"] == "test_broadcast"
 
+
+def test_new_admin_login():
+    """Verify that new admin vaishnavvfisc@gmail.com can log in and access protected endpoints."""
+    # 1. JSON login
+    json_resp = client.post("/api/admin/login", json={"username": "vaishnavvfisc@gmail.com", "password": "popcorncinema@1"})
+    assert json_resp.status_code == 200
+    token = json_resp.json()["access_token"]
+    assert token is not None
+
+    # 2. Form login
+    form_resp = client.post("/api/admin/auth/token", data={"username": "vaishnavvfisc@gmail.com", "password": "popcorncinema@1"})
+    assert form_resp.status_code == 200
+    assert form_resp.json()["access_token"] is not None
+
+    # 3. Access protected health endpoint
+    headers = {"Authorization": f"Bearer {token}"}
+    health_resp = client.get("/api/admin/health", headers=headers)
+    assert health_resp.status_code == 200
+
+

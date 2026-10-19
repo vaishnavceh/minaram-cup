@@ -5,6 +5,7 @@ SQLite database engine and transaction manager for Minaram Cup Tournament Manage
 import sqlite3
 import os
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import Optional, List, Dict, Any, Tuple
 from contextlib import contextmanager
@@ -363,6 +364,32 @@ class Database:
             );
             """)
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_audit_time ON knockout_audit_logs(timestamp);")
+
+            # 14. Admin Users Table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS admin_users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT 'admin',
+                created_at TEXT NOT NULL
+            );
+            """)
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_admin_username ON admin_users(username);")
+
+            # Seed default administrators
+            now_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            try:
+                from backend.auth import hash_password, DEFAULT_ADMINS
+                for adm_u, adm_p in DEFAULT_ADMINS.items():
+                    existing = cursor.execute("SELECT id FROM admin_users WHERE LOWER(username) = LOWER(?);", (adm_u,)).fetchone()
+                    if not existing:
+                        cursor.execute("""
+                            INSERT INTO admin_users (username, password_hash, role, created_at)
+                            VALUES (?, ?, 'admin', ?);
+                        """, (adm_u, hash_password(adm_p), now_ts))
+            except Exception as e:
+                logger.warning(f"Failed to seed admin users: {e}")
 
             # Default Settings Insertion
             default_settings = {

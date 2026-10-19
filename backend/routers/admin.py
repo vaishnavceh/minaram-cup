@@ -20,7 +20,7 @@ from app.knockout_manager import KnockoutManager
 from app.results_manager import ResultsManager
 from app.backup_service import BackupService
 from app.standings import StandingsCalculator
-from backend.auth import get_current_admin, create_access_token, ADMIN_USERNAME, ADMIN_PASSWORD
+from backend.auth import get_current_admin, create_access_token, authenticate_admin, ADMIN_USERNAME, ADMIN_PASSWORD
 
 router = APIRouter(prefix="/api/admin", tags=["Admin Operations"])
 
@@ -141,37 +141,39 @@ def login_admin_form(
     password: str = Form(...)
 ):
     """OAuth2 / URL-encoded form login used by website Admin Portal."""
-    if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
+    admin_user = authenticate_admin(username, password, db)
+    if not admin_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    token = create_access_token(username)
+    token = create_access_token(admin_user["username"])
     return {
         "access_token": token,
         "token": token,
         "token_type": "bearer",
-        "username": username,
-        "role": "admin"
+        "username": admin_user["username"],
+        "role": admin_user.get("role", "admin")
     }
 
 
 @router.post("/login")
 def login_admin_json(req: LoginRequest):
     """JSON login for programmatic clients."""
-    if req.username != ADMIN_USERNAME or req.password != ADMIN_PASSWORD:
+    admin_user = authenticate_admin(req.username, req.password, db)
+    if not admin_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password"
         )
-    token = create_access_token(req.username)
+    token = create_access_token(admin_user["username"])
     return {
         "access_token": token,
         "token": token,
         "token_type": "bearer",
-        "username": req.username,
-        "role": "admin"
+        "username": admin_user["username"],
+        "role": admin_user.get("role", "admin")
     }
 
 
