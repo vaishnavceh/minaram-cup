@@ -709,12 +709,44 @@ def get_knockout_audit_log_admin(limit: int = 100, admin: dict = Depends(get_cur
 
 
 @router.post("/knockout/apply-draw")
-def apply_ceremonial_draw_admin(pairings: list = Body(..., embed=True), admin: dict = Depends(get_current_admin)):
+def apply_ceremonial_draw_admin(
+    pairings: list = Body(..., embed=True),
+    status_mode: str = Body("CONFIRMED", embed=True),
+    admin: dict = Depends(get_current_admin)
+):
     """Apply administrator's UEFA ceremonial draw pairings to official knockout fixtures."""
     try:
-        res = ko_mgr.apply_custom_draw(pairings=pairings, admin_username=admin["sub"])
+        res = ko_mgr.apply_custom_draw(pairings=pairings, admin_username=admin["sub"], status_mode=status_mode)
         from app.events import broadcaster
-        broadcaster.broadcast_from_thread("knockout_updated", {"action": "ceremonial_draw_applied"})
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "ceremonial_draw_applied", "status_mode": status_mode})
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/knockout/reset-draw")
+def reset_ceremonial_draw_admin(admin: dict = Depends(get_current_admin)):
+    """Reset ceremonial draw and roll back all published preliminary knockout fixtures."""
+    try:
+        res = ko_mgr.reset_ceremonial_draw(admin_username=admin["sub"])
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "ceremonial_draw_reset"})
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/knockout/set-fixtures-status")
+def set_knockout_fixtures_status_admin(
+    stage: str = Body("Preliminary Round", embed=True),
+    status_mode: str = Body("CONFIRMED", embed=True),
+    admin: dict = Depends(get_current_admin)
+):
+    """Batch toggle published fixtures of a stage between CONFIRMED and PREDICTED."""
+    try:
+        res = ko_mgr.batch_set_stage_status(stage=stage, status_mode=status_mode, admin_username=admin["sub"])
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "fixtures_status_updated", "status_mode": status_mode})
         return res
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

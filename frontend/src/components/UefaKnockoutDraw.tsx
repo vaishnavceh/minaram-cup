@@ -53,18 +53,21 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
   const [soundEnabled, setSoundEnabled] = useState(true);
   const audioCtxRef = useRef<AudioContext | null>(null);
 
+  const [publishStatusMode, setPublishStatusMode] = useState<'CONFIRMED' | 'PREDICTED'>('CONFIRMED');
   const [isApplying, setIsApplying] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const [isSyncingDesktop, setIsSyncingDesktop] = useState(false);
   const [adminMessage, setAdminMessage] = useState('');
 
   const handleApplyToOfficial = async () => {
     if (!token || pairings.length === 0) return;
-    if (!window.confirm(`Apply these ${pairings.length} drawn pairings into the authoritative official tournament fixtures?`)) return;
+    const modeLabel = publishStatusMode === 'PREDICTED' ? 'PREDICTED (LIVE DRAW)' : 'CONFIRMED (OFFICIAL)';
+    if (!window.confirm(`Publish these ${pairings.length} drawn pairings into the knockout bracket as ${modeLabel}?`)) return;
     setIsApplying(true);
     setAdminMessage('');
     try {
-      const res = await api.adminApplyCeremonialDraw(pairings, token);
-      setAdminMessage(res.message || 'Official knockout fixtures updated successfully!');
+      const res = await api.adminApplyCeremonialDraw(pairings, token, publishStatusMode);
+      setAdminMessage(res.message || `Knockout fixtures successfully published as ${publishStatusMode}!`);
       if (onRefreshBracket) onRefreshBracket();
       setTimeout(() => setAdminMessage(''), 5000);
     } catch (err: any) {
@@ -72,6 +75,31 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
     } finally {
       setIsApplying(false);
     }
+  };
+
+  const handleResetDraw = async () => {
+    if (isDrawing || isAutoPlaying || isResetting) return;
+    const confirmMsg = isAdmin
+      ? 'Reset ceremonial draw? This will clear drawn pairings and ROLL BACK any published preliminary fixtures from the official knockout bracket.'
+      : 'Reset ceremonial draw? This will reset all drawn ties back into the pots.';
+    if (!window.confirm(confirmMsg)) return;
+
+    if (isAdmin && token) {
+      setIsResetting(true);
+      setAdminMessage('');
+      try {
+        const res = await api.adminResetCeremonialDraw(token);
+        setAdminMessage(res.message || 'Draw reset and published fixtures rolled back successfully!');
+        if (onRefreshBracket) onRefreshBracket();
+        setTimeout(() => setAdminMessage(''), 5000);
+      } catch (err: any) {
+        alert(err.message || 'Failed to roll back published fixtures from knockout bracket');
+      } finally {
+        setIsResetting(false);
+      }
+    }
+
+    initializeDrawPools();
   };
 
   const handleSyncToDesktop = async () => {
@@ -462,12 +490,13 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
             </button>
 
             <button
-              onClick={initializeDrawPools}
-              disabled={isDrawing || isAutoPlaying}
-              className="inline-flex items-center space-x-1.5 px-3.5 py-2.5 rounded-lg bg-neutral-900 border border-neutral-700 hover:border-neutral-500 text-xs font-mono text-neutral-300 hover:text-white transition-colors disabled:opacity-50"
+              onClick={handleResetDraw}
+              disabled={isDrawing || isAutoPlaying || isResetting}
+              className="inline-flex items-center space-x-1.5 px-3.5 py-2.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/50 border border-rose-800/60 text-xs font-mono text-rose-300 hover:text-white transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
+              title="Reset draw and roll back published fixtures from the knockout bracket"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>RESET</span>
+              <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin' : ''}`} />
+              <span>{isResetting ? 'ROLLING BACK...' : 'RESET DRAW'}</span>
             </button>
 
             <button
@@ -503,14 +532,46 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
 
             {isAdmin && (
               <>
+                {/* Publish Mode Toggle: PREDICTED (LIVE DRAW) vs CONFIRMED (OFFICIAL) */}
+                <div className="flex items-center bg-black/60 p-1 rounded-lg border border-neutral-700/80">
+                  <button
+                    type="button"
+                    onClick={() => setPublishStatusMode('PREDICTED')}
+                    className={`px-2.5 py-1.5 rounded text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                      publishStatusMode === 'PREDICTED'
+                        ? 'bg-amber-500/25 text-amber-300 border border-amber-500/60 shadow-sm'
+                        : 'text-neutral-400 hover:text-neutral-200'
+                    }`}
+                    title="Publish as PREDICTED / LIVE DRAW fixtures"
+                  >
+                    ⚡ PREDICTED (LIVE DRAW)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPublishStatusMode('CONFIRMED')}
+                    className={`px-2.5 py-1.5 rounded text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                      publishStatusMode === 'CONFIRMED'
+                        ? 'bg-cyan-500/25 text-cyan-300 border border-cyan-500/60 shadow-sm'
+                        : 'text-neutral-400 hover:text-neutral-200'
+                    }`}
+                    title="Publish as CONFIRMED official fixtures"
+                  >
+                    🛡️ CONFIRMED (OFFICIAL)
+                  </button>
+                </div>
+
                 <button
                   onClick={handleApplyToOfficial}
                   disabled={isApplying || pairings.length === 0}
-                  className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-lg bg-emerald-950 hover:bg-emerald-900 border border-emerald-600 text-xs font-mono font-bold text-emerald-300 transition-colors disabled:opacity-50 cursor-pointer shadow-md"
-                  title="Commit drawn pairings to official knockout fixtures in database"
+                  className={`inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-lg text-xs font-mono font-bold transition-colors disabled:opacity-50 cursor-pointer shadow-md border ${
+                    publishStatusMode === 'PREDICTED'
+                      ? 'bg-amber-950/80 hover:bg-amber-900 border-amber-600 text-amber-300'
+                      : 'bg-emerald-950/90 hover:bg-emerald-900 border-emerald-600 text-emerald-300'
+                  }`}
+                  title={`Publish ${pairings.length} drawn pairings into the official knockout bracket as ${publishStatusMode}`}
                 >
                   <Save className="w-3.5 h-3.5" />
-                  <span>{isApplying ? 'SAVING...' : 'APPLY TO FIXTURES'}</span>
+                  <span>{isApplying ? 'PUBLISHING...' : `PUBLISH AS ${publishStatusMode}`}</span>
                 </button>
 
                 <button

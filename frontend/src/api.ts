@@ -532,14 +532,36 @@ export const api = {
     return handleResponse<any[]>(res);
   },
 
-  async adminApplyCeremonialDraw(pairings: any[], token: string): Promise<any> {
+  async adminApplyCeremonialDraw(pairings: any[], token: string, statusMode: string = 'CONFIRMED'): Promise<any> {
     const res = await fetch(`${API_BASE}/admin/knockout/apply-draw`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ pairings }),
+      body: JSON.stringify({ pairings, status_mode: statusMode }),
+    });
+    return handleResponse(res);
+  },
+
+  async adminResetCeremonialDraw(token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/reset-draw`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return handleResponse(res);
+  },
+
+  async adminSetFixturesStatus(stage: string, statusMode: string, token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/set-fixtures-status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ stage, status_mode: statusMode }),
     });
     return handleResponse(res);
   },

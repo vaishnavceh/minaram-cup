@@ -748,7 +748,7 @@ class KnockoutManager:
                         "notes": off["notes"] or "",
                         "completed_at": off["completed_at"] or "",
                         "confirmed_at": off["confirmed_at"] or "",
-                        "is_official": True
+                        "is_official": (off["status"] == "CONFIRMED")
                     })
                 else:
                     m_copy = dict(m)
@@ -846,28 +846,28 @@ class KnockoutManager:
 
         with self.db.transaction(action="fixture_confirmed") as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                INSERT INTO knockout_official_fixtures (
-                    stage, round_number, match_number, bracket_slot,
-                    home_team_id, away_team_id, home_placeholder, away_placeholder,
-                    scheduled_date, scheduled_time, scheduled_end_date, venue,
-                    status, notes, confirmed_at, confirmed_by, created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?, ?, ?, ?, ?)
-                ON CONFLICT(bracket_slot) DO UPDATE SET
-                    status = 'CONFIRMED',
-                    home_team_id = excluded.home_team_id,
-                    away_team_id = excluded.away_team_id,
-                    confirmed_at = excluded.confirmed_at,
-                    confirmed_by = excluded.confirmed_by,
-                    updated_at = excluded.updated_at;
-            """, (
-                target_fixture["stage"], target_fixture["round_number"], target_fixture["match_number"],
-                bracket_slot, target_fixture.get("home_team_id"), target_fixture.get("away_team_id"),
-                target_fixture.get("home_placeholder", ""), target_fixture.get("away_placeholder", ""),
-                target_fixture.get("scheduled_date", ""), target_fixture.get("scheduled_time", ""),
-                target_fixture.get("scheduled_end_date", ""), target_fixture.get("venue", "Minaram Stadium"),
-                target_fixture.get("notes", ""), now_str, admin_username, now_str, now_str
-            ))
+            if existing:
+                cursor.execute("""
+                    UPDATE knockout_official_fixtures
+                    SET status = 'CONFIRMED', confirmed_at = ?, confirmed_by = ?, updated_at = ?
+                    WHERE bracket_slot = ?;
+                """, (now_str, admin_username, now_str, bracket_slot))
+            else:
+                cursor.execute("""
+                    INSERT INTO knockout_official_fixtures (
+                        stage, round_number, match_number, bracket_slot,
+                        home_team_id, away_team_id, home_placeholder, away_placeholder,
+                        scheduled_date, scheduled_time, scheduled_end_date, venue,
+                        status, notes, confirmed_at, confirmed_by, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMED', ?, ?, ?, ?, ?);
+                """, (
+                    target_fixture["stage"], target_fixture["round_number"], target_fixture["match_number"],
+                    bracket_slot, target_fixture.get("home_team_id"), target_fixture.get("away_team_id"),
+                    target_fixture.get("home_placeholder", ""), target_fixture.get("away_placeholder", ""),
+                    target_fixture.get("scheduled_date", ""), target_fixture.get("scheduled_time", ""),
+                    target_fixture.get("scheduled_end_date", ""), target_fixture.get("venue", "Minaram Stadium"),
+                    target_fixture.get("notes", ""), now_str, admin_username, now_str, now_str
+                ))
 
             # Audit log
             cursor.execute("""
@@ -890,10 +890,48 @@ class KnockoutManager:
             confirmed_count += 1
         return confirmed_count
 
+    def batch_set_stage_status(self, stage: str = "Preliminary Round", status_mode: str = "CONFIRMED", admin_username: str = "admin") -> dict:
+        """Batch update all published fixtures of a stage to CONFIRMED or PREDICTED."""
+        status_val = "PREDICTED" if "PREDICT" in str(status_mode).upper() else "CONFIRMED"
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        updated_count = 0
+
+        rows = self.db.execute_query("""
+            SELECT bracket_slot FROM knockout_official_fixtures
+            WHERE stage = ? AND status NOT IN ('COMPLETED', 'LIVE');
+        """, (stage,))
+        slot_list = [r["bracket_slot"] for r in rows]
+
+        with self.db.transaction(action="batch_stage_status_update") as conn:
+            cursor = conn.cursor()
+            for slot in slot_list:
+                cursor.execute("""
+                    UPDATE knockout_official_fixtures
+                    SET status = ?, updated_at = ?
+                    WHERE bracket_slot = ?;
+                """, (status_val, now_str, slot))
+                updated_count += 1
+
+            cursor.execute("""
+                INSERT INTO knockout_audit_logs (timestamp, admin_username, action, entity_type, entity_id, old_value, new_value, reason)
+                VALUES (?, ?, 'BATCH_SET_STAGE_STATUS', 'STAGE', ?, '', ?, ?);
+            """, (now_str, admin_username, stage, status_val, f"Admin updated {updated_count} fixtures to {status_val}"))
+
+        for slot in slot_list:
+            self._sync_official_fixture_to_matches(slot)
+
+        return {
+            "status": "updated",
+            "stage": stage,
+            "status_mode": status_val,
+            "count": updated_count,
+            "message": f"Updated {updated_count} fixtures in {stage} to {status_val}!"
+        }
+
     def unconfirm_fixture(self, bracket_slot: str, admin_username: str = "admin") -> Dict[str, Any]:
         """Revert a fixture back to predicted if not already in progress or completed."""
         existing = self.db.execute_one(
-            "SELECT id, status FROM knockout_official_fixtures WHERE bracket_slot = ?;",
+            "SELECT id, status, home_team_id, away_team_id FROM knockout_official_fixtures WHERE bracket_slot = ?;",
             (bracket_slot,)
         )
         if not existing:
@@ -904,12 +942,22 @@ class KnockoutManager:
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with self.db.transaction(action="fixture_unconfirmed") as conn:
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM knockout_official_fixtures WHERE bracket_slot = ?;", (bracket_slot,))
+            if existing["home_team_id"] and existing["away_team_id"]:
+                cursor.execute("""
+                    UPDATE knockout_official_fixtures
+                    SET status = 'PREDICTED', updated_at = ?
+                    WHERE bracket_slot = ?;
+                """, (now_str, bracket_slot))
+            else:
+                cursor.execute("DELETE FROM knockout_official_fixtures WHERE bracket_slot = ?;", (bracket_slot,))
+                cursor.execute("DELETE FROM matches WHERE bracket_slot = ? AND status NOT IN ('Completed', 'In Progress');", (bracket_slot,))
+
             cursor.execute("""
                 INSERT INTO knockout_audit_logs (timestamp, admin_username, action, entity_type, entity_id, old_value, new_value, reason)
-                VALUES (?, ?, 'UNCONFIRM_FIXTURE', 'knockout_fixture', ?, ?, 'PREDICTED', 'Admin reverted fixture to unconfirmed prediction');
+                VALUES (?, ?, 'UNCONFIRM_FIXTURE', 'knockout_fixture', ?, ?, 'PREDICTED', 'Admin set fixture status to PREDICTED (Live Draw)');
             """, (now_str, admin_username, bracket_slot, existing["status"]))
 
+        self._sync_official_fixture_to_matches(bracket_slot)
         return {"status": "PREDICTED", "bracket_slot": bracket_slot}
 
     def edit_fixture(
@@ -1503,9 +1551,10 @@ class KnockoutManager:
             import logging
             logging.getLogger(__name__).warning(f"Error syncing official fixture {bracket_slot} to matches: {e}")
 
-    def apply_custom_draw(self, pairings: list, admin_username: str = "admin") -> dict:
+    def apply_custom_draw(self, pairings: list, admin_username: str = "admin", status_mode: str = "CONFIRMED") -> dict:
         """Apply administrator's drawn pairings into official knockout fixtures."""
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        status_val = "PREDICTED" if "PREDICT" in str(status_mode).upper() else "CONFIRMED"
         applied_count = 0
         for p in pairings:
             m_num = p.get("match_number") or p.get("matchNumber") or (applied_count + 1)
@@ -1532,9 +1581,9 @@ class KnockoutManager:
             if existing:
                 self.db.execute_non_query("""
                     UPDATE knockout_official_fixtures
-                    SET home_team_id = ?, away_team_id = ?, status = 'CONFIRMED', notes = ?, updated_at = ?
+                    SET home_team_id = ?, away_team_id = ?, status = ?, notes = ?, updated_at = ?
                     WHERE bracket_slot = ?;
-                """, (home_id, away_id, f"Drawn via Official Ceremonial Draw on {now_str}", now_str, slot))
+                """, (home_id, away_id, status_val, f"Drawn via Official Ceremonial Draw ({status_val}) on {now_str}", now_str, slot))
             else:
                 try:
                     num_val = int(str(slot).replace("PR", "")) if "PR" in str(slot) else int(m_num)
@@ -1549,7 +1598,7 @@ class KnockoutManager:
                 """, (
                     slot, "Preliminary Round", num_val, 0,
                     home_id, away_id, "2026-10-22", "Flexible (MW Window)", "Online / Mobile Lobby",
-                    "CONFIRMED", f"Drawn via Official Ceremonial Draw on {now_str}",
+                    status_val, f"Drawn via Official Ceremonial Draw ({status_val}) on {now_str}",
                     now_str, now_str
                 ))
             self._sync_official_fixture_to_matches(slot)
@@ -1558,12 +1607,60 @@ class KnockoutManager:
         self.db.execute_non_query("""
             INSERT INTO knockout_audit_logs (timestamp, admin_username, action, entity_type, entity_id, old_value, new_value, reason)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-        """, (now_str, admin_username, "APPLY_CEREMONIAL_DRAW", "PRELIMINARY_STAGE", "PR1-PR14", "", f"{applied_count} ties confirmed", "Applied UEFA Ceremonial Draw to Official Fixtures"))
+        """, (now_str, admin_username, "APPLY_CEREMONIAL_DRAW", "PRELIMINARY_STAGE", "PR1-PR14", "", f"{applied_count} ties ({status_val})", f"Applied UEFA Ceremonial Draw to fixtures as {status_val}"))
 
         return {
             "status": "applied",
+            "status_mode": status_val,
             "count": applied_count,
-            "message": f"Successfully committed {applied_count} preliminary ties into official knockout fixtures!"
+            "message": f"Successfully published {applied_count} preliminary ties as {status_val} in knockout fixtures!"
+        }
+
+    def reset_ceremonial_draw(self, admin_username: str = "admin") -> dict:
+        """
+        Roll back all published preliminary/drawn fixtures from the knockout bracket.
+        Safely clears knockout_official_fixtures and unplayed matches from the matches table,
+        and regenerates fresh predictions.
+        """
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        slots_to_remove = self.db.execute_query("""
+            SELECT bracket_slot FROM knockout_official_fixtures
+            WHERE (bracket_slot LIKE 'PR%' OR stage = 'Preliminary Round')
+              AND status NOT IN ('COMPLETED', 'LIVE');
+        """)
+        slot_names = [s["bracket_slot"] for s in slots_to_remove]
+
+        rolled_back_count = 0
+        with self.db.transaction(action="ceremonial_draw_reset") as conn:
+            cursor = conn.cursor()
+            for slot in slot_names:
+                cursor.execute("DELETE FROM knockout_official_fixtures WHERE bracket_slot = ?;", (slot,))
+                cursor.execute("DELETE FROM matches WHERE bracket_slot = ? AND status NOT IN ('Completed', 'In Progress');", (slot,))
+                rolled_back_count += 1
+
+            # Remove any orphan scheduled preliminary matches from general matches table
+            cursor.execute("""
+                DELETE FROM matches
+                WHERE (bracket_slot LIKE 'PR%' OR stage = 'Preliminary Round')
+                  AND status NOT IN ('Completed', 'In Progress');
+            """)
+
+            # Clear cached prediction snapshots so bracket recalculates freshly
+            cursor.execute("DELETE FROM knockout_snapshots;")
+
+            cursor.execute("""
+                INSERT INTO knockout_audit_logs (timestamp, admin_username, action, entity_type, entity_id, old_value, new_value, reason)
+                VALUES (?, ?, 'RESET_CEREMONIAL_DRAW', 'PRELIMINARY_STAGE', 'ALL_PR', '', 'ROLLED_BACK', 'Admin rolled back ceremonial draw and published knockout fixtures');
+            """, (now_str, admin_username))
+
+        # Re-initialize clean predicted snapshot
+        self.get_or_create_predicted_snapshot(force=True)
+
+        return {
+            "status": "reset",
+            "rolled_back_count": rolled_back_count,
+            "message": f"Successfully rolled back {rolled_back_count} published fixtures from the knockout bracket."
         }
 
     def export_draw_to_desktop(self, admin_username: str = "admin") -> dict:

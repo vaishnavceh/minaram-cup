@@ -385,3 +385,54 @@ def test_apply_custom_ceremonial_draw_and_desktop_export(temp_db):
     assert Path(export_res["file_path"]).exists()
     assert Path(export_res["csv_path"]).exists()
 
+
+def test_ceremonial_draw_reset_and_status_modes(temp_db):
+    """Test publishing draw as PREDICTED vs CONFIRMED, and rolling back draw via reset."""
+    setup_15_groups_tournament(temp_db)
+    km = KnockoutManager(temp_db)
+
+    # 1. Apply draw with status_mode='PREDICTED'
+    pairings = [
+        {"match_number": 1, "home_team_id": 1, "away_team_id": 2},
+        {"match_number": 2, "home_team_id": 3, "away_team_id": 4},
+    ]
+    res = km.apply_custom_draw(pairings=pairings, admin_username="admin", status_mode="PREDICTED")
+    assert res["status"] == "applied"
+    assert res["status_mode"] == "PREDICTED"
+
+    pr1 = temp_db.execute_one("SELECT * FROM knockout_official_fixtures WHERE bracket_slot = 'PR1';")
+    assert pr1["status"] == "PREDICTED"
+
+    # Verify bracket payload reflects PREDICTED and not confirmed official
+    data = km.get_knockout_tournament_data()
+    pr_matches = data["bracket"]["Preliminary Round"]
+    m1 = next(m for m in pr_matches if m["bracket_slot"] == "PR1")
+    assert m1["status"] == "PREDICTED"
+    assert m1["is_official"] is False
+
+    # 2. Batch toggle to CONFIRMED
+    batch_res = km.batch_set_stage_status(stage="Preliminary Round", status_mode="CONFIRMED", admin_username="admin")
+    assert batch_res["status_mode"] == "CONFIRMED"
+    pr1_conf = temp_db.execute_one("SELECT * FROM knockout_official_fixtures WHERE bracket_slot = 'PR1';")
+    assert pr1_conf["status"] == "CONFIRMED"
+
+    # 3. Reset and rollback ceremonial draw
+    reset_res = km.reset_ceremonial_draw(admin_username="admin")
+    assert reset_res["status"] == "reset"
+    assert reset_res["rolled_back_count"] >= 2
+
+    # Verify database fixtures were completely rolled back
+    remaining_ko = temp_db.execute_query("SELECT * FROM knockout_official_fixtures WHERE bracket_slot LIKE 'PR%';")
+    assert len(remaining_ko) == 0
+
+    remaining_matches = temp_db.execute_query("SELECT * FROM matches WHERE bracket_slot LIKE 'PR%';")
+    assert len(remaining_matches) == 0
+
+    # Verify bracket regenerates clean unconfirmed fixtures
+    fresh_data = km.get_knockout_tournament_data()
+    fresh_pr = fresh_data["bracket"]["Preliminary Round"]
+    assert len(fresh_pr) == 14
+    for m in fresh_pr:
+        assert m["is_official"] is False
+
+

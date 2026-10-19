@@ -84,17 +84,25 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
         </span>
       );
     }
-    if (s === 'CONFIRMED' || isOfficial) {
+    if (s === 'CONFIRMED' || (isOfficial && s !== 'PREDICTED' && s !== 'LIVE_DRAW')) {
       return (
-        <span className="inline-flex items-center space-x-1 text-[10px] font-mono font-bold text-cyan-300 bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-700/60">
+        <span className="inline-flex items-center space-x-1 text-[10px] font-mono font-bold text-cyan-300 bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-700/60 shadow-[0_0_10px_rgba(6,182,212,0.15)]">
           <Shield className="w-3 h-3 text-cyan-400" />
           <span>CONFIRMED FIXTURE</span>
         </span>
       );
     }
+    if (s === 'PREDICTED' || s === 'LIVE_DRAW' || s === 'LIVE DRAW') {
+      return (
+        <span className="inline-flex items-center space-x-1 text-[10px] font-mono font-bold text-amber-300 bg-amber-950/70 px-2 py-0.5 rounded border border-amber-600/70 shadow-[0_0_10px_rgba(245,158,11,0.2)] uppercase tracking-wider">
+          <Sparkles className="w-2.5 h-2.5 text-amber-400 animate-pulse" />
+          <span>PREDICTED · LIVE DRAW</span>
+        </span>
+      );
+    }
     return (
-      <span className="inline-flex items-center space-x-1 text-[10px] font-mono font-bold text-amber-300/90 bg-amber-950/40 px-2 py-0.5 rounded border border-dashed border-amber-600/50 uppercase tracking-wider">
-        <Sparkles className="w-2.5 h-2.5 text-amber-400" />
+      <span className="inline-flex items-center space-x-1 text-[10px] font-mono font-bold text-neutral-400 bg-neutral-900/60 px-2 py-0.5 rounded border border-neutral-700/60 uppercase tracking-wider">
+        <Sparkles className="w-2.5 h-2.5 text-neutral-400" />
         <span>PREDICTED</span>
       </span>
     );

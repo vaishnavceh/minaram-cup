@@ -18,7 +18,8 @@ import {
   Check,
   X,
   Shuffle,
-  Users
+  Users,
+  RotateCcw
 } from 'lucide-react';
 import { UefaKnockoutDraw } from './UefaKnockoutDraw';
 
@@ -181,6 +182,33 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
       await loadData();
     } catch (err: any) {
       showError(err.message || 'Failed to reset predictions.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetCeremonialDraw = async () => {
+    if (!window.confirm('Reset ceremonial draw? This will ROLL BACK all published preliminary fixtures from the official knockout bracket.')) return;
+    try {
+      setLoading(true);
+      const res = await api.adminResetCeremonialDraw(token);
+      showSuccess(res.message || 'Published draw fixtures rolled back successfully.');
+      await loadData();
+    } catch (err: any) {
+      showError(err.message || 'Failed to rollback draw fixtures.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBatchSetStatus = async (stage: string, statusMode: string) => {
+    try {
+      setLoading(true);
+      const res = await api.adminSetFixturesStatus(stage, statusMode, token);
+      showSuccess(res.message || `Fixtures set to ${statusMode}.`);
+      await loadData();
+    } catch (err: any) {
+      showError(err.message || 'Failed to update fixture statuses.');
     } finally {
       setLoading(false);
     }
@@ -443,16 +471,40 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
             type="button"
             onClick={() => handleBatchConfirm('Preliminary Round')}
             className="px-3.5 py-2 rounded-lg bg-cyan-950/60 hover:bg-cyan-900/60 text-cyan-300 border border-cyan-700/60 text-xs font-mono font-bold flex items-center space-x-1.5 cursor-pointer"
+            title="Set all preliminary fixtures to CONFIRMED"
           >
             <Shield className="w-3.5 h-3.5" />
             <span>CONFIRM ALL PRELIM</span>
+          </button>
+
+          {/* Batch Set Preliminary as Predicted */}
+          <button
+            type="button"
+            onClick={() => handleBatchSetStatus('Preliminary Round', 'PREDICTED')}
+            className="px-3.5 py-2 rounded-lg bg-amber-950/50 hover:bg-amber-900/60 text-amber-300 border border-amber-700/60 text-xs font-mono font-bold flex items-center space-x-1.5 cursor-pointer"
+            title="Set all preliminary fixtures to PREDICTED (Live Draw)"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>SET PRELIM AS PREDICTED</span>
+          </button>
+
+          {/* Rollback Ceremonial Draw */}
+          <button
+            type="button"
+            onClick={handleResetCeremonialDraw}
+            className="px-3.5 py-2 rounded-lg bg-red-950/70 hover:bg-red-900/80 text-red-200 border border-red-700 text-xs font-mono font-bold flex items-center space-x-1.5 cursor-pointer shadow-sm"
+            title="Roll back all drawn preliminary fixtures from the knockout bracket"
+          >
+            <RotateCcw className="w-3.5 h-3.5 text-red-400" />
+            <span>ROLLBACK DRAW FIXTURES</span>
           </button>
 
           {/* Reset Predictions */}
           <button
             type="button"
             onClick={handleResetPredictions}
-            className="px-3.5 py-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 border border-rose-800/60 text-xs font-mono font-bold flex items-center space-x-1.5 cursor-pointer"
+            className="px-3.5 py-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 text-xs font-mono font-bold flex items-center space-x-1.5 cursor-pointer"
+            title="Reset predictions snapshot cache"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>RESET PREDICTIONS</span>
@@ -616,10 +668,11 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-2 shrink-0">
-                {m.status === 'PREDICTED' ? (
+                {m.status === 'PREDICTED' || m.status === 'LIVE_DRAW' ? (
                   <button
                     onClick={() => handleConfirmSingle(m.bracket_slot)}
                     className="px-2.5 py-1.5 rounded bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-700 text-cyan-300 text-xs font-mono font-bold cursor-pointer"
+                    title="Promote fixture to CONFIRMED"
                   >
                     Confirm
                   </button>
@@ -627,9 +680,10 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
                   m.status !== 'COMPLETED' && (
                     <button
                       onClick={() => handleUnconfirmSingle(m.bracket_slot)}
-                      className="px-2.5 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-400 text-xs font-mono cursor-pointer"
+                      className="px-2.5 py-1.5 rounded bg-amber-950/50 hover:bg-amber-900/60 border border-amber-700 text-amber-300 text-xs font-mono font-bold cursor-pointer"
+                      title="Set fixture status to PREDICTED (Live Draw)"
                     >
-                      Unconfirm
+                      Set Predicted
                     </button>
                   )
                 )}
