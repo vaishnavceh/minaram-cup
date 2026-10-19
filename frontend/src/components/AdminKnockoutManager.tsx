@@ -20,6 +20,7 @@ import {
   Shuffle,
   Users
 } from 'lucide-react';
+import { UefaKnockoutDraw } from './UefaKnockoutDraw';
 
 interface AdminKnockoutManagerProps {
   token: string;
@@ -30,6 +31,7 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
   const [bracket, setBracket] = useState<PublicBracket>({ rounds: [] });
   const [allTeams, setAllTeams] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [adminSection, setAdminSection] = useState<'fixtures' | 'draw_ceremony'>('fixtures');
   const [activeStage, setActiveStage] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [successMessage, setSuccessMessage] = useState('');
@@ -347,8 +349,44 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
         </div>
       )}
 
-      {/* Knockout Master Toolbar */}
-      <div className="p-5 rounded-2xl bg-[#121214] border border-neutral-800 shadow-xl flex flex-wrap items-center justify-between gap-4">
+      {/* Knockout Admin Views Switcher */}
+      <div className="flex border-b border-[#222222] mb-6">
+        <button
+          onClick={() => setAdminSection('fixtures')}
+          className={`flex items-center space-x-2 px-5 py-2.5 font-display text-sm tracking-wider transition-colors border-b-2 -mb-px ${
+            adminSection === 'fixtures'
+              ? 'border-brand-red text-white bg-neutral-900/60'
+              : 'border-transparent text-neutral-400 hover:text-white'
+          }`}
+        >
+          <Trophy className="w-4 h-4 text-brand-gold" />
+          <span>OFFICIAL FIXTURES & SCORING DESK</span>
+        </button>
+
+        <button
+          onClick={() => setAdminSection('draw_ceremony')}
+          className={`flex items-center space-x-2 px-5 py-2.5 font-display text-sm tracking-wider transition-colors border-b-2 -mb-px ${
+            adminSection === 'draw_ceremony'
+              ? 'border-brand-gold text-white bg-neutral-900/60'
+              : 'border-transparent text-neutral-400 hover:text-white'
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
+          <span>UEFA CEREMONIAL DRAW DESK (ADMIN ONLY)</span>
+        </button>
+      </div>
+
+      {adminSection === 'draw_ceremony' ? (
+        <UefaKnockoutDraw
+          bracket={bracket}
+          token={token}
+          isAdmin={true}
+          onRefreshBracket={loadData}
+        />
+      ) : (
+        <>
+          {/* Knockout Master Toolbar */}
+          <div className="p-5 rounded-2xl bg-[#121214] border border-neutral-800 shadow-xl flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-widest">
             <Trophy className="w-4 h-4" />
@@ -613,6 +651,8 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
           ))}
         </div>
       </div>
+      </>
+      )}
 
       {/* MODAL 1: RECORD SCORE & CONFIRM RESULT */}
       {resultModalSlot && (

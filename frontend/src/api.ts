@@ -531,4 +531,26 @@ export const api = {
     });
     return handleResponse<any[]>(res);
   },
+
+  async adminApplyCeremonialDraw(pairings: any[], token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/apply-draw`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ pairings }),
+    });
+    return handleResponse(res);
+  },
+
+  async adminSyncDrawToDesktop(token: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/knockout/sync-desktop`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return handleResponse(res);
+  },
 };

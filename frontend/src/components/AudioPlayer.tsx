@@ -17,26 +17,41 @@ import {
 export const AudioPlayer: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Time-based default volume calculation
-  // Morning / daytime: 50% (0.50). Night: same percent (50%) but stabilized for night (not too loud)
-  const getInitialNightStatus = () => {
-    const hour = new Date().getHours();
-    return hour >= 20 || hour < 6; // Night between 8 PM and 6 AM
+  // Time-based automatic night stabilization:
+  // Daytime (6 AM to 8 PM): Standard dynamic playback at 50% default volume.
+  // Nighttime (8 PM to 6 AM): Automatically stabilized for nighttime so peak brass & choir don't blast.
+  const getTimeState = () => {
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const isNight = hour >= 20 || hour < 6;
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 === 0 ? 12 : hour % 12;
+    const formattedMinute = minute < 10 ? `0${minute}` : minute;
+    const timeString = `${displayHour}:${formattedMinute} ${ampm}`;
+    return {
+      isNight,
+      timeString
+    };
   };
 
-  const [isNightTime, setIsNightTime] = useState<boolean>(getInitialNightStatus());
-  const [nightStabilizer, setNightStabilizer] = useState<boolean>(getInitialNightStatus());
+  const [timeState, setTimeState] = useState(getTimeState());
+  const [userOverride, setUserOverride] = useState<boolean | null>(null); // null = auto detect
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [volume, setVolume] = useState<number>(0.5); // Default 50%
+  const [volume, setVolume] = useState<number>(0.5); // Default 50% base volume
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [autoplayBlocked, setAutoplayBlocked] = useState<boolean>(false);
 
+  // Active night stabilizer status (user override takes precedence if set, otherwise auto follows time)
+  const isNightStabilizerActive = userOverride !== null ? userOverride : timeState.isNight;
+
   // Night-stabilized effective volume calculation:
-  // When night stabilizer is active, softly compress/attenuate upper range so peak orchestral brass doesn't blast
-  const effectiveVolume = isMuted ? 0 : nightStabilizer ? volume * 0.72 : volume;
+  // At night: volume is attenuated and stabilized (0.70x, yielding ~0.35 max when slider is 50%)
+  // so the anthem is soft and respectful at night, not loud.
+  const effectiveVolume = isMuted ? 0 : isNightStabilizerActive ? volume * 0.70 : volume;
 
   useEffect(() => {
     if (audioRef.current) {
@@ -44,13 +59,61 @@ export const AudioPlayer: React.FC = () => {
     }
   }, [effectiveVolume]);
 
-  // Update night time every 10 minutes in background
+  // Periodically check local time every 15 seconds to automatically react when time changes
   useEffect(() => {
-    const timer = setInterval(() => {
-      const night = getInitialNightStatus();
-      setIsNightTime(night);
-    }, 600000);
+    const check = () => {
+      setTimeState(getTimeState());
+    };
+    const timer = setInterval(check, 15000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Automatically play anthem on start:
+  // First attempt immediate playback. If browser autoplay policy blocks unprompted audio,
+  // register a one-time global user gesture listener (click, keydown, touch) so it starts instantly on first interaction.
+  useEffect(() => {
+    let unmounted = false;
+
+    const startPlayback = async () => {
+      if (!audioRef.current) return;
+      try {
+        await audioRef.current.play();
+        if (!unmounted) {
+          setIsPlaying(true);
+          setAutoplayBlocked(false);
+        }
+      } catch {
+        if (!unmounted) {
+          setAutoplayBlocked(true);
+        }
+        const onFirstInteraction = () => {
+          if (audioRef.current && audioRef.current.paused) {
+            audioRef.current
+              .play()
+              .then(() => {
+                if (!unmounted) {
+                  setIsPlaying(true);
+                  setAutoplayBlocked(false);
+                }
+              })
+              .catch(() => {});
+          }
+          window.removeEventListener('click', onFirstInteraction);
+          window.removeEventListener('keydown', onFirstInteraction);
+          window.removeEventListener('touchstart', onFirstInteraction);
+        };
+
+        window.addEventListener('click', onFirstInteraction, { once: true });
+        window.addEventListener('keydown', onFirstInteraction, { once: true });
+        window.addEventListener('touchstart', onFirstInteraction, { once: true });
+      }
+    };
+
+    startPlayback();
+
+    return () => {
+      unmounted = true;
+    };
   }, []);
 
   // Sync playback state with audio element
@@ -131,7 +194,8 @@ export const AudioPlayer: React.FC = () => {
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
         loop
-        preload="metadata"
+        autoPlay
+        preload="auto"
       />
 
       {/* Floating Bottom Audio Player */}
@@ -157,8 +221,17 @@ export const AudioPlayer: React.FC = () => {
                   <span className="w-0.5 bg-brand-gold animate-[bounce_0.4s_ease-in-out_infinite] h-full" />
                 </div>
               )}
-              <span className="text-[10px] font-mono text-brand-gold font-bold">
-                {currentPercent}%
+              <span className="text-[10px] font-mono text-brand-gold font-bold flex items-center space-x-1">
+                <span>{currentPercent}%</span>
+                {isNightStabilizerActive ? (
+                  <span title="Night Acoustic Limiter Active">
+                    <Moon className="w-2.5 h-2.5 text-indigo-400" />
+                  </span>
+                ) : (
+                  <span title="Daytime Standard Dynamics Active">
+                    <Sun className="w-2.5 h-2.5 text-amber-400" />
+                  </span>
+                )}
               </span>
             </div>
 
@@ -208,29 +281,49 @@ export const AudioPlayer: React.FC = () => {
             {/* Time-Based Night Stabilization Strip */}
             <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-[#0f1626] border border-[#1e2c47] flex items-center justify-between text-[11px] font-mono">
               <div className="flex items-center space-x-2">
-                {nightStabilizer ? (
-                  <Moon className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                {isNightStabilizerActive ? (
+                  <Moon className="w-3.5 h-3.5 text-indigo-400 shrink-0 animate-pulse" />
                 ) : (
                   <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                 )}
-                <span className="text-neutral-300">
-                  {nightStabilizer
-                    ? 'Night Limiter (Not Too Loud)'
-                    : 'Daytime Standard Dynamics'}
-                </span>
+                <div>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="text-white font-bold">{timeState.timeString}</span>
+                    <span className="text-[8px] uppercase px-1 rounded bg-black/60 text-neutral-400 border border-neutral-700">
+                      {userOverride === null ? 'AUTO DETECTED' : 'MANUAL'}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-neutral-300">
+                    {isNightStabilizerActive
+                      ? 'Night Mode: Stabilized for Night (Not Too Loud)'
+                      : 'Daytime Mode: Standard 50% Dynamics'}
+                  </span>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setNightStabilizer(!nightStabilizer)}
-                className={`text-[9px] uppercase px-1.5 py-0.5 rounded font-bold transition-colors ${
-                  nightStabilizer
-                    ? 'bg-indigo-950 text-indigo-300 border border-indigo-700'
-                    : 'bg-amber-950 text-amber-300 border border-amber-700'
-                }`}
-                title="Toggle night-time acoustic limiter"
-              >
-                {nightStabilizer ? 'ON' : 'OFF'}
-              </button>
+              <div className="flex items-center space-x-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setUserOverride(!isNightStabilizerActive)}
+                  className={`text-[9px] uppercase px-1.5 py-0.5 rounded font-bold transition-colors cursor-pointer ${
+                    isNightStabilizerActive
+                      ? 'bg-indigo-950 text-indigo-300 border border-indigo-700'
+                      : 'bg-amber-950 text-amber-300 border border-amber-700'
+                  }`}
+                  title="Toggle night-time acoustic limiter"
+                >
+                  {isNightStabilizerActive ? 'NIGHT ON' : 'DAY ON'}
+                </button>
+                {userOverride !== null && (
+                  <button
+                    type="button"
+                    onClick={() => setUserOverride(null)}
+                    className="text-[8px] uppercase px-1 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white border border-neutral-700 cursor-pointer"
+                    title="Reset to auto time detection"
+                  >
+                    AUTO
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Scrub Progress Bar */}

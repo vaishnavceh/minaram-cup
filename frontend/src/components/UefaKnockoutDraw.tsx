@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { api } from '../api';
 import { PublicBracket, DirectQualifier, PublicMatch } from '../types';
 import {
   Sparkles,
@@ -13,12 +14,18 @@ import {
   AlertCircle,
   Flame,
   ArrowRight,
-  Shuffle
+  Shuffle,
+  Save,
+  Monitor,
+  Download
 } from 'lucide-react';
 
 interface UefaKnockoutDrawProps {
   bracket: PublicBracket;
+  token?: string;
+  isAdmin?: boolean;
   onDrawComplete?: (pairings: any[]) => void;
+  onRefreshBracket?: () => void;
 }
 
 interface DrawBall {
@@ -40,10 +47,56 @@ interface DrawnPairing {
   timestamp: string;
 }
 
-export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket }) => {
+export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, token, isAdmin = false, onRefreshBracket }) => {
   // Sound synthesizer using Web Audio API (zero external assets needed)
   const [soundEnabled, setSoundEnabled] = useState(true);
   const audioCtxRef = useRef<AudioContext | null>(null);
+
+  const [isApplying, setIsApplying] = useState(false);
+  const [isSyncingDesktop, setIsSyncingDesktop] = useState(false);
+  const [adminMessage, setAdminMessage] = useState('');
+
+  const handleApplyToOfficial = async () => {
+    if (!token || pairings.length === 0) return;
+    if (!window.confirm(`Apply these ${pairings.length} drawn pairings into the authoritative official tournament fixtures?`)) return;
+    setIsApplying(true);
+    setAdminMessage('');
+    try {
+      const res = await api.adminApplyCeremonialDraw(pairings, token);
+      setAdminMessage(res.message || 'Official knockout fixtures updated successfully!');
+      if (onRefreshBracket) onRefreshBracket();
+      setTimeout(() => setAdminMessage(''), 5000);
+    } catch (err: any) {
+      alert(err.message || 'Failed to apply draw to official fixtures');
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleSyncToDesktop = async () => {
+    if (!token) return;
+    setIsSyncingDesktop(true);
+    setAdminMessage('');
+    try {
+      const res = await api.adminSyncDrawToDesktop(token);
+      const blob = new Blob([res.content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = res.filename || 'MINARAM_CUP_2026_OFFICIAL_KNOCKOUT_DRAW.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setAdminMessage(`Official Draw successfully synced to Desktop: ${res.file_path}`);
+      setTimeout(() => setAdminMessage(''), 6000);
+    } catch (err: any) {
+      alert(err.message || 'Failed to sync draw to desktop');
+    } finally {
+      setIsSyncingDesktop(false);
+    }
+  };
 
   const playChime = (type: 'draw' | 'reveal' | 'clash' | 'complete') => {
     if (!soundEnabled) return;
@@ -396,8 +449,40 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket }) =
               <Shuffle className="w-4 h-4" />
               <span>DRAW TIE #{currentMatchNumber <= 14 ? currentMatchNumber : 14}</span>
             </button>
+
+            {isAdmin && (
+              <>
+                <button
+                  onClick={handleApplyToOfficial}
+                  disabled={isApplying || pairings.length === 0}
+                  className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-lg bg-emerald-950 hover:bg-emerald-900 border border-emerald-600 text-xs font-mono font-bold text-emerald-300 transition-colors disabled:opacity-50 cursor-pointer shadow-md"
+                  title="Commit drawn pairings to official knockout fixtures in database"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>{isApplying ? 'SAVING...' : 'APPLY TO FIXTURES'}</span>
+                </button>
+
+                <button
+                  onClick={handleSyncToDesktop}
+                  disabled={isSyncingDesktop}
+                  className="inline-flex items-center space-x-1.5 px-4 py-2.5 rounded-lg bg-indigo-950 hover:bg-indigo-900 border border-indigo-600 text-xs font-mono font-bold text-indigo-300 transition-colors disabled:opacity-50 cursor-pointer shadow-md"
+                  title="Export official draw to Desktop (text and CSV)"
+                >
+                  <Monitor className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>{isSyncingDesktop ? 'SYNCING...' : 'SYNC TO DESKTOP'}</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
+
+        {/* Admin Feedback Banner */}
+        {adminMessage && (
+          <div className="mt-4 p-3 rounded-lg bg-emerald-950/90 border border-emerald-600 text-xs font-mono text-emerald-200 flex items-center space-x-2 animate-fade-in">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{adminMessage}</span>
+          </div>
+        )}
 
         {/* Draw Progress Bar */}
         <div className="mt-6 pt-4 border-t border-neutral-800/80">

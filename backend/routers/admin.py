@@ -707,3 +707,25 @@ def get_knockout_audit_log_admin(limit: int = 100, admin: dict = Depends(get_cur
     """View administrative audit trail of all knockout actions."""
     return ko_mgr.get_audit_logs(limit=limit)
 
+
+@router.post("/knockout/apply-draw")
+def apply_ceremonial_draw_admin(pairings: list = Body(..., embed=True), admin: dict = Depends(get_current_admin)):
+    """Apply administrator's UEFA ceremonial draw pairings to official knockout fixtures."""
+    try:
+        res = ko_mgr.apply_custom_draw(pairings=pairings, admin_username=admin["sub"])
+        from app.events import broadcaster
+        broadcaster.broadcast_from_thread("knockout_updated", {"action": "ceremonial_draw_applied"})
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/knockout/sync-desktop")
+def sync_draw_to_desktop_admin(admin: dict = Depends(get_current_admin)):
+    """Export and sync official knockout draw directly to Desktop."""
+    try:
+        res = ko_mgr.export_draw_to_desktop(admin_username=admin["sub"])
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+

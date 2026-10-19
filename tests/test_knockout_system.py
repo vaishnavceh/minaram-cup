@@ -353,3 +353,34 @@ def test_reset_predictions_preserves_confirmed(temp_db):
     assert pr4 is not None
     assert pr4["status"] == "COMPLETED"
     assert pr4["home_score"] == 2
+
+
+def test_apply_custom_ceremonial_draw_and_desktop_export(temp_db):
+    """Test applying UEFA ceremonial draw pairings to official fixtures and exporting report to Desktop."""
+    setup_15_groups_tournament(temp_db)
+    km = KnockoutManager(temp_db)
+
+    # 1. Custom ceremonial pairings
+    pairings = [
+        {"match_number": 1, "home_team_id": 1, "away_team_id": 2},
+        {"match_number": 2, "home_team_id": 3, "away_team_id": 4},
+    ]
+
+    res = km.apply_custom_draw(pairings=pairings, admin_username="admin")
+    assert res["status"] == "applied"
+    assert res["count"] == 2
+
+    # Check database fixtures
+    pr1 = temp_db.execute_one("SELECT * FROM knockout_official_fixtures WHERE bracket_slot = 'PR1';")
+    assert pr1 is not None
+    assert pr1["home_team_id"] == 1
+    assert pr1["away_team_id"] == 2
+    assert pr1["status"] == "CONFIRMED"
+
+    # 2. Desktop export
+    export_res = km.export_draw_to_desktop(admin_username="admin")
+    assert export_res["status"] == "success"
+    assert "MINARAM CUP 2026" in export_res["content"]
+    assert Path(export_res["file_path"]).exists()
+    assert Path(export_res["csv_path"]).exists()
+

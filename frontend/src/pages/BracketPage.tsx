@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { api } from '../api';
 import { PublicBracket, DirectQualifier, KnockoutConflict } from '../types';
 import { BracketTree } from '../components/BracketTree';
-import { UefaKnockoutDraw } from '../components/UefaKnockoutDraw';
 import {
   GitFork,
   Trophy,
@@ -20,8 +19,7 @@ import {
   AlertTriangle,
   RefreshCw,
   Flame,
-  Scale,
-  Shuffle
+  Scale
 } from 'lucide-react';
 
 export const BracketPage: React.FC = () => {
@@ -31,7 +29,6 @@ export const BracketPage: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
-  const [viewMode, setViewMode] = useState<'bracket' | 'uefa_draw'>('bracket');
   const [activeStageTab, setActiveStageTab] = useState<string>('ALL');
   const [showRulesPanel, setShowRulesPanel] = useState(false);
   const [lastNotification, setLastNotification] = useState<string>('');
@@ -235,41 +232,7 @@ export const BracketPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Top View Mode Switcher: Bracket vs UEFA Draw Simulator */}
-      <div className="flex border-b border-[#222222] mb-8">
-        <button
-          onClick={() => setViewMode('bracket')}
-          className={`flex items-center space-x-2 px-6 py-3 font-display text-base tracking-wider transition-all border-b-2 -mb-px ${
-            viewMode === 'bracket'
-              ? 'border-brand-red text-white bg-neutral-900/60'
-              : 'border-transparent text-neutral-400 hover:text-white'
-          }`}
-        >
-          <GitFork className="w-4 h-4 text-brand-red" />
-          <span>TOURNAMENT BRACKET</span>
-        </button>
-
-        <button
-          onClick={() => setViewMode('uefa_draw')}
-          className={`flex items-center space-x-2 px-6 py-3 font-display text-base tracking-wider transition-all border-b-2 -mb-px ${
-            viewMode === 'uefa_draw'
-              ? 'border-brand-gold text-white bg-neutral-900/60'
-              : 'border-transparent text-neutral-400 hover:text-white'
-          }`}
-        >
-          <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
-          <span>UEFA-STYLE CEREMONIAL DRAW</span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold border border-brand-gold/40">
-            SIMULATOR
-          </span>
-        </button>
-      </div>
-
-      {viewMode === 'uefa_draw' ? (
-        <UefaKnockoutDraw bracket={bracket} />
-      ) : (
-        <>
-          {/* DIRECT ROUND OF 16 QUALIFIERS SECTION (Section 2) */}
+      {/* DIRECT ROUND OF 16 QUALIFIERS SECTION (Section 2) */}
       <div className="mb-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2.5">
@@ -539,8 +502,6 @@ export const BracketPage: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
-      </>
       )}
     </div>
   );

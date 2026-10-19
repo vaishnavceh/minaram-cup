@@ -1471,3 +1471,148 @@ class KnockoutManager:
                 off["home_score"], off["away_score"], off["home_penalty"], off["away_penalty"],
                 m_status, off["winner_team_id"], off["completed_at"], off["notes"] or ""
             ))
+
+    def apply_custom_draw(self, pairings: list, admin_username: str = "admin") -> dict:
+        """Apply administrator's drawn pairings into official knockout fixtures."""
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        applied_count = 0
+        for p in pairings:
+            m_num = p.get("match_number") or p.get("matchNumber") or (applied_count + 1)
+            slot = p.get("slot") or f"PR{m_num}"
+            home_id = p.get("homeTeam", {}).get("id") if isinstance(p.get("homeTeam"), dict) else p.get("home_team_id")
+            away_id = p.get("awayTeam", {}).get("id") if isinstance(p.get("awayTeam"), dict) else p.get("away_team_id")
+            if not home_id or not away_id:
+                continue
+
+            existing = self.db.execute_one("SELECT bracket_slot FROM knockout_official_fixtures WHERE bracket_slot = ?;", (slot,))
+            if existing:
+                self.db.execute_non_query("""
+                    UPDATE knockout_official_fixtures
+                    SET home_team_id = ?, away_team_id = ?, status = 'CONFIRMED', notes = ?, updated_at = ?
+                    WHERE bracket_slot = ?;
+                """, (home_id, away_id, f"Drawn via Official Ceremonial Draw on {now_str}", now_str, slot))
+            else:
+                try:
+                    num_val = int(str(slot).replace("PR", "")) if "PR" in str(slot) else int(m_num)
+                except (ValueError, TypeError):
+                    num_val = applied_count + 1
+                self.db.execute_non_query("""
+                    INSERT INTO knockout_official_fixtures (
+                        bracket_slot, stage, match_number, round_number,
+                        home_team_id, away_team_id, scheduled_date, scheduled_time, venue,
+                        status, notes, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """, (
+                    slot, "Preliminary Round", num_val, 0,
+                    home_id, away_id, "2026-10-22", "Flexible (MW Window)", "Online / Mobile Lobby",
+                    "CONFIRMED", f"Drawn via Official Ceremonial Draw on {now_str}",
+                    now_str, now_str
+                ))
+            self._sync_official_fixture_to_matches(slot)
+            applied_count += 1
+
+        self.db.execute_non_query("""
+            INSERT INTO knockout_audit_logs (timestamp, admin_username, action, entity_type, entity_id, old_value, new_value, reason)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        """, (now_str, admin_username, "APPLY_CEREMONIAL_DRAW", "PRELIMINARY_STAGE", "PR1-PR14", "", f"{applied_count} ties confirmed", "Applied UEFA Ceremonial Draw to Official Fixtures"))
+
+        return {
+            "status": "applied",
+            "count": applied_count,
+            "message": f"Successfully committed {applied_count} preliminary ties into official knockout fixtures!"
+        }
+
+    def export_draw_to_desktop(self, admin_username: str = "admin") -> dict:
+        """Format the complete knockout draw and save directly to Desktop."""
+        bracket = self.get_or_create_predicted_snapshot()
+        direct = bracket.get("direct_qualifiers", [])
+        rounds = bracket.get("rounds", [])
+
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        lines = []
+        lines.append("=" * 80)
+        lines.append("MINARAM CUP 2026 — OFFICIAL KNOCKOUT TOURNAMENT DRAW & SEEDING REPORT")
+        lines.append("=" * 80)
+        lines.append(f"Generated: {now_str}")
+        lines.append(f"Tournament Desk Administrator: {admin_username}")
+        lines.append(f"Snapshot Version: {bracket.get('snapshot_version', 'v1')}")
+        lines.append(f"Status: {'PROVISIONAL (GROUP STAGE IN PROGRESS)' if bracket.get('is_provisional') else 'OFFICIAL & FINALIZED'}")
+        lines.append("")
+        lines.append("-" * 80)
+        lines.append("1. DIRECT ROUND OF 16 QUALIFIERS (Awarded Byes — Exempt from Preliminary Round)")
+        lines.append("-" * 80)
+        for i, dq in enumerate(direct, 1):
+            slot = "R16_1 (Top Half)" if i == 1 else "R16_5 (Bottom Half)"
+            lines.append(f"Seed #{i}: {dq.get('team_name')} ({dq.get('group_name')}) — GF: {dq.get('goals_for')}, GD: {dq.get('goal_difference')}, PTS: {dq.get('points')}")
+            lines.append(f"         Assigned Bracket Slot: {slot}")
+        lines.append("")
+        lines.append("-" * 80)
+        lines.append("2. PRELIMINARY KNOCKOUT ROUND (14 Single-Leg Elimination Ties)")
+        lines.append("-" * 80)
+        lines.append(f"{'Slot':<8} | {'Home Squad':<28} | {'Away Squad':<28} | {'Status':<12}")
+        lines.append("-" * 80)
+
+        prelim_matches = []
+        r16_matches = []
+        if isinstance(rounds, dict):
+            prelim_matches = rounds.get("Preliminary Round", [])
+            r16_matches = rounds.get("Round of 16", [])
+        elif isinstance(rounds, list):
+            for r in rounds:
+                if isinstance(r, dict):
+                    r_name = (r.get("round_name") or "").lower()
+                    if "preliminary" in r_name:
+                        prelim_matches = r.get("matches", [])
+                    elif "16" in r_name:
+                        r16_matches = r.get("matches", [])
+
+        for m in prelim_matches:
+            slot = m.get("bracket_slot") or f"PR{m.get('match_number')}"
+            home = m.get("home_team_name") or f"Team #{m.get('home_team_id')}"
+            away = m.get("away_team_name") or f"Team #{m.get('away_team_id')}"
+            status = m.get("status") or "PREDICTED"
+            lines.append(f"{slot:<8} | {home:<28} | {away:<28} | {status:<12}")
+
+        lines.append("")
+        lines.append("-" * 80)
+        lines.append("3. ROUND OF 16 BRACKET SLOTS")
+        lines.append("-" * 80)
+        for m in r16_matches:
+            slot = m.get("bracket_slot") or f"R16_{m.get('match_number')}"
+            home = m.get("home_team_name") or "TBD"
+            away = m.get("away_team_name") or "TBD"
+            lines.append(f"{slot:<8}: {home} vs {away}")
+
+        lines.append("=" * 80)
+        lines.append("Minaram Cup 2026 · TKM College of Engineering eFootball Championship")
+        lines.append("=" * 80)
+        content = "\n".join(lines)
+
+        import pathlib
+        desktop_candidates = [
+            pathlib.Path.home() / "OneDrive" / "Desktop",
+            pathlib.Path.home() / "Desktop",
+            pathlib.Path("C:/Users/vaish/OneDrive/Desktop"),
+        ]
+        target_dir = next((p for p in desktop_candidates if p.exists()), pathlib.Path.cwd())
+        target_file = target_dir / "MINARAM_CUP_2026_OFFICIAL_KNOCKOUT_DRAW.txt"
+        target_file.write_text(content, encoding="utf-8")
+
+        csv_file = target_dir / "MINARAM_CUP_2026_KNOCKOUT_PAIRINGS.csv"
+        csv_lines = ["Slot,Match Number,Stage,Home Team,Away Team,Status"]
+        for m in prelim_matches:
+            csv_lines.append(f"{m.get('bracket_slot')},{m.get('match_number')},{m.get('stage')},{m.get('home_team_name')},{m.get('away_team_name')},{m.get('status')}")
+        csv_file.write_text("\n".join(csv_lines), encoding="utf-8")
+
+        self.db.execute_non_query("""
+            INSERT INTO knockout_audit_logs (timestamp, admin_username, action, entity_type, entity_id, old_value, new_value, reason)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        """, (now_str, admin_username, "SYNC_DESKTOP", "DRAW_REPORT", str(target_file), "", now_str, "Exported official draw to Desktop"))
+
+        return {
+            "status": "success",
+            "file_path": str(target_file),
+            "csv_path": str(csv_file),
+            "filename": "MINARAM_CUP_2026_OFFICIAL_KNOCKOUT_DRAW.txt",
+            "content": content
+        }
