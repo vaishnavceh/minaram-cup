@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api';
 import { PublicMatch } from '../types';
-import { Lock, LogOut, CheckCircle, RefreshCw, AlertCircle, Trophy, Save, Shield } from 'lucide-react';
+import { Lock, LogOut, CheckCircle, RefreshCw, AlertCircle, Trophy, Save, Shield, Tv } from 'lucide-react';
 import { AdminKnockoutManager } from '../components/AdminKnockoutManager';
+import { AdminLiveStreamManager } from '../components/AdminLiveStreamManager';
 
 export const AdminPage: React.FC = () => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('minaram_admin_token'));
@@ -10,7 +11,7 @@ export const AdminPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'knockout' | 'matches'>('knockout');
+  const [activeTab, setActiveTab] = useState<'knockout' | 'matches' | 'livestream'>('knockout');
 
   // Admin Dashboard State
   const [tournament, setTournament] = useState<any>(null);
@@ -356,10 +357,23 @@ export const AdminPage: React.FC = () => {
           <Shield className="w-4 h-4 text-neutral-400" />
           <span>GROUP MATCH SCORING</span>
         </button>
+        <button
+          onClick={() => setActiveTab('livestream')}
+          className={`flex items-center space-x-2 px-6 py-3 font-display text-base tracking-wider transition-colors border-b-2 -mb-px ${
+            activeTab === 'livestream'
+              ? 'border-brand-red text-white bg-neutral-900/60'
+              : 'border-transparent text-neutral-400 hover:text-neutral-200'
+          }`}
+        >
+          <Tv className="w-4 h-4 text-brand-red" />
+          <span>LIVE STREAM SETTINGS</span>
+        </button>
       </div>
 
       {activeTab === 'knockout' ? (
         <AdminKnockoutManager token={token} onRefreshParent={loadMatches} />
+      ) : activeTab === 'livestream' ? (
+        <AdminLiveStreamManager token={token} />
       ) : (
         <>
           {/* Notifications */}

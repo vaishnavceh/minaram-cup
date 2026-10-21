@@ -68,6 +68,7 @@ export function useLiveUpdates(onEvent?: (event: LiveEventPayload) => void) {
         es.addEventListener('ceremonial_draw_applied', handleMsg);
         es.addEventListener('ceremonial_draw_reset', handleMsg);
         es.addEventListener('knockout_fixtures_cleared', handleMsg);
+        es.addEventListener('live_stream_updated', handleMsg);
 
         es.onerror = () => {
           if (isMounted) setIsConnected(false);

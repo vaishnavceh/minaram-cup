@@ -60,6 +60,13 @@ The official digital competition platform for the **Minaram Cup** eFootball Cham
 - When an administrator records or updates a match score in the desktop manager, `broadcaster.broadcast_from_thread()` triggers an instant Server-Sent Event (`/api/events`).
 - Connected browser tabs receive the score update and update standings without needing manual page refreshes.
 
+### 5. Live Broadcast Watch Page & YouTube Live Chat (`/live`)
+- **Dedicated Public Watch Page (`/live`):** Premium viewing experience tailored to Minaram Cup's pitch-dark editorial theme (`#080808`, `#111111`, `#B3121B`).
+- **Two-Column Broadcast Layout:** Responsive 16:9 official YouTube video player on the left, synchronized official YouTube live chat on the right.
+- **Dynamic LIVE Indicator:** Navigation automatically highlights the LIVE item with an animated pulsating red badge whenever a live broadcast is active.
+- **Administrator Live Stream Settings:** Control panel accessible from both the Desktop Tournament Manager (`Live Stream` view) and Web Admin Portal (`/admin` -> `LIVE STREAM SETTINGS`). Provides stream URL validation, preview, publishing, ending, and hiding capabilities with instant SSE synchronization.
+- **YouTube Chat Domain Policy:** Uses runtime hostname detection (`window.location.hostname`) to automatically bind YouTube's `embed_domain` to production environments. In local development or restricted environments, displays a graceful `CHAT UNAVAILABLE` card with direct links to participate on YouTube.
+
 ---
 
 ## 🚀 How to Launch the Application

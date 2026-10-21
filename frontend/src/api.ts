@@ -7,6 +7,8 @@ import {
   PublicBracket,
   AssetManifest,
   TopScorer,
+  PublicLiveStream,
+  AdminLiveStreamConfig,
 } from './types';
 import { makeWhatsAppLink } from './utils/whatsapp';
 
@@ -622,6 +624,76 @@ export const api = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+    });
+    return handleResponse(res);
+  },
+
+  async getLiveStream(): Promise<PublicLiveStream> {
+    const res = await fetch(`${API_BASE}/public/live-stream`);
+    return handleResponse<PublicLiveStream>(res);
+  },
+
+  async adminGetLiveStream(token: string): Promise<AdminLiveStreamConfig> {
+    const res = await fetch(`${API_BASE}/admin/live-stream`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return handleResponse<AdminLiveStreamConfig>(res);
+  },
+
+  async adminUpdateLiveStream(payload: Partial<AdminLiveStreamConfig>, token: string): Promise<AdminLiveStreamConfig> {
+    const res = await fetch(`${API_BASE}/admin/live-stream`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    return handleResponse<AdminLiveStreamConfig>(res);
+  },
+
+  async adminPublishLiveStream(payload: Partial<AdminLiveStreamConfig> | undefined, token: string): Promise<AdminLiveStreamConfig> {
+    const res = await fetch(`${API_BASE}/admin/live-stream/publish`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload || {}),
+    });
+    return handleResponse<AdminLiveStreamConfig>(res);
+  },
+
+  async adminEndLiveStream(token: string): Promise<AdminLiveStreamConfig> {
+    const res = await fetch(`${API_BASE}/admin/live-stream/end`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return handleResponse<AdminLiveStreamConfig>(res);
+  },
+
+  async adminHideLiveStream(token: string): Promise<AdminLiveStreamConfig> {
+    const res = await fetch(`${API_BASE}/admin/live-stream/hide`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return handleResponse<AdminLiveStreamConfig>(res);
+  },
+
+  async adminPreviewLiveStream(youtube_url: string, token: string): Promise<{ valid: boolean; video_id: string; embed_url: string; watch_url: string }> {
+    const res = await fetch(`${API_BASE}/admin/live-stream/preview`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ youtube_url }),
     });
     return handleResponse(res);
   },

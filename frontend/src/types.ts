@@ -177,3 +177,34 @@ export interface TopScorer {
   goals_per_match: number;
 }
 
+export type LiveStreamStatus = 'Scheduled' | 'Live' | 'Ended' | 'Hidden' | 'None';
+
+export interface PublicLiveStream {
+  is_active: boolean;
+  status: LiveStreamStatus;
+  title: string;
+  stage?: string;
+  announcement?: string;
+  scheduled_start_time?: string;
+  video_id?: string | null;
+  embed_url?: string | null;
+  chat_url?: string | null;
+  watch_url?: string | null;
+}
+
+export interface AdminLiveStreamConfig {
+  youtube_url: string;
+  video_id: string;
+  title: string;
+  stage: string;
+  status: LiveStreamStatus;
+  announcement: string;
+  scheduled_start_time: string;
+  is_published: boolean;
+  updated_at?: string;
+  updated_by?: string;
+  embed_url?: string;
+  watch_url?: string;
+}
+
+

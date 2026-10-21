@@ -460,6 +460,24 @@ class Database:
             """)
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_admin_username ON admin_users(username);")
 
+            # 15. Live Stream Configuration Table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS live_stream_config (
+                id INTEGER PRIMARY KEY CHECK (id = 1),
+                youtube_url TEXT NOT NULL DEFAULT '',
+                video_id TEXT NOT NULL DEFAULT '',
+                title TEXT NOT NULL DEFAULT 'MINARAM CUP — LIVE BROADCAST',
+                stage TEXT NOT NULL DEFAULT '',
+                status TEXT NOT NULL DEFAULT 'Scheduled',
+                announcement TEXT NOT NULL DEFAULT '',
+                scheduled_start_time TEXT NOT NULL DEFAULT '',
+                is_published INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                updated_by TEXT DEFAULT 'admin'
+            );
+            """)
+
             # Seed default administrators
             now_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             try:
@@ -492,6 +510,15 @@ class Database:
             }
             for k, v in default_settings.items():
                 cursor.execute("INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?);", (k, v))
+
+            # Default Live Stream Configuration
+            cursor.execute("""
+                INSERT OR IGNORE INTO live_stream_config (
+                    id, youtube_url, video_id, title, stage, status, announcement, scheduled_start_time, is_published, created_at, updated_at, updated_by
+                ) VALUES (
+                    1, '', '', 'MINARAM CUP — LIVE BROADCAST', '', 'Scheduled', '', '', 0, ?, ?, 'system'
+                );
+            """, (now_ts, now_ts))
 
         logger.info(f"Database initialized successfully at {self.db_path}")
 

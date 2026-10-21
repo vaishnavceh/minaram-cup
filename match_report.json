@@ -1,0 +1,282 @@
+{
+  "source": "SQLite Database (minaram_cup.db)",
+  "total_matches": 113,
+  "completed_matches": 58,
+  "not_completed_matches": 55,
+  "completion_percentage": 51.3,
+  "status_breakdown": {
+    "Completed": 58,
+    "Scheduled": 55
+  },
+  "stage_breakdown": {
+    "Group Stage": {
+      "total": 84,
+      "completed": 58,
+      "pending": 26,
+      "pct": 69.04761904761905
+    },
+    "Preliminary Round": {
+      "total": 14,
+      "completed": 0,
+      "pending": 14,
+      "pct": 0.0
+    },
+    "Round of 16": {
+      "total": 8,
+      "completed": 0,
+      "pending": 8,
+      "pct": 0.0
+    },
+    "Quarter-Final": {
+      "total": 4,
+      "completed": 0,
+      "pending": 4,
+      "pct": 0.0
+    },
+    "Semi-Final": {
+      "total": 2,
+      "completed": 0,
+      "pending": 2,
+      "pct": 0.0
+    },
+    "Final": {
+      "total": 1,
+      "completed": 0,
+      "pending": 1,
+      "pct": 0.0
+    }
+  },
+  "group_breakdown": {
+    "Group A": {
+      "total": 6,
+      "completed": 6,
+      "pending": 0,
+      "pct": 100.0,
+      "all_done": true
+    },
+    "Group B": {
+      "total": 6,
+      "completed": 5,
+      "pending": 1,
+      "pct": 83.33333333333334,
+      "all_done": false
+    },
+    "Group C": {
+      "total": 6,
+      "completed": 3,
+      "pending": 3,
+      "pct": 50.0,
+      "all_done": false
+    },
+    "Group D": {
+      "total": 6,
+      "completed": 5,
+      "pending": 1,
+      "pct": 83.33333333333334,
+      "all_done": false
+    },
+    "Group E": {
+      "total": 6,
+      "completed": 4,
+      "pending": 2,
+      "pct": 66.66666666666666,
+      "all_done": false
+    },
+    "Group F": {
+      "total": 6,
+      "completed": 5,
+      "pending": 1,
+      "pct": 83.33333333333334,
+      "all_done": false
+    },
+    "Group G": {
+      "total": 6,
+      "completed": 6,
+      "pending": 0,
+      "pct": 100.0,
+      "all_done": true
+    },
+    "Group H": {
+      "total": 6,
+      "completed": 5,
+      "pending": 1,
+      "pct": 83.33333333333334,
+      "all_done": false
+    },
+    "Group I": {
+      "total": 6,
+      "completed": 3,
+      "pending": 3,
+      "pct": 50.0,
+      "all_done": false
+    },
+    "Group J": {
+      "total": 6,
+      "completed": 2,
+      "pending": 4,
+      "pct": 33.33333333333333,
+      "all_done": false
+    },
+    "Group K": {
+      "total": 6,
+      "completed": 3,
+      "pending": 3,
+      "pct": 50.0,
+      "all_done": false
+    },
+    "Group L": {
+      "total": 6,
+      "completed": 3,
+      "pending": 3,
+      "pct": 50.0,
+      "all_done": false
+    },
+    "Group M": {
+      "total": 6,
+      "completed": 3,
+      "pending": 3,
+      "pct": 50.0,
+      "all_done": false
+    },
+    "Group N": {
+      "total": 3,
+      "completed": 2,
+      "pending": 1,
+      "pct": 66.66666666666666,
+      "all_done": false
+    },
+    "Group O": {
+      "total": 3,
+      "completed": 3,
+      "pending": 0,
+      "pct": 100.0,
+      "all_done": true
+    }
+  },
+  "groups_total": 15,
+  "groups_completed_count": 3,
+  "goals": {
+    "total_goals": 358,
+    "average_goals_per_match": 6.17,
+    "home_wins": 18,
+    "away_wins": 31,
+    "draws": 9,
+    "penalty_shootouts": 0,
+    "clean_sheets": 10,
+    "highest_scoring_match": {
+      "id": 664,
+      "match_number": 24,
+      "stage": "Group Stage",
+      "group_name": "Group L",
+      "round_number": 1,
+      "bracket_slot": "",
+      "home_team": "Zeltic Fc",
+      "away_team": "SANTOS F",
+      "winner_team": "SANTOS F",
+      "home_score": 3,
+      "away_score": 10,
+      "home_penalty": null,
+      "away_penalty": null,
+      "status": "Completed",
+      "scheduled_date": "2026-10-14",
+      "scheduled_end_date": "",
+      "scheduled_time": "Flexible (MW Window)",
+      "venue": "Online / Mobile Lobby",
+      "completed_at": "2026-10-17 18:34:22",
+      "notes": "",
+      "is_completed": true
+    },
+    "biggest_blowout": {
+      "id": 654,
+      "match_number": 14,
+      "stage": "Group Stage",
+      "group_name": "Group G",
+      "round_number": 1,
+      "bracket_slot": "",
+      "home_team": "Rossoneri",
+      "away_team": "FC porto",
+      "winner_team": "Rossoneri",
+      "home_score": 8,
+      "away_score": 1,
+      "home_penalty": null,
+      "away_penalty": null,
+      "status": "Completed",
+      "scheduled_date": "2026-10-14",
+      "scheduled_end_date": "",
+      "scheduled_time": "Flexible (MW Window)",
+      "venue": "Online / Mobile Lobby",
+      "completed_at": "2026-10-17 23:16:00",
+      "notes": "",
+      "is_completed": true
+    }
+  },
+  "top_scorers": [
+    {
+      "team": "Rossoneri",
+      "goals": 21,
+      "matches": 3,
+      "avg": 7.0
+    },
+    {
+      "team": "astagfirullah",
+      "goals": 15,
+      "matches": 3,
+      "avg": 5.0
+    },
+    {
+      "team": "Phantom Troupe",
+      "goals": 15,
+      "matches": 3,
+      "avg": 5.0
+    },
+    {
+      "team": "Imperium",
+      "goals": 14,
+      "matches": 3,
+      "avg": 4.67
+    },
+    {
+      "team": "Fury FC",
+      "goals": 13,
+      "matches": 3,
+      "avg": 4.33
+    }
+  ],
+  "best_defense": [
+    {
+      "team": "kappiltheetam",
+      "conceded": 0,
+      "matches": 1,
+      "avg": 0.0,
+      "clean_sheets": 1
+    },
+    {
+      "team": "Madridistas",
+      "conceded": 0,
+      "matches": 1,
+      "avg": 0.0,
+      "clean_sheets": 1
+    },
+    {
+      "team": "Rossoneri",
+      "conceded": 1,
+      "matches": 3,
+      "avg": 0.33,
+      "clean_sheets": 2
+    },
+    {
+      "team": "FC Flickball",
+      "conceded": 1,
+      "matches": 2,
+      "avg": 0.5,
+      "clean_sheets": 1
+    },
+    {
+      "team": "Las Palmas FC",
+      "conceded": 1,
+      "matches": 2,
+      "avg": 0.5,
+      "clean_sheets": 1
+    }
+  ]
+}

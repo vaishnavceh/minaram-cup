@@ -1,0 +1,114 @@
+﻿match_number,stage,group_name,home_team,away_team,home_score,away_score,status,winner_team,scheduled_date,venue
+1,Group Stage,Group A,Kudil Boiss,Red evils,1,3,Completed,Red evils,2026-10-14,Online / Mobile Lobby
+1,Preliminary Round,,Fury FC,SANTOS F,,,Scheduled,,2026-10-24,Minaram Pitch 1
+2,Group Stage,Group A,MIDHUN,Los Blancos,4,2,Completed,MIDHUN,2026-10-14,Online / Mobile Lobby
+2,Preliminary Round,,Los Blancos,galacticos,,,Scheduled,,2026-10-24,Minaram Pitch 1
+3,Group Stage,Group B,FC kandam,chicken fry,3,0,Completed,FC kandam,2026-10-14,Online / Mobile Lobby
+3,Preliminary Round,,Phantom Troupe,MIDHUN,,,Scheduled,,2026-10-24,Minaram Pitch 1
+4,Group Stage,Group B,Suii,Imperium,1,4,Completed,Imperium,2026-10-14,Online / Mobile Lobby
+4,Preliminary Round,,Honoured one,scene piller,,,Scheduled,,2026-10-24,Minaram Pitch 1
+5,Group Stage,Group C,Netti Ketti NK,Ya Illaahi,3,5,Completed,Ya Illaahi,2026-10-14,Online / Mobile Lobby
+5,Preliminary Round,,La magia de Neymar,FC kandam,,,Scheduled,,2026-10-24,Minaram Pitch 1
+6,Group Stage,Group C,VIP SQUAD,Salsamukk,2,4,Completed,Salsamukk,2026-10-14,Online / Mobile Lobby
+6,Preliminary Round,,astagfirullah,Napoli,,,Scheduled,,2026-10-24,Minaram Pitch 1
+7,Group Stage,Group D,HORKHAX,tst,5,4,Completed,HORKHAX,2026-10-14,Online / Mobile Lobby
+7,Preliminary Round,,Pappanum pillerum,Broke FC,,,Scheduled,,2026-10-24,Minaram Pitch 1
+8,Group Stage,Group D,Napoli,Honoured one,2,2,Completed,,2026-10-14,Online / Mobile Lobby
+8,Preliminary Round,,Atalanta,Random guy,,,Scheduled,,2026-10-24,Minaram Pitch 1
+9,Group Stage,Group E,Broke FC,Spark FC,5,1,Completed,Broke FC,2026-10-14,Online / Mobile Lobby
+9,Preliminary Round,,Ya Illaahi,la masia,,,Scheduled,,2026-10-24,Minaram Pitch 1
+10,Group Stage,Group E,SASC SANTHI,Fury FC,0,6,Completed,Fury FC,2026-10-14,Online / Mobile Lobby
+10,Preliminary Round,,Madridistas,Salsamukk,,,Scheduled,,2026-10-24,Minaram Pitch 1
+11,Group Stage,Group F,IPB,galacticos,5,5,Completed,,2026-10-14,Online / Mobile Lobby
+11,Preliminary Round,,FC Flickball,Cannanore FC,,,Scheduled,,2026-10-24,Minaram Pitch 1
+12,Group Stage,Group F,astagfirullah,LoL,4,4,Completed,,2026-10-14,Online / Mobile Lobby
+12,Preliminary Round,,hahaha,Aadu LEO,,,Scheduled,,2026-10-24,Minaram Pitch 1
+13,Group Stage,Group G,ALN,scene piller,5,5,Completed,,2026-10-14,Online / Mobile Lobby
+13,Preliminary Round,,Kandamkali,kappiltheetam,,,Scheduled,,2026-10-24,Minaram Pitch 1
+14,Group Stage,Group G,Rossoneri,FC porto,8,1,Completed,Rossoneri,2026-10-14,Online / Mobile Lobby
+14,Preliminary Round,,Las Palmas FC,Fifa Manjeri,,,Scheduled,,2026-10-24,Minaram Pitch 1
+15,Group Stage,Group H,Aadu LEO,Phantom Troupe,0,4,Completed,Phantom Troupe,2026-10-14,Online / Mobile Lobby
+15,Round of 16,,Rossoneri,TBD,,,Scheduled,,2026-10-26,Minaram Pitch 1
+16,Group Stage,Group H,MOTTA PUFFS,Hala Madrid,5,3,Completed,MOTTA PUFFS,2026-10-14,Online / Mobile Lobby
+16,Round of 16,,TBD,TBD,,,Scheduled,,2026-10-26,Minaram Pitch 1
+17,Group Stage,Group I,Random guy,hahaha,3,4,Completed,hahaha,2026-10-14,Online / Mobile Lobby
+17,Round of 16,,TBD,TBD,,,Scheduled,,2026-10-26,Minaram Pitch 1
+18,Group Stage,Group I,el fenomeno,abc,1,2,Completed,abc,2026-10-14,Online / Mobile Lobby
+18,Round of 16,,TBD,TBD,,,Scheduled,,2026-10-26,Minaram Pitch 1
+19,Group Stage,Group J,FARISH,kappiltheetam,0,2,Completed,kappiltheetam,2026-10-14,Online / Mobile Lobby
+19,Round of 16,,Imperium,TBD,,,Scheduled,,2026-10-26,Minaram Pitch 1
+20,Group Stage,Group J,Madridistas,La roja,4,0,Completed,Madridistas,2026-10-14,Online / Mobile Lobby
+20,Round of 16,,TBD,TBD,,,Scheduled,,2026-10-26,Minaram Pitch 1
+21,Group Stage,Group K,1C09,Pappanum pillerum,1,4,Completed,Pappanum pillerum,2026-10-14,Online / Mobile Lobby
+21,Round of 16,,TBD,TBD,,,Scheduled,,2026-10-26,Minaram Pitch 1
+22,Group Stage,Group K,LOSENDES,Cannanore FC,1,3,Completed,Cannanore FC,2026-10-14,Online / Mobile Lobby
+22,Round of 16,,TBD,TBD,,,Scheduled,,2026-10-26,Minaram Pitch 1
+23,Group Stage,Group L,La magia de Neymar,zinta,4,2,Completed,La magia de Neymar,2026-10-14,Online / Mobile Lobby
+23,Quarter-Final,,TBD,TBD,,,Scheduled,,2026-10-28,Minaram Stadium
+24,Group Stage,Group L,Zeltic Fc,SANTOS F,3,10,Completed,SANTOS F,2026-10-14,Online / Mobile Lobby
+24,Quarter-Final,,TBD,TBD,,,Scheduled,,2026-10-28,Minaram Stadium
+25,Group Stage,Group M,Brighton FC,la masia,2,5,Completed,la masia,2026-10-14,Online / Mobile Lobby
+25,Quarter-Final,,TBD,TBD,,,Scheduled,,2026-10-28,Minaram Stadium
+26,Group Stage,Group M,Fc kama,FC Flickball,1,1,Completed,,2026-10-14,Online / Mobile Lobby
+26,Quarter-Final,,TBD,TBD,,,Scheduled,,2026-10-28,Minaram Stadium
+27,Group Stage,Group N,Leverkusen,Las Palmas FC,0,3,Completed,Las Palmas FC,2026-10-14,Online / Mobile Lobby
+27,Semi-Final,,TBD,TBD,,,Scheduled,,2026-10-29,Minaram Stadium
+28,Group Stage,Group O,Visca Barca,Kandamkali,3,3,Completed,,2026-10-14,Online / Mobile Lobby
+28,Semi-Final,,TBD,TBD,,,Scheduled,,2026-10-29,Minaram Stadium
+29,Group Stage,Group A,MIDHUN,Kudil Boiss,3,0,Completed,MIDHUN,2026-10-18,Online / Mobile Lobby
+29,Final,,TBD,TBD,,,Scheduled,,2026-10-31,Minaram Grand Arena
+30,Group Stage,Group A,Red evils,Los Blancos,2,4,Completed,Los Blancos,2026-10-18,Online / Mobile Lobby
+31,Group Stage,Group B,Suii,FC kandam,2,3,Completed,FC kandam,2026-10-18,Online / Mobile Lobby
+32,Group Stage,Group B,chicken fry,Imperium,2,4,Completed,Imperium,2026-10-18,Online / Mobile Lobby
+33,Group Stage,Group C,VIP SQUAD,Netti Ketti NK,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+34,Group Stage,Group C,Ya Illaahi,Salsamukk,3,4,Completed,Salsamukk,2026-10-18,Online / Mobile Lobby
+35,Group Stage,Group D,Napoli,HORKHAX,5,3,Completed,Napoli,2026-10-18,Online / Mobile Lobby
+36,Group Stage,Group D,tst,Honoured one,1,4,Completed,Honoured one,2026-10-18,Online / Mobile Lobby
+37,Group Stage,Group E,SASC SANTHI,Broke FC,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+38,Group Stage,Group E,Spark FC,Fury FC,1,2,Completed,Fury FC,2026-10-18,Online / Mobile Lobby
+39,Group Stage,Group F,astagfirullah,IPB,5,4,Completed,astagfirullah,2026-10-18,Online / Mobile Lobby
+40,Group Stage,Group F,galacticos,LoL,4,3,Completed,galacticos,2026-10-18,Online / Mobile Lobby
+41,Group Stage,Group G,Rossoneri,ALN,6,0,Completed,Rossoneri,2026-10-18,Online / Mobile Lobby
+42,Group Stage,Group G,scene piller,FC porto,4,2,Completed,scene piller,2026-10-18,Online / Mobile Lobby
+43,Group Stage,Group H,MOTTA PUFFS,Aadu LEO,1,3,Completed,Aadu LEO,2026-10-18,Online / Mobile Lobby
+44,Group Stage,Group H,Phantom Troupe,Hala Madrid,4,5,Completed,Hala Madrid,2026-10-18,Online / Mobile Lobby
+45,Group Stage,Group I,el fenomeno,Random guy,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+46,Group Stage,Group I,hahaha,abc,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+47,Group Stage,Group J,Madridistas,FARISH,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+48,Group Stage,Group J,kappiltheetam,La roja,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+49,Group Stage,Group K,LOSENDES,1C09,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+50,Group Stage,Group K,Pappanum pillerum,Cannanore FC,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+51,Group Stage,Group L,Zeltic Fc,La magia de Neymar,6,6,Completed,,2026-10-18,Online / Mobile Lobby
+52,Group Stage,Group L,zinta,SANTOS F,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+53,Group Stage,Group M,Fc kama,Brighton FC,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+54,Group Stage,Group M,la masia,FC Flickball,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+55,Group Stage,Group N,Leverkusen,Fifa Manjeri,,,Scheduled,,2026-10-18,Online / Mobile Lobby
+56,Group Stage,Group O,Visca Barca,Atalanta,2,5,Completed,Atalanta,2026-10-18,Online / Mobile Lobby
+57,Group Stage,Group A,Kudil Boiss,Los Blancos,1,6,Completed,Los Blancos,2026-10-22,Online / Mobile Lobby
+58,Group Stage,Group A,Red evils,MIDHUN,4,2,Completed,Red evils,2026-10-22,Online / Mobile Lobby
+59,Group Stage,Group B,FC kandam,Imperium,2,6,Completed,Imperium,2026-10-22,Online / Mobile Lobby
+60,Group Stage,Group B,chicken fry,Suii,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+61,Group Stage,Group C,Netti Ketti NK,Salsamukk,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+62,Group Stage,Group C,Ya Illaahi,VIP SQUAD,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+63,Group Stage,Group D,HORKHAX,Honoured one,4,5,Completed,Honoured one,2026-10-22,Online / Mobile Lobby
+64,Group Stage,Group D,tst,Napoli,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+65,Group Stage,Group E,Broke FC,Fury FC,2,5,Completed,Fury FC,2026-10-22,Online / Mobile Lobby
+66,Group Stage,Group E,Spark FC,SASC SANTHI,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+67,Group Stage,Group F,IPB,LoL,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+68,Group Stage,Group F,galacticos,astagfirullah,3,6,Completed,astagfirullah,2026-10-22,Online / Mobile Lobby
+69,Group Stage,Group G,ALN,FC porto,1,1,Completed,,2026-10-22,Online / Mobile Lobby
+70,Group Stage,Group G,scene piller,Rossoneri,0,7,Completed,Rossoneri,2026-10-22,Online / Mobile Lobby
+71,Group Stage,Group H,Aadu LEO,Hala Madrid,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+72,Group Stage,Group H,Phantom Troupe,MOTTA PUFFS,7,1,Completed,Phantom Troupe,2026-10-22,Online / Mobile Lobby
+73,Group Stage,Group I,Random guy,abc,4,3,Completed,Random guy,2026-10-22,Online / Mobile Lobby
+74,Group Stage,Group I,hahaha,el fenomeno,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+75,Group Stage,Group J,FARISH,La roja,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+76,Group Stage,Group J,kappiltheetam,Madridistas,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+77,Group Stage,Group K,1C09,Cannanore FC,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+78,Group Stage,Group K,Pappanum pillerum,LOSENDES,4,2,Completed,Pappanum pillerum,2026-10-22,Online / Mobile Lobby
+79,Group Stage,Group L,La magia de Neymar,SANTOS F,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+80,Group Stage,Group L,zinta,Zeltic Fc,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+81,Group Stage,Group M,Brighton FC,FC Flickball,0,3,Completed,FC Flickball,2026-10-22,Online / Mobile Lobby
+82,Group Stage,Group M,la masia,Fc kama,,,Scheduled,,2026-10-22,Online / Mobile Lobby
+83,Group Stage,Group N,Fifa Manjeri,Las Palmas FC,1,5,Completed,Las Palmas FC,2026-10-22,Online / Mobile Lobby
+84,Group Stage,Group O,Atalanta,Kandamkali,1,1,Completed,,2026-10-22,Online / Mobile Lobby

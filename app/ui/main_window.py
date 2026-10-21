@@ -23,6 +23,7 @@ from app.ui.standings import StandingsView
 from app.ui.knockout import KnockoutView
 from app.ui.reports import ReportsView
 from app.ui.settings import SettingsView
+from app.ui.live_stream import LiveStreamView
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("green")
@@ -135,6 +136,7 @@ class MainWindow(ctk.CTk):
             ("Results", "⚽  Results"),
             ("Points Table", "🏆  Points Table"),
             ("Knockout Stage", "⚔️  Knockout Stage"),
+            ("Live Stream", "📡  Live Stream"),
             ("Reports & Exports", "📊  Reports & Exports"),
             ("Settings", "⚙️  Settings"),
         ]
@@ -243,6 +245,7 @@ class MainWindow(ctk.CTk):
             "Results": lambda: ResultsView(self.workspace, self.db),
             "Points Table": lambda: StandingsView(self.workspace, self.db),
             "Knockout Stage": lambda: KnockoutView(self.workspace, self.db, self.show_section),
+            "Live Stream": lambda: LiveStreamView(self.workspace, self.db),
             "Reports & Exports": lambda: ReportsView(self.workspace, self.db),
             "Settings": lambda: SettingsView(self.workspace, self.db, self.on_settings_updated),
         }

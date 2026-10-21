@@ -20,6 +20,7 @@ from app.knockout_manager import KnockoutManager
 from app.results_manager import ResultsManager
 from app.backup_service import BackupService
 from app.standings import StandingsCalculator
+from app.live_stream_service import LiveStreamService, extract_youtube_video_id, build_embed_url
 from backend.auth import get_current_admin, create_access_token, authenticate_admin, ADMIN_USERNAME, ADMIN_PASSWORD
 
 router = APIRouter(prefix="/api/admin", tags=["Admin Operations"])
@@ -33,6 +34,7 @@ ko_mgr = KnockoutManager(db)
 res_mgr = ResultsManager(db)
 stand_calc = StandingsCalculator(db)
 backup_svc = BackupService(db)
+live_stream_svc = LiveStreamService(db)
 
 
 class LoginRequest(BaseModel):
@@ -130,6 +132,29 @@ class KnockoutRuleUpdateRequest(BaseModel):
 
 class ThirdPlaceToggleRequest(BaseModel):
     enabled: bool
+
+
+class LiveStreamUpdateRequest(BaseModel):
+    youtube_url: str
+    title: str
+    stage: Optional[str] = ""
+    status: Optional[str] = "Scheduled"
+    announcement: Optional[str] = ""
+    scheduled_start_time: Optional[str] = ""
+    is_published: Optional[bool] = None
+
+
+class LiveStreamPublishRequest(BaseModel):
+    youtube_url: Optional[str] = None
+    title: Optional[str] = None
+    stage: Optional[str] = None
+    status: Optional[str] = "Live"
+    announcement: Optional[str] = None
+    scheduled_start_time: Optional[str] = None
+
+
+class LiveStreamPreviewRequest(BaseModel):
+    youtube_url: str
 
 
 # ----------------------------------------------------
@@ -804,4 +829,104 @@ def sync_draw_to_desktop_admin(admin: dict = Depends(get_current_admin)):
         return res
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+# ----------------------------------------------------
+# Live Stream Administration Endpoints
+# ----------------------------------------------------
+@router.get("/live-stream")
+def get_live_stream_admin(admin: dict = Depends(get_current_admin)):
+    """Retrieve full live stream configuration for administrators."""
+    return live_stream_svc.get_admin_config()
+
+
+@router.put("/live-stream")
+def update_live_stream_admin(
+    payload: LiveStreamUpdateRequest,
+    admin: dict = Depends(get_current_admin)
+):
+    """
+    Validate and save live stream settings to database.
+    Broadcasts state update to public website if published.
+    """
+    try:
+        updated = live_stream_svc.save_config(
+            youtube_url=payload.youtube_url,
+            title=payload.title,
+            stage=payload.stage or "",
+            status=payload.status or "Scheduled",
+            announcement=payload.announcement or "",
+            scheduled_start_time=payload.scheduled_start_time or "",
+            is_published=payload.is_published,
+            admin_username=admin["sub"],
+            broadcast_update=True
+        )
+        return updated
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/live-stream/publish")
+def publish_live_stream_admin(
+    payload: Optional[LiveStreamPublishRequest] = None,
+    admin: dict = Depends(get_current_admin)
+):
+    """Publish the stream configuration to the public website and notify connected clients."""
+    try:
+        p = payload or LiveStreamPublishRequest()
+        res = live_stream_svc.publish(
+            youtube_url=p.youtube_url,
+            title=p.title,
+            stage=p.stage,
+            status=p.status or "Live",
+            announcement=p.announcement,
+            scheduled_start_time=p.scheduled_start_time,
+            admin_username=admin["sub"]
+        )
+        return res
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/live-stream/end")
+def end_live_stream_admin(admin: dict = Depends(get_current_admin)):
+    """End the current broadcast and update public page state."""
+    try:
+        return live_stream_svc.end_broadcast(admin_username=admin["sub"])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/live-stream/hide")
+def hide_live_stream_admin(admin: dict = Depends(get_current_admin)):
+    """Hide the live broadcast from the public page."""
+    try:
+        return live_stream_svc.hide_broadcast(admin_username=admin["sub"])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/live-stream/preview")
+def preview_live_stream_admin(
+    payload: LiveStreamPreviewRequest,
+    admin: dict = Depends(get_current_admin)
+):
+    """Validate a YouTube URL and generate embed preview data without saving."""
+    video_id = extract_youtube_video_id(payload.youtube_url)
+    if not video_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid YouTube URL. Please provide a valid youtube.com or youtu.be livestream link."
+        )
+    return {
+        "valid": True,
+        "video_id": video_id,
+        "embed_url": build_embed_url(video_id),
+        "watch_url": f"https://www.youtube.com/watch?v={video_id}"
+    }
+
 

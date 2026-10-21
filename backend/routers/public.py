@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 
 from app.database import Database
 from app.team_manager import TeamManager
@@ -18,6 +18,7 @@ from app.fixture_generator import FixtureGenerator
 from app.standings import StandingsCalculator
 from app.knockout_manager import KnockoutManager
 from app.number_to_whatsapp_link import make_whatsapp_link
+from app.live_stream_service import LiveStreamService
 
 router = APIRouter(prefix="/api/public", tags=["Public Tournament Data"])
 
@@ -35,6 +36,7 @@ tourn_mgr = TournamentManager(db)
 fix_gen = FixtureGenerator(db)
 stand_calc = StandingsCalculator(db)
 ko_mgr = KnockoutManager(db)
+live_stream_svc = LiveStreamService(db)
 
 MANIFEST_FILE = Path(__file__).resolve().parent.parent.parent / "tools" / "asset_manifest.json"
 
@@ -431,4 +433,15 @@ def get_public_top_scorers(limit: int = 15) -> List[Dict[str, Any]]:
             "goals_per_match": ratio
         })
     return res
+
+
+@router.get("/live-stream")
+def get_public_live_stream(request: Request) -> Dict[str, Any]:
+    """
+    Retrieve active live stream configuration and verified YouTube embed data.
+    Sanitized for public viewing: Never exposes unpublished, hidden, or administrative details.
+    """
+    host = request.headers.get("host", "")
+    return live_stream_svc.get_public_config(host_domain=host)
+
 

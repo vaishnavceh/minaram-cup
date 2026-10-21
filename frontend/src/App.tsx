@@ -12,6 +12,7 @@ import { TeamDetailPage } from './pages/TeamDetailPage';
 import { BracketPage } from './pages/BracketPage';
 import { RulesPage } from './pages/RulesPage';
 import { AdminPage } from './pages/AdminPage';
+import { LivePage } from './pages/LivePage';
 import { AudioPlayer } from './components/AudioPlayer';
 import { useLiveUpdates } from './hooks/useLiveUpdates';
 import { Radio } from 'lucide-react';
@@ -35,6 +36,10 @@ export const App: React.FC = () => {
     } else if (evType === 'knockout_updated' || evType === 'ceremonial_draw_applied' || evType === 'knockout_fixtures_cleared') {
       const action = evt.data?.action || 'updated';
       setLiveToast(`KNOCKOUT UPDATE: Bracket ${String(action).replace(/_/g, ' ')}.`);
+      setTimeout(() => setLiveToast(null), 4000);
+    } else if (evType === 'live_stream_updated') {
+      const st = evt.data?.status || 'updated';
+      setLiveToast(`LIVESTREAM UPDATE: Broadcast is now ${st.toUpperCase()}.`);
       setTimeout(() => setLiveToast(null), 4000);
     }
   });
@@ -63,6 +68,7 @@ export const App: React.FC = () => {
               <Route path="/teams/:id" element={<TeamDetailPage />} />
               <Route path="/bracket" element={<BracketPage />} />
               <Route path="/knockout" element={<BracketPage />} />
+              <Route path="/live" element={<LivePage />} />
               <Route path="/rules" element={<RulesPage />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
