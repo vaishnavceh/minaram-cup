@@ -1,15 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { api } from '../api';
+import { api, isTokenExpired } from '../api';
 import { PublicMatch } from '../types';
 import { Lock, LogOut, CheckCircle, RefreshCw, AlertCircle, Trophy, Save, Shield, Tv } from 'lucide-react';
 import { AdminKnockoutManager } from '../components/AdminKnockoutManager';
 import { AdminLiveStreamManager } from '../components/AdminLiveStreamManager';
 
 export const AdminPage: React.FC = () => {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('minaram_admin_token'));
+  const [token, setToken] = useState<string | null>(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('minaram_admin_token') : null;
+    if (saved && isTokenExpired(saved)) {
+      localStorage.removeItem('minaram_admin_token');
+      return null;
+    }
+    return saved;
+  });
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
+  const [loginError, setLoginError] = useState(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('minaram_admin_token') : null;
+    if (saved && isTokenExpired(saved)) {
+      return 'Your previous admin session has expired. Please log in again.';
+    }
+    return '';
+  });
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'knockout' | 'matches' | 'livestream'>('knockout');
 
@@ -121,6 +134,18 @@ export const AdminPage: React.FC = () => {
     setNotes('Rule 3: Both teams failed to play within given deadline (0–0 recorded, 1 point awarded to each team)');
   };
 
+  const checkAuthError = (err: any): boolean => {
+    const msg = err?.message || String(err);
+    if (msg.includes('401') || msg.toLowerCase().includes('token') || msg.toLowerCase().includes('expired')) {
+      localStorage.removeItem('minaram_admin_token');
+      localStorage.removeItem('admin_token');
+      setToken(null);
+      setLoginError('Your admin session has expired. Please log in again.');
+      return true;
+    }
+    return false;
+  };
+
   const handleRecordResult = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token || !selectedMatchId) return;
@@ -143,7 +168,9 @@ export const AdminPage: React.FC = () => {
       setActionSuccess(`Match #${selectedMatchId} result recorded successfully! Broadcast sent to live feed.`);
       await loadMatches();
     } catch (err: any) {
-      setActionError(err.message || 'Failed to record result');
+      if (!checkAuthError(err)) {
+        setActionError(err.message || 'Failed to record result');
+      }
     } finally {
       setLoading(false);
     }
@@ -160,7 +187,9 @@ export const AdminPage: React.FC = () => {
       setActionSuccess(`Match #${selectedMatchId} result reset to SCHEDULED.`);
       await loadMatches();
     } catch (err: any) {
-      setActionError(err.message || 'Failed to reset match');
+      if (!checkAuthError(err)) {
+        setActionError(err.message || 'Failed to reset match');
+      }
     } finally {
       setLoading(false);
     }
@@ -177,7 +206,9 @@ export const AdminPage: React.FC = () => {
       setActionSuccess(res.message || 'Tournament stage advanced successfully!');
       await loadMatches();
     } catch (err: any) {
-      setActionError(err.message || 'Failed to advance stage');
+      if (!checkAuthError(err)) {
+        setActionError(err.message || 'Failed to advance stage');
+      }
     } finally {
       setLoading(false);
     }

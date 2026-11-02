@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { api } from '../api';
+import { api, isTokenExpired } from '../api';
 import { PublicBracket, DirectQualifier, KnockoutConflict } from '../types';
 import { BracketTree } from '../components/BracketTree';
 import { UefaKnockoutDraw } from '../components/UefaKnockoutDraw';
@@ -221,8 +221,8 @@ export const BracketPage: React.FC = () => {
         <div className="mb-10 animate-fade-in">
           <UefaKnockoutDraw
             bracket={bracket}
-            token={typeof window !== 'undefined' ? localStorage.getItem('minaram_admin_token') || localStorage.getItem('admin_token') || '' : ''}
-            isAdmin={typeof window !== 'undefined' && Boolean(localStorage.getItem('minaram_admin_token') || localStorage.getItem('admin_token'))}
+            token={typeof window !== 'undefined' ? (isTokenExpired(localStorage.getItem('minaram_admin_token') || localStorage.getItem('admin_token')) ? '' : (localStorage.getItem('minaram_admin_token') || localStorage.getItem('admin_token') || '')) : ''}
+            isAdmin={typeof window !== 'undefined' && !isTokenExpired(localStorage.getItem('minaram_admin_token') || localStorage.getItem('admin_token'))}
             allTeams={allTeams}
             onRefreshBracket={() => loadData(true)}
           />

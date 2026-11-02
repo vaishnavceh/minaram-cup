@@ -15,6 +15,26 @@ import { makeWhatsAppLink } from './utils/whatsapp';
 const RAW_BASE = (import.meta.env.VITE_API_URL as string) || '';
 const API_BASE = RAW_BASE ? `${RAW_BASE.replace(/\/+$/, '')}/api` : '/api';
 
+export function isTokenExpired(token: string | null | undefined): boolean {
+  if (!token) return true;
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return true;
+    const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const jsonStr = decodeURIComponent(
+      atob(b64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    const payload = JSON.parse(jsonStr);
+    if (!payload.exp) return false;
+    return payload.exp * 1000 <= Date.now();
+  } catch {
+    return true;
+  }
+}
+
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     const errorText = await res.text();
@@ -24,6 +44,10 @@ async function handleResponse<T>(res: Response): Promise<T> {
       if (parsed.detail) msg = parsed.detail;
     } catch {
       if (errorText) msg = errorText;
+    }
+    if (res.status === 401 && typeof window !== 'undefined') {
+      localStorage.removeItem('minaram_admin_token');
+      localStorage.removeItem('admin_token');
     }
     throw new Error(msg);
   }

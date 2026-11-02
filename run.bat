@@ -11,14 +11,20 @@ echo.
 :: Detect Python interpreter
 set "PY_CMD="
 
-where py >nul 2>&1
-if %ERRORLEVEL% equ 0 (
-    set "PY_CMD=py"
+if exist "%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe" (
+    set "PY_CMD=%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe"
     goto :FOUND_PYTHON
 )
 
-if exist "%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe" (
-    set "PY_CMD=%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe"
+py -3.14 --version >nul 2>&1
+if %ERRORLEVEL% equ 0 (
+    set "PY_CMD=py -3.14"
+    goto :FOUND_PYTHON
+)
+
+where py >nul 2>&1
+if %ERRORLEVEL% equ 0 (
+    set "PY_CMD=py"
     goto :FOUND_PYTHON
 )
 

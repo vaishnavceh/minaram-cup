@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { api } from '../api';
+import { api, isTokenExpired } from '../api';
 import { PublicBracket, DirectQualifier, PublicMatch } from '../types';
 import {
   Sparkles,
@@ -56,7 +56,8 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
   const [soundEnabled, setSoundEnabled] = useState(true);
   const audioCtxRef = useRef<AudioContext | null>(null);
 
-  const effectiveToken = token || (typeof window !== 'undefined' ? localStorage.getItem('minaram_admin_token') || localStorage.getItem('admin_token') || '' : '');
+  const rawToken = token || (typeof window !== 'undefined' ? localStorage.getItem('minaram_admin_token') || localStorage.getItem('admin_token') || '' : '');
+  const effectiveToken = isTokenExpired(rawToken) ? '' : rawToken;
   const isEffectiveAdmin = isAdmin || Boolean(effectiveToken);
 
   const [publishStatusMode, setPublishStatusMode] = useState<'CONFIRMED' | 'PREDICTED'>('CONFIRMED');
@@ -69,9 +70,27 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
 
   const DRAW_STORAGE_KEY = 'minaram_ceremonial_draw_state_v1';
 
+  const handleDrawAuthError = (err: any): boolean => {
+    const msg = err?.message || String(err);
+    if (msg.includes('401') || msg.toLowerCase().includes('token') || msg.toLowerCase().includes('expired')) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('minaram_admin_token');
+        localStorage.removeItem('admin_token');
+      }
+      alert('Your admin session has expired. Please log in again from the Admin page.');
+      window.location.href = '/admin';
+      return true;
+    }
+    return false;
+  };
+
   const handleApplyToOfficial = async () => {
     if (!effectiveToken || pairings.length === 0) {
-      alert('Admin authentication required or no pairings to publish. Please log in as tournament desk administrator.');
+      alert('Admin authentication required or your session has expired. Please log in as tournament administrator on the Admin page.');
+      if (isTokenExpired(rawToken) && typeof window !== 'undefined') {
+        localStorage.removeItem('minaram_admin_token');
+        localStorage.removeItem('admin_token');
+      }
       return;
     }
     const modeLabel = publishStatusMode === 'PREDICTED' ? 'PREDICTED (LIVE DRAW)' : 'CONFIRMED (OFFICIAL)';
@@ -104,7 +123,9 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
       setTimeout(() => setAdminMessage(''), 8000);
     } catch (err: any) {
       clearTimeout(safetyTimer);
-      alert(err.message || 'Failed to apply draw to official fixtures');
+      if (!handleDrawAuthError(err)) {
+        alert(err.message || 'Failed to apply draw to official fixtures');
+      }
     } finally {
       setIsApplying(false);
     }
@@ -130,7 +151,9 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
         if (onRefreshBracket) onRefreshBracket();
         setTimeout(() => setAdminMessage(''), 5000);
       } catch (err: any) {
-        alert(err.message || 'Failed to roll back published fixtures from knockout bracket');
+        if (!handleDrawAuthError(err)) {
+          alert(err.message || 'Failed to roll back published fixtures from knockout bracket');
+        }
       } finally {
         setIsResetting(false);
       }
@@ -163,7 +186,9 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
       initializeDrawPools(true);
       setTimeout(() => setAdminMessage(''), 5000);
     } catch (err: any) {
-      alert(err.message || `Failed to clear ${mode} fixtures`);
+      if (!handleDrawAuthError(err)) {
+        alert(err.message || `Failed to clear ${mode} fixtures`);
+      }
     } finally {
       setIsClearing(false);
     }
@@ -191,7 +216,9 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
       setAdminMessage(`Official Draw successfully synced to Desktop: ${res.file_path}`);
       setTimeout(() => setAdminMessage(''), 6000);
     } catch (err: any) {
-      alert(err.message || 'Failed to sync draw to desktop');
+      if (!handleDrawAuthError(err)) {
+        alert(err.message || 'Failed to sync draw to desktop');
+      }
     } finally {
       setIsSyncingDesktop(false);
     }

@@ -8,13 +8,18 @@ echo ========================================================
 echo.
 
 set "PY_CMD="
+if exist "%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe" (
+    set "PY_CMD=%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe"
+    goto :START
+)
+py -3.14 --version >nul 2>&1
+if %ERRORLEVEL% equ 0 (
+    set "PY_CMD=py -3.14"
+    goto :START
+)
 where py >nul 2>&1
 if %ERRORLEVEL% equ 0 (
     set "PY_CMD=py"
-    goto :START
-)
-if exist "%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe" (
-    set "PY_CMD=%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe"
     goto :START
 )
 set "PY_CMD=python"

@@ -2,6 +2,18 @@
 setlocal
 cd /d "%~dp0"
 
+:: Check if Python 3.14 environment is available
+if exist "%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe" (
+    "%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe" check_matches.py %*
+    goto :END
+)
+
+py -3.14 --version >nul 2>&1
+if %ERRORLEVEL% equ 0 (
+    py -3.14 check_matches.py %*
+    goto :END
+)
+
 :: Check if py command is available
 where py >nul 2>&1
 if %ERRORLEVEL% equ 0 (
@@ -13,12 +25,6 @@ if %ERRORLEVEL% equ 0 (
 where python >nul 2>&1
 if %ERRORLEVEL% equ 0 (
     python check_matches.py %*
-    goto :END
-)
-
-:: Fallback direct executable
-if exist "%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe" (
-    "%LOCALAPPDATA%\Python\pythoncore-3.14-64\python.exe" check_matches.py %*
     goto :END
 )
 

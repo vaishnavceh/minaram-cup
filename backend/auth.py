@@ -94,8 +94,8 @@ def authenticate_admin(username: str, password: str, db=None) -> Optional[dict]:
     return None
 
 
-def create_access_token(username: str, expires_in_seconds: int = 86400 * 7) -> str:
-    """Create a tamper-proof HMAC-SHA256 signed access token."""
+def create_access_token(username: str, expires_in_seconds: int = 86400 * 30) -> str:
+    """Create a tamper-proof HMAC-SHA256 signed access token (defaults to 30 days)."""
     header = {"alg": "HS256", "typ": "JWT"}
     payload = {
         "sub": username,
