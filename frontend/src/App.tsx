@@ -66,8 +66,8 @@ export const App: React.FC = () => {
               <Route path="/standings" element={<StandingsPage />} />
               <Route path="/teams" element={<TeamsPage />} />
               <Route path="/teams/:id" element={<TeamDetailPage />} />
-              <Route path="/bracket" element={<BracketPage />} />
-              <Route path="/knockout" element={<BracketPage />} />
+              <Route path="/bracket" element={<Navigate to="/fixtures" replace />} />
+              <Route path="/knockout" element={<Navigate to="/fixtures" replace />} />
               <Route path="/live" element={<LivePage />} />
               <Route path="/rules" element={<RulesPage />} />
               <Route path="/admin" element={<AdminPage />} />

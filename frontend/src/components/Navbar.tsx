@@ -45,7 +45,6 @@ export const Navbar: React.FC<NavbarProps> = ({ isLiveConnected }) => {
     { name: 'STANDINGS', path: '/standings', icon: BarChart3 },
     { name: 'TEAMS', path: '/teams', icon: Users },
     { name: 'LIVE', path: '/live', icon: Tv },
-    { name: 'KNOCKOUT / QUALIFIERS', path: '/bracket', icon: Trophy },
     { name: 'RULES', path: '/rules', icon: Shield },
   ];
 

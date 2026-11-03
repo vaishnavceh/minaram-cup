@@ -297,35 +297,8 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Hub 1: Knockout / Qualifiers */}
-            <Link
-              to="/bracket"
-              className="group relative p-6 rounded-2xl bg-gradient-to-b from-[#161208] via-[#100d06] to-[#080808] border border-brand-gold/40 hover:border-brand-gold transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-brand-gold/10"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-brand-gold/10 border border-brand-gold/40 flex items-center justify-center text-brand-gold group-hover:scale-110 transition-transform">
-                    <Trophy className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold border border-brand-gold/30 uppercase tracking-widest animate-pulse">
-                    UCL DRAW
-                  </span>
-                </div>
-                <h3 className="font-display text-2xl text-white tracking-wide group-hover:text-brand-gold transition-colors">
-                  KNOCKOUT / QUALIFIERS
-                </h3>
-                <p className="text-xs font-mono text-neutral-400 mt-2 leading-relaxed">
-                  30 qualified squads, 2 Direct R16 Byes, interactive UEFA Champions League style ceremonial draw simulator, and championship bracket.
-                </p>
-              </div>
-              <div className="mt-6 pt-3 border-t border-neutral-800 flex items-center justify-between text-xs font-mono text-brand-gold group-hover:text-white transition-colors">
-                <span>ENTER KNOCKOUT ARENA</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-
-            {/* Hub 2: Group Standings */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Hub 1: Group Standings */}
             <Link
               to="/standings"
               className="group relative p-6 rounded-2xl bg-gradient-to-b from-[#0e141a] via-[#090d12] to-[#080808] border border-neutral-800 hover:border-cyan-500/60 transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-cyan-900/10"
