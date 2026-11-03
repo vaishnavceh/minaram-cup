@@ -367,7 +367,8 @@ class KnockoutManager:
                 "away_penalty": None,
                 "winner_team_id": None,
                 "winner_team_name": None,
-                "scheduled_date": "2026-10-24",
+                "scheduled_date": "2026-11-02",
+                "scheduled_end_date": "2026-11-13",
                 "scheduled_time": "Flexible (MW Window)",
                 "venue": "Minaram Pitch 1",
                 "notes": f"Preliminary Round Match {match_num}"
@@ -446,7 +447,8 @@ class KnockoutManager:
                 "away_penalty": None,
                 "winner_team_id": None,
                 "winner_team_name": None,
-                "scheduled_date": "2026-10-26",
+                "scheduled_date": "2026-11-16",
+                "scheduled_end_date": "2026-11-25",
                 "scheduled_time": "Flexible (MW Window)",
                 "venue": "Minaram Pitch 1",
                 "notes": f"Round of 16 ({slot})"
@@ -478,7 +480,8 @@ class KnockoutManager:
                 "away_penalty": None,
                 "winner_team_id": None,
                 "winner_team_name": None,
-                "scheduled_date": "2026-10-28",
+                "scheduled_date": "2026-11-28",
+                "scheduled_end_date": "2026-12-04",
                 "scheduled_time": "Flexible (MW Window)",
                 "venue": "Minaram Stadium",
                 "notes": f"Quarter-Final ({slot})"
@@ -508,7 +511,8 @@ class KnockoutManager:
                 "away_penalty": None,
                 "winner_team_id": None,
                 "winner_team_name": None,
-                "scheduled_date": "2026-10-29",
+                "scheduled_date": "2026-12-07",
+                "scheduled_end_date": "2026-12-11",
                 "scheduled_time": "Flexible (MW Window)",
                 "venue": "Minaram Stadium",
                 "notes": f"Semi-Final ({slot})"
@@ -533,7 +537,8 @@ class KnockoutManager:
             "away_penalty": None,
             "winner_team_id": None,
             "winner_team_name": None,
-            "scheduled_date": "2026-10-31",
+            "scheduled_date": "2026-12-14",
+            "scheduled_end_date": "2026-12-16",
             "scheduled_time": "Flexible (MW Window)",
             "venue": "Minaram Grand Arena",
             "notes": "Minaram Cup Grand Final"
@@ -559,7 +564,8 @@ class KnockoutManager:
                 "away_penalty": None,
                 "winner_team_id": None,
                 "winner_team_name": None,
-                "scheduled_date": "2026-10-30",
+                "scheduled_date": "2026-12-14",
+                "scheduled_end_date": "2026-12-16",
                 "scheduled_time": "Flexible (MW Window)",
                 "venue": "Minaram Stadium",
                 "notes": "3rd Place Playoff"
@@ -1675,7 +1681,7 @@ class KnockoutManager:
                 """, (
                     slot, "Preliminary Round", m_num, 1,
                     home_id, away_id, home_name or f"Seed {idx}A", away_name or f"Seed {idx}B",
-                    "2026-10-24", "Flexible (MW Window)", "Online / Mobile Lobby",
+                    "2026-11-02", "Flexible (MW Window)", "Online / Mobile Lobby",
                     status_val, f"Drawn via Official Ceremonial Draw ({status_val}) on {now_str}",
                     now_str, now_str
                 ))
@@ -1716,7 +1722,7 @@ class KnockoutManager:
                 """, (
                     slot, "Round of 16", m_num, 2,
                     h_id, a_id, h_ph, a_ph,
-                    "2026-10-26", "Flexible (MW Window)", "Minaram Pitch 1",
+                    "2026-11-16", "Flexible (MW Window)", "Minaram Pitch 1",
                     downstream_status, f"Round of 16 ({slot})",
                     now_str, now_str
                 ))
@@ -1740,7 +1746,7 @@ class KnockoutManager:
                 """, (
                     slot, "Quarter-Final", m_num, 3,
                     None, None, h_ph, a_ph,
-                    "2026-10-28", "Flexible (MW Window)", "Minaram Pitch 1",
+                    "2026-11-28", "Flexible (MW Window)", "Minaram Pitch 1",
                     downstream_status, f"Quarter-Final ({slot})",
                     now_str, now_str
                 ))
@@ -1762,7 +1768,7 @@ class KnockoutManager:
                 """, (
                     slot, "Semi-Final", m_num, 4,
                     None, None, h_ph, a_ph,
-                    "2026-10-30", "Flexible (MW Window)", "Minaram Stadium",
+                    "2026-12-07", "Flexible (MW Window)", "Minaram Stadium",
                     downstream_status, f"Semi-Final ({slot})",
                     now_str, now_str
                 ))
@@ -1784,7 +1790,7 @@ class KnockoutManager:
                 """, (
                     slot, stg, m_num, r_num,
                     None, None, h_ph, a_ph,
-                    "2026-11-01", "Flexible (MW Window)", "Minaram Stadium",
+                    "2026-12-14", "Flexible (MW Window)", "Minaram Stadium",
                     downstream_status, notes,
                     now_str, now_str
                 ))
