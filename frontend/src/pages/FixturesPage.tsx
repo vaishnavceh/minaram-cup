@@ -111,16 +111,19 @@ export const FixturesPage: React.FC = () => {
         return false;
       }
     }
-    if (selectedMatchweek !== 'ALL') {
-      if (String(m.round_number) !== selectedMatchweek) {
-        return false;
+    // Matchweek and Group filters only apply to Group Stage or when viewing ALL stages
+    if (selectedStage === 'ALL' || selectedStage === 'GROUP_STAGE') {
+      if (selectedMatchweek !== 'ALL') {
+        if (String(m.round_number) !== selectedMatchweek) {
+          return false;
+        }
       }
-    }
-    if (selectedGroup !== 'ALL') {
-      const matchGrp = normalizeGroupKey(m.group_name);
-      const selGrp = normalizeGroupKey(selectedGroup);
-      if (matchGrp !== selGrp) {
-        return false;
+      if (selectedGroup !== 'ALL') {
+        const matchGrp = normalizeGroupKey(m.group_name);
+        const selGrp = normalizeGroupKey(selectedGroup);
+        if (matchGrp !== selGrp) {
+          return false;
+        }
       }
     }
     if (searchTerm.trim()) {
@@ -179,7 +182,13 @@ export const FixturesPage: React.FC = () => {
             {stages.map((st) => (
               <button
                 key={st.key}
-                onClick={() => setSelectedStage(st.key)}
+                onClick={() => {
+                  setSelectedStage(st.key);
+                  if (st.key !== 'ALL' && st.key !== 'GROUP_STAGE') {
+                    setSelectedGroup('ALL');
+                    setSelectedMatchweek('ALL');
+                  }
+                }}
                 className={`px-3 py-1 rounded text-xs font-mono uppercase transition-colors ${
                   selectedStage === st.key
                     ? 'bg-brand-red text-white font-bold'
@@ -204,8 +213,8 @@ export const FixturesPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Matchweek Filter */}
-        {availableMatchweeks.length > 2 && (
+        {/* Matchweek Filter (only for Group Stage or ALL) */}
+        {(selectedStage === 'ALL' || selectedStage === 'GROUP_STAGE') && availableMatchweeks.length > 2 && (
           <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-neutral-800/60">
             <span className="text-xs font-mono text-neutral-400 mr-2">MATCHWEEK:</span>
             {availableMatchweeks.map((mw) => {
