@@ -111,8 +111,8 @@ export const FixturesPage: React.FC = () => {
         return false;
       }
     }
-    // Matchweek and Group filters only apply to Group Stage or when viewing ALL stages
-    if (selectedStage === 'ALL' || selectedStage === 'GROUP_STAGE') {
+    // Matchweek and Group filters only apply to Group Stage or when viewing Group Stage matches in ALL
+    if (selectedStage === 'GROUP_STAGE' || (selectedStage === 'ALL' && (m.stage === 'Group Stage' || m.stage === 'League'))) {
       if (selectedMatchweek !== 'ALL') {
         if (String(m.round_number) !== selectedMatchweek) {
           return false;

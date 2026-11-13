@@ -64,7 +64,7 @@ class ResultsView(ctk.CTkScrollableFrame):
         self.stage_menu = ctk.CTkOptionMenu(
             t_bar,
             variable=self.stage_var,
-            values=["All Stages", "Group Stage", "League", "Quarter-Final", "Semi-Final", "Final"],
+            values=["All Stages", "Group Stage", "Preliminary Round", "Round of 16", "Quarter-Final", "Semi-Final", "Final", "Third-Place Playoff", "League"],
             width=130,
             height=28,
             fg_color=theme.BG_INPUT,
@@ -282,7 +282,7 @@ class ResultsView(ctk.CTkScrollableFrame):
         away_score_e.pack(fill="x")
 
         # Knockout penalty shootout section (if knockout match)
-        is_knockout = match.stage in ("Quarter-Final", "Semi-Final", "Final", "Round of 16")
+        is_knockout = match.stage in ("Preliminary Round", "Round of 16", "Quarter-Final", "Semi-Final", "Final", "Third-Place Playoff")
         pen_frame = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
         if is_knockout:
             pen_frame.pack(fill="x", pady=(0, 10))

@@ -646,9 +646,12 @@ class BackupService:
             cursor.execute("DELETE FROM groups;")
             cursor.execute("DELETE FROM registrations;")
             cursor.execute("DELETE FROM standings_overrides;")
+            cursor.execute("DELETE FROM knockout_official_fixtures;")
+            cursor.execute("DELETE FROM knockout_snapshots;")
+            cursor.execute("DELETE FROM knockout_audit_logs;")
             cursor.execute(
                 "DELETE FROM sqlite_sequence WHERE name IN "
-                "('matches', 'match_audit_log', 'registration_team_map', 'teams', 'groups', 'registrations', 'standings_overrides');"
+                "('matches', 'match_audit_log', 'registration_team_map', 'teams', 'groups', 'registrations', 'standings_overrides', 'knockout_official_fixtures', 'knockout_snapshots', 'knockout_audit_logs');"
             )
 
 

@@ -51,3 +51,5 @@ backups/backups_manifest.json
 *.pre_pull_*.db
 *.db-wal
 *.db-shm
+* - Copy*.db
+

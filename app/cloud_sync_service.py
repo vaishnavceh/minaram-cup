@@ -241,6 +241,34 @@ def pull_database(base_url: Optional[str] = None,
             if not content.startswith(b"SQLite format 3"):
                 return False, "Downloaded content is not a valid SQLite database."
 
+            # Check if local DB has completed matches that incoming cloud DB lacks
+            local_completed = []
+            local_knockout_completed = []
+            if DB_PATH.exists():
+                try:
+                    import sqlite3
+                    with sqlite3.connect(DB_PATH) as l_conn:
+                        l_conn.row_factory = sqlite3.Row
+                        local_completed = [
+                            dict(r) for r in l_conn.execute(
+                                "SELECT id, match_number, bracket_slot, stage, home_score, away_score, "
+                                "home_penalty, away_penalty, status, winner_team_id, completed_at, notes "
+                                "FROM matches WHERE status IN ('Completed', 'Walkover');"
+                            ).fetchall()
+                        ]
+                        has_ko = l_conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='knockout_official_fixtures';").fetchone()
+                        if has_ko:
+                            local_knockout_completed = [
+                                dict(r) for r in l_conn.execute(
+                                    "SELECT id, bracket_slot, stage, match_number, home_team_id, away_team_id, "
+                                    "home_score, away_score, home_penalty, away_penalty, status, winner_team_id, "
+                                    "winner_method, completed_at, notes FROM knockout_official_fixtures "
+                                    "WHERE status IN ('COMPLETED', 'CONFIRMED');"
+                                ).fetchall()
+                            ]
+                except Exception as e:
+                    logger.warning(f"Could not inspect local completed matches before pull: {e}")
+
             # Safety local backup
             if DB_PATH.exists():
                 backup_name = f"minaram_cup.pre_pull_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
@@ -251,6 +279,66 @@ def pull_database(base_url: Optional[str] = None,
 
             with open(DB_PATH, "wb") as f:
                 f.write(content)
+
+            # Preserve any local completed match results that the incoming cloud DB was missing
+            if local_completed:
+                try:
+                    import sqlite3
+                    with sqlite3.connect(DB_PATH) as post_conn:
+                        post_conn.row_factory = sqlite3.Row
+                        merged_count = 0
+                        for lm in local_completed:
+                            cond = "bracket_slot = ?" if lm.get("bracket_slot") else "match_number = ?"
+                            val = lm["bracket_slot"] if lm.get("bracket_slot") else lm["match_number"]
+                            cur_m = post_conn.execute(f"SELECT id, status FROM matches WHERE {cond};", (val,)).fetchone()
+                            if cur_m and cur_m["status"] not in ('Completed', 'Walkover'):
+                                post_conn.execute(f"""
+                                    UPDATE matches
+                                    SET home_score = ?, away_score = ?, home_penalty = ?, away_penalty = ?,
+                                        status = ?, winner_team_id = ?, completed_at = ?, notes = ?
+                                    WHERE {cond};
+                                """, (
+                                    lm["home_score"], lm["away_score"], lm["home_penalty"], lm["away_penalty"],
+                                    lm["status"], lm["winner_team_id"], lm["completed_at"], lm["notes"], val
+                                ))
+                                merged_count += 1
+                        
+                        for lk in local_knockout_completed:
+                            if not lk.get("bracket_slot"):
+                                continue
+                            cur_k = post_conn.execute(
+                                "SELECT id, status FROM knockout_official_fixtures WHERE bracket_slot = ?;",
+                                (lk["bracket_slot"],)
+                            ).fetchone()
+                            if not cur_k:
+                                post_conn.execute("""
+                                    INSERT INTO knockout_official_fixtures (
+                                        bracket_slot, stage, match_number, home_team_id, away_team_id,
+                                        home_score, away_score, home_penalty, away_penalty,
+                                        status, winner_team_id, winner_method, completed_at, notes
+                                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                                """, (
+                                    lk["bracket_slot"], lk["stage"], lk["match_number"],
+                                    lk["home_team_id"], lk["away_team_id"],
+                                    lk["home_score"], lk["away_score"], lk["home_penalty"], lk["away_penalty"],
+                                    lk["status"], lk["winner_team_id"], lk["winner_method"], lk["completed_at"], lk["notes"]
+                                ))
+                            elif cur_k["status"] not in ('COMPLETED', 'CONFIRMED') and lk["status"] in ('COMPLETED', 'CONFIRMED'):
+                                post_conn.execute("""
+                                    UPDATE knockout_official_fixtures
+                                    SET home_score = ?, away_score = ?, home_penalty = ?, away_penalty = ?,
+                                        status = ?, winner_team_id = ?, winner_method = ?, completed_at = ?, notes = ?
+                                    WHERE bracket_slot = ?;
+                                """, (
+                                    lk["home_score"], lk["away_score"], lk["home_penalty"], lk["away_penalty"],
+                                    lk["status"], lk["winner_team_id"], lk["winner_method"], lk["completed_at"], lk["notes"],
+                                    lk["bracket_slot"]
+                                ))
+                        post_conn.commit()
+                        if merged_count > 0:
+                            report(f"Preserved {merged_count} locally completed matches that were not yet in cloud.")
+                except Exception as e:
+                    logger.warning(f"Could not merge local completed matches after pull: {e}")
 
             # Automatically create atomic backup and state snapshot of newly pulled data
             try:

@@ -109,8 +109,11 @@ class ResultsManager:
             ))
 
         # 3. Knockout advancement if applicable
-        if winner_id and match["bracket_slot"]:
-            self.knockout_mgr.advance_winner_in_bracket(match_id, winner_id)
+        if match["bracket_slot"]:
+            if winner_id:
+                self.knockout_mgr.advance_winner_in_bracket(match_id, winner_id)
+            else:
+                self.knockout_mgr._sync_match_to_official_fixtures(match_id)
 
         try:
             from app.events import broadcaster
@@ -152,6 +155,9 @@ class ResultsManager:
                 match["home_score"], match["away_score"], match["status"],
                 reason
             ))
+
+        if match["bracket_slot"]:
+            self.knockout_mgr._sync_match_to_official_fixtures(match_id)
 
         try:
             from app.events import broadcaster

@@ -117,7 +117,7 @@ class FixturesView(ctk.CTkScrollableFrame):
         self.stage_menu = ctk.CTkOptionMenu(
             f_bar,
             variable=self.stage_filter_var,
-            values=["All Stages", "Group Stage", "League", "Quarter-Final", "Semi-Final", "Final"],
+            values=["All Stages", "Group Stage", "Preliminary Round", "Round of 16", "Quarter-Final", "Semi-Final", "Final", "Third-Place Playoff", "League"],
             width=130,
             height=28,
             fg_color=theme.BG_INPUT,

@@ -334,6 +334,8 @@ def get_public_bracket() -> Dict[str, Any]:
                 "bracket_slot": m.get("bracket_slot"),
                 "home_team_id": m.get("home_team_id"),
                 "away_team_id": m.get("away_team_id"),
+                "team_a_id": m.get("home_team_id"),
+                "team_b_id": m.get("away_team_id"),
                 "home_team_name": m.get("home_team_name") or m.get("home_placeholder") or "Yet to decide",
                 "away_team_name": m.get("away_team_name") or m.get("away_placeholder") or "Yet to decide",
                 "team_a_name": m.get("home_team_name") or m.get("home_placeholder") or "Yet to decide",
@@ -359,7 +361,8 @@ def get_public_bracket() -> Dict[str, Any]:
                 "venue": m.get("venue") or "Minaram Stadium",
                 "pitch": m.get("venue") or "Minaram Stadium",
                 "notes": m.get("notes") or "",
-                "is_official": m.get("is_official", False)
+                "is_official": bool(m.get("is_official") or (m.get("status") in ("CONFIRMED", "COMPLETED", "LIVE"))),
+                "is_published": bool(m.get("is_published", True))
             }
             for m in matches
         ]
