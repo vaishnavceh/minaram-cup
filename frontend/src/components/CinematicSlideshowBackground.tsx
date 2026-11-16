@@ -54,6 +54,16 @@ export const LEGEND_SLIDES: LegendSlide[] = [
     era: 'Signature Celebration',
     tagline: 'Every goal dedicated to where it all began.',
   },
+  {
+    id: 'messi-jersey',
+    image: '/assets/backgrounds/legends/lionel-messi-jersey-3840x2160-17375.webp',
+    mobileImage: '/assets/backgrounds/legends/mobile/efootball-messi-hero.webp',
+    legend: 'Lionel Messi',
+    title: 'The Blueprint of Perfection',
+    badge: 'ALBICELESTE · #10',
+    era: 'Unrivaled Mastery',
+    tagline: 'Vision, touch, and imagination beyond mortal limits.',
+  },
 
   // CRISTIANO RONALDO
   {
@@ -85,6 +95,16 @@ export const LEGEND_SLIDES: LegendSlide[] = [
     badge: 'CR7 · COMMANDER',
     era: '5x Champions League Winner',
     tagline: 'Step onto any pitch in the world and conquer it.',
+  },
+  {
+    id: 'ronaldo-masterclass',
+    image: '/assets/backgrounds/legends/cristiano-ronaldo-5120x2880-17335.webp',
+    mobileImage: '/assets/backgrounds/legends/mobile/ronaldo-victory-fist.webp',
+    legend: 'Cristiano Ronaldo',
+    title: 'Immortal Quinas Masterclass',
+    badge: 'PORTUGAL · #7',
+    era: 'Record Goal Machine',
+    tagline: 'The ultimate standard of elite sporting discipline.',
   },
   {
     id: 'ronaldo-messi-rivalry',
@@ -127,6 +147,16 @@ export const LEGEND_SLIDES: LegendSlide[] = [
     badge: 'MAGICIAN · #10',
     era: 'Global Icon',
     tagline: 'The joy of street football brought to the world stage.',
+  },
+  {
+    id: 'neymar-samba-4k',
+    image: '/assets/backgrounds/legends/neymar-jr-black-3840x2160-17408.webp',
+    mobileImage: '/assets/backgrounds/legends/mobile/neymar-debut-celebration.webp',
+    legend: 'Neymar Jr',
+    title: 'The Joga Bonito Legacy',
+    badge: 'SELEÇÃO · #10',
+    era: 'Pure Samba Magic',
+    tagline: 'When football becomes pure entertainment and poetry in motion.',
   },
 ];
 
