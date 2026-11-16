@@ -426,17 +426,17 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
           }`}
         >
           <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
-          <span>UEFA CEREMONIAL DRAW DESK (ADMIN ONLY)</span>
+          <span>LEGENDS CEREMONIAL DRAW DESK (ADMIN ONLY)</span>
         </button>
       </div>
 
       {adminSection === 'draw_ceremony' ? (
         <div className="space-y-4">
-          <div className="p-3.5 rounded-xl bg-blue-950/40 border border-blue-700/40 text-blue-200 text-xs font-mono flex items-start space-x-2">
-            <Shield className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-600/40 text-amber-200 text-xs font-mono flex items-start space-x-2">
+            <Shield className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold text-blue-100 block">ADMIN ONLY — UEFA CEREMONIAL DRAW DESK</span>
-              <span className="text-blue-300/70">Complete the ceremonial draw below, then click APPLY TO FIXTURES to sync results live to the public Knockout Bracket. Players do not have access to this draw.</span>
+              <span className="font-bold text-amber-100 block">ADMIN ONLY — LEGENDS CEREMONIAL DRAW DESK</span>
+              <span className="text-neutral-300">Complete the ceremonial draw below, then click APPLY TO FIXTURES to sync results live to the public Knockout Bracket.</span>
             </div>
           </div>
           <UefaKnockoutDraw
@@ -711,7 +711,7 @@ export const AdminKnockoutManager: React.FC<AdminKnockoutManagerProps> = ({ toke
                   className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-gold to-amber-600 hover:from-brand-gold-bright hover:to-amber-500 text-black font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-amber-950/40"
                 >
                   <Sparkles className="w-4 h-4" />
-                  <span>OPEN UEFA CEREMONIAL DRAW DESK</span>
+                  <span>OPEN LEGENDS CEREMONIAL DRAW DESK</span>
                 </button>
               )}
             </div>

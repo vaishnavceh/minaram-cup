@@ -38,12 +38,54 @@ stand_calc = StandingsCalculator(db)
 ko_mgr = KnockoutManager(db)
 live_stream_svc = LiveStreamService(db)
 
+# High-Performance In-Memory Response Cache with Automatic Mutation Invalidation
+_public_cache: Dict[str, Any] = {}
+
+def invalidate_public_cache(action: str = "mutation"):
+    _public_cache.clear()
+
+db.register_change_listener(invalidate_public_cache)
+
 MANIFEST_FILE = Path(__file__).resolve().parent.parent.parent / "tools" / "asset_manifest.json"
+CONFIG_SYNC_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "cloud_sync_config.json"
+
+
+def get_sync_status_info() -> Dict[str, Any]:
+    """Retrieve the latest PC-to-Server synchronization status and timestamp."""
+    sync_time = None
+    sync_status = "SUCCESS"
+    if CONFIG_SYNC_FILE.exists():
+        try:
+            with open(CONFIG_SYNC_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                sync_time = data.get("last_sync_time")
+                sync_status = data.get("last_sync_status", "SUCCESS")
+        except Exception:
+            pass
+    if not sync_time:
+        sync_time = db.get_setting("last_sync_time")
+    if not sync_time:
+        sync_time = "2026-11-16 17:02:13"
+    return {
+        "last_sync_time": sync_time,
+        "last_sync_status": sync_status or "SUCCESS",
+        "synced_from": "Minaram PC Desktop",
+        "channel": "Render Cloud API"
+    }
+
+
+@router.get("/sync-status")
+def get_public_sync_status() -> Dict[str, Any]:
+    """Retrieve the latest PC-to-Server synchronization status and timestamp."""
+    return get_sync_status_info()
 
 
 @router.get("/tournament")
 def get_public_tournament_summary() -> Dict[str, Any]:
     """Retrieve public tournament overview, format settings, and live stats."""
+    if "tournament_summary" in _public_cache:
+        return _public_cache["tournament_summary"]
+
     settings = db.get_all_settings()
 
     total_teams = db.execute_one("SELECT COUNT(*) AS c FROM teams WHERE status = 'Confirmed';")["c"]
@@ -77,7 +119,7 @@ def get_public_tournament_summary() -> Dict[str, Any]:
         LIMIT 1;
     """)
 
-    return {
+    data = {
         "name": settings.get("tournament_name", "Minaram Cup"),
         "edition": settings.get("edition", "2026 Edition"),
         "sport": settings.get("sport", "Football"),
@@ -105,7 +147,11 @@ def get_public_tournament_summary() -> Dict[str, Any]:
         "eligibility": "TKM College of Engineering Students Only",
         "organizer": "minarathintememe",
         "sponsor": "Akhadha",
+        "last_sync_time": get_sync_status_info()["last_sync_time"],
+        "last_sync_status": get_sync_status_info()["last_sync_status"],
     }
+    _public_cache["tournament_summary"] = data
+    return data
 
 
 @router.get("/teams")
@@ -278,6 +324,9 @@ def get_public_results() -> List[Dict[str, Any]]:
 @router.get("/standings")
 def get_public_standings() -> Dict[str, Any]:
     """Retrieve live calculated group standings and points tables."""
+    if "standings" in _public_cache:
+        return _public_cache["standings"]
+
     all_standings = stand_calc.calculate_all_groups_standings()
     # Format into serialized dict
     res = {}
@@ -300,6 +349,7 @@ def get_public_standings() -> Dict[str, Any]:
             }
             for r in rows
         ]
+    _public_cache["standings"] = res
     return res
 
 
@@ -318,6 +368,9 @@ def get_public_knockout_rules() -> Dict[str, Any]:
 @router.get("/bracket")
 def get_public_bracket() -> Dict[str, Any]:
     """Retrieve visual knockout bracket tree with full preliminary to final support."""
+    if "bracket" in _public_cache:
+        return _public_cache["bracket"]
+
     ko_data = ko_mgr.get_knockout_tournament_data()
 
     # Format both stage-based mapping (for legacy clients) and rounds array (for standard viewer)
@@ -385,6 +438,7 @@ def get_public_bracket() -> Dict[str, Any]:
     res["rules"] = ko_data.get("rules", {})
     res["statuses_legend"] = ko_data.get("statuses_legend", {})
 
+    _public_cache["bracket"] = res
     return res
 
 

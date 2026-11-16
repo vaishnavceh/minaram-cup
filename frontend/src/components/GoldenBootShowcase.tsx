@@ -115,8 +115,19 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
     <section id="golden-boot" className="relative">
       <div
         ref={exportRef}
-        className="p-4 sm:p-7 rounded-2xl bg-[#0c0c0c] border border-neutral-800/80 shadow-2xl relative"
+        className="p-4 sm:p-8 rounded-2xl bg-gradient-to-r from-[#04060B] via-[#080C16] to-[#04060B] border border-white/10 shadow-2xl relative overflow-hidden"
       >
+        {/* Neymar Studio Background Texture on Right */}
+        <div className="absolute right-0 top-0 bottom-0 w-full md:w-1/2 opacity-15 md:opacity-25 pointer-events-none">
+          <img
+            src="/assets/backgrounds/legends/neymar-black-studio.webp"
+            alt="Neymar Jr Golden Boot"
+            className="w-full h-full object-cover object-right"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#04060B] via-transparent to-transparent" />
+        </div>
+
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-8 relative">
           <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-amber-400 mb-1">

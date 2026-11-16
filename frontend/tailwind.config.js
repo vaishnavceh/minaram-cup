@@ -8,29 +8,45 @@ export default {
     extend: {
       colors: {
         pitch: {
-          950: '#020617',
-          900: '#030d26',
-          850: '#06143c',
-          800: '#0a1c52',
-          700: '#0f296f',
-          600: '#1d4ed8',
+          950: '#020408',
+          900: '#04060B',
+          850: '#080C16',
+          800: '#0F1626',
+          750: '#162035',
+          700: '#1e293b',
+          600: '#334155',
+        },
+        tribute: {
+          gold: '#D4AF37',
+          'gold-light': '#FDE047',
+          'gold-dark': '#A16207',
+          crimson: '#E11D48',
+          'crimson-bright': '#FB7185',
+          'crimson-dark': '#9F1239',
+          sky: '#38BDF8',
+          'sky-bright': '#7DD3FC',
+          'sky-dark': '#0284C7',
+          canary: '#EAB308',
+          'canary-bright': '#FDE047',
+          emerald: '#10B981',
+          'emerald-dark': '#047857',
         },
         brand: {
-          red: '#2563eb', // UCL Electric Blue replaces legacy red
-          'red-bright': '#38bdf8', // UCL Electric Cyan
-          'red-dark': '#1e40af', // Deep UCL Navy Blue
-          gold: '#fbbf24', // Trophy Gold
-          silver: '#e2e8f0', // Silver Starball Chrome
-          bronze: '#d97706',
-          ucl: '#2563eb',
-          'ucl-cyan': '#00f0ff',
-          'ucl-navy': '#020718',
-          'ucl-deep': '#030d28',
+          red: '#E11D48', // Genuine Quinas Crimson Red
+          'red-bright': '#FB7185',
+          'red-dark': '#9F1239',
+          gold: '#D4AF37', // Championship Trophy Gold
+          'gold-light': '#FDE047',
+          silver: '#E2E8F0', // Platinum Chrome
+          bronze: '#CD7F32',
         },
         editorial: {
-          white: '#F5F5F5',
-          muted: '#94a3b8',
-          subtle: '#64748b',
+          white: '#FFFFFF',
+          cream: '#F8FAFC',
+          silver: '#CBD5E1',
+          muted: '#94A3B8',
+          subtle: '#64748B',
+          dark: '#334155',
         }
       },
       fontFamily: {
@@ -43,11 +59,13 @@ export default {
         tightest: '-.04em',
       },
       boxShadow: {
-        'glow-red': '0 0 25px rgba(37, 99, 235, 0.55)',
-        'glow-red-lg': '0 0 50px rgba(56, 189, 248, 0.45)',
-        'glow-blue': '0 0 25px rgba(37, 99, 235, 0.55)',
-        'glow-cyan': '0 0 25px rgba(6, 182, 212, 0.55)',
-        'ucl-card': '0 8px 32px 0 rgba(2, 6, 23, 0.65)',
+        'glow-red': '0 0 25px rgba(225, 29, 72, 0.45)',
+        'glow-crimson': '0 0 25px rgba(225, 29, 72, 0.45)',
+        'glow-gold': '0 0 25px rgba(212, 175, 55, 0.45)',
+        'glow-gold-lg': '0 0 50px rgba(212, 175, 55, 0.35)',
+        'glow-sky': '0 0 25px rgba(56, 189, 248, 0.45)',
+        'glow-emerald': '0 0 25px rgba(16, 185, 129, 0.45)',
+        'tribute-card': '0 12px 36px -4px rgba(0, 0, 0, 0.8)',
       }
     },
   },

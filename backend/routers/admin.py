@@ -6,10 +6,14 @@ Allows authorized administrators to manage registrations, teams, fixtures, and r
 
 from __future__ import annotations
 
+import logging
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Body, status, File, UploadFile, Form
 from pydantic import BaseModel
+
+logger = logging.getLogger("minaram_cup.admin")
 
 from app.database import Database
 from app.registration_service import RegistrationService
@@ -484,6 +488,15 @@ def download_database_admin(admin: dict = Depends(get_current_admin)):
     from fastapi.responses import FileResponse
     if not db.db_path.exists():
         raise HTTPException(status_code=404, detail="Database file not found")
+    
+    # Flush WAL to disk first so the exported .db is completely self-contained and consistent
+    try:
+        conn = db.get_connection()
+        conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+        conn.close()
+    except Exception:
+        pass
+
     return FileResponse(
         path=str(db.db_path),
         filename="minaram_cup.db",
@@ -535,7 +548,14 @@ async def upload_database_admin(
     except Exception as e:
         logger.warning(f"Post-upload knockout recalculation notice: {e}")
 
-    # 5. Broadcast live updates across all tournament channels
+    # 5. Record sync timestamp and broadcast live updates across all tournament channels
+    sync_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        db.set_setting("last_sync_time", sync_now)
+        db.set_setting("last_sync_status", "SUCCESS")
+    except Exception:
+        pass
+    broadcaster.broadcast_from_thread("cloud_sync", {"sync_time": sync_now, "status": "SUCCESS"})
     broadcaster.broadcast_from_thread("standings_updated", {"source": "cloud_sync"})
     broadcaster.broadcast_from_thread("fixtures_updated", {"source": "cloud_sync"})
     broadcaster.broadcast_from_thread("match_updated", {"source": "cloud_sync"})
@@ -545,6 +565,7 @@ async def upload_database_admin(
 
     return {
         "status": "synchronized",
+        "last_sync_time": sync_now,
         "message": f"Cloud database updated successfully ({len(content)} bytes). Live website updated."
     }
 

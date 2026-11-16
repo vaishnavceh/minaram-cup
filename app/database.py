@@ -168,8 +168,9 @@ class Database:
         conn.execute("PRAGMA foreign_keys = ON;")
         conn.execute("PRAGMA journal_mode = WAL;")
         conn.execute("PRAGMA synchronous = NORMAL;")
-        conn.execute("PRAGMA cache_size = -2000;")
+        conn.execute("PRAGMA cache_size = -64000;")
         conn.execute("PRAGMA temp_store = MEMORY;")
+        conn.execute("PRAGMA busy_timeout = 15000;")
         return conn
 
     @contextmanager
@@ -318,6 +319,9 @@ class Database:
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_matches_group ON matches(group_id);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_matches_teams ON matches(home_team_id, away_team_id);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_matches_status ON matches(status);")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_matches_number ON matches(match_number);")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_matches_bracket_slot ON matches(bracket_slot);")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_matches_round ON matches(round_number);")
 
             # Migration: Ensure scheduled_end_date exists in matches
             match_cols = [r[1] for r in cursor.execute("PRAGMA table_info(matches);").fetchall()]
@@ -409,6 +413,8 @@ class Database:
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_fix_slot ON knockout_official_fixtures(bracket_slot);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_fix_stage ON knockout_official_fixtures(stage);")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_fix_status ON knockout_official_fixtures(status);")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_fix_match_num ON knockout_official_fixtures(match_number);")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_ko_fix_teams ON knockout_official_fixtures(home_team_id, away_team_id);")
 
             # 11. Knockout Direct Overrides (Manual admin override of the 2 direct qualifiers)
             cursor.execute("""

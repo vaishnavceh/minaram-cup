@@ -64,6 +64,16 @@ class MainWindow(ctk.CTk):
         self.minsize(1040, 680)
         self.configure(fg_color=theme.BG_MAIN)
 
+        # Fullscreen & Window controls
+        self.is_fullscreen = False
+        try:
+            self.state("zoomed")  # Launch maximized on Windows for optimal experience
+        except Exception:
+            pass
+
+        self.bind("<F11>", self.toggle_fullscreen)
+        self.bind("<Escape>", self.exit_fullscreen)
+
         # Set official app icon
         icon_path = Path(__file__).resolve().parent.parent.parent / "Logo" / "minaram_app_icon.ico"
         if icon_path.exists():
@@ -218,6 +228,19 @@ class MainWindow(ctk.CTk):
             command=lambda: self.show_section("Registrations")
         ).pack(side="left", padx=(0, 8))
 
+        self.fs_btn = ctk.CTkButton(
+            top_right,
+            text="⛶ Fullscreen",
+            fg_color=theme.BG_CARD,
+            hover_color=theme.BG_CARD_HOVER,
+            text_color=theme.TEXT_SECONDARY,
+            font=ctk.CTkFont(size=11, weight="bold"),
+            height=30,
+            width=96,
+            command=self.toggle_fullscreen
+        )
+        self.fs_btn.pack(side="left", padx=(0, 8))
+
         self.tourn_badge = ctk.CTkLabel(
             top_right,
             text=f"⚽ {self.db.get_setting('tournament_name', 'Minaram Cup')}",
@@ -316,4 +339,29 @@ class MainWindow(ctk.CTk):
         """Callback when cloud sync successfully completes."""
         if self.current_section in self.views:
             self.views[self.current_section].refresh()
+
+    def toggle_fullscreen(self, event=None):
+        """Toggle true fullscreen display mode or restore."""
+        self.is_fullscreen = not self.is_fullscreen
+        try:
+            self.attributes("-fullscreen", self.is_fullscreen)
+        except Exception:
+            try:
+                if self.is_fullscreen:
+                    self.state("zoomed")
+                else:
+                    self.state("normal")
+            except Exception:
+                pass
+
+        if hasattr(self, "fs_btn") and self.fs_btn.winfo_exists():
+            self.fs_btn.configure(
+                text="❐ Restore" if self.is_fullscreen else "⛶ Fullscreen"
+            )
+
+    def exit_fullscreen(self, event=None):
+        """Escape key handler: cleanly exits fullscreen mode if active."""
+        if self.is_fullscreen:
+            self.toggle_fullscreen()
+
 

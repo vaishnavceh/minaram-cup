@@ -8,6 +8,15 @@ export interface PublicTournament {
   match_count: number;
   completed_matches: number;
   group_stage_completed: boolean;
+  last_sync_time?: string;
+  last_sync_status?: string;
+}
+
+export interface SyncStatus {
+  last_sync_time: string;
+  last_sync_status: string;
+  synced_from?: string;
+  channel?: string;
 }
 
 export interface PublicTeam {
@@ -81,6 +90,8 @@ export interface GroupStandingRow {
   goal_difference: number;
   points: number;
   rank: number;
+  form?: string[] | string;
+  is_qualified?: boolean;
 }
 
 export interface PublicGroupStandings {

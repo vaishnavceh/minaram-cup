@@ -278,7 +278,7 @@ class TeamsView(ctk.CTkScrollableFrame):
     # Modals & Actions
     # ----------------------------------------------------
     def open_history_modal(self, team):
-        modal = BaseModal(self, title=f"Match History — {team.name}", width=550, height=450)
+        modal = BaseModal(self, title=f"Match History — {team.name}", width=560, height=480)
 
         stats = self.team_mgr.get_team_stats(team.id)
         stat_bar = ctk.CTkFrame(modal.body_frame, fg_color=theme.BG_INPUT, corner_radius=6)
@@ -321,7 +321,7 @@ class TeamsView(ctk.CTkScrollableFrame):
             ctk.CTkLabel(right, text=m["outcome"], font=ctk.CTkFont(size=10, weight="bold"), text_color=col).pack(anchor="e")
 
     def open_create_team_modal(self):
-        modal = BaseModal(self, title="Create New Team", width=460, height=440)
+        modal = BaseModal(self, title="Create New Team", width=480, height=480, scrollable=True)
 
         groups = self.db.execute_query("SELECT id, name FROM groups ORDER BY display_order ASC;")
         group_map = {g["name"]: g["id"] for g in groups}
@@ -390,7 +390,7 @@ class TeamsView(ctk.CTkScrollableFrame):
         ctk.CTkButton(modal.body_frame, text="Create Team", fg_color=theme.ACCENT_GREEN, hover_color=theme.ACCENT_GREEN_HOVER, text_color=theme.TEXT_DARK, font=ctk.CTkFont(weight="bold"), command=save).pack(fill="x", pady=(4, 0))
 
     def open_edit_team_modal(self, team):
-        modal = BaseModal(self, title=f"Edit Team — {team.name}", width=460, height=440)
+        modal = BaseModal(self, title=f"Edit Team — {team.name}", width=480, height=480, scrollable=True)
 
         groups = self.db.execute_query("SELECT id, name FROM groups ORDER BY display_order ASC;")
         group_map = {g["name"]: g["id"] for g in groups}
@@ -496,7 +496,7 @@ class TeamsView(ctk.CTkScrollableFrame):
             messagebox.showinfo("Merge Teams", "Need at least 2 teams to perform a merge.")
             return
 
-        modal = BaseModal(self, title="Merge Duplicate Teams", width=480, height=340)
+        modal = BaseModal(self, title="Merge Duplicate Teams", width=500, height=380, scrollable=True)
 
         ctk.CTkLabel(
             modal.body_frame,

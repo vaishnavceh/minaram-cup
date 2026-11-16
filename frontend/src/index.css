@@ -12,15 +12,15 @@
   }
 
   body {
-    background-color: #020718;
+    background-color: #04060B;
     background-image: 
-      linear-gradient(180deg, rgba(2, 7, 24, 0.78) 0%, rgba(3, 13, 36, 0.84) 40%, rgba(2, 7, 24, 0.92) 100%),
-      url('/assets/backgrounds/ucl_main_bg.jpg');
+      linear-gradient(180deg, rgba(4, 6, 11, 0.88) 0%, rgba(8, 12, 22, 0.92) 50%, rgba(4, 6, 11, 0.95) 100%),
+      url('/assets/backgrounds/legends/ronaldo-messi-tribute-walk.webp');
     background-attachment: fixed;
     background-size: cover;
-    background-position: center top;
+    background-position: center bottom;
     background-repeat: no-repeat;
-    color: #e2e8f0;
+    color: #F8FAFC;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     min-height: 100vh;
   }
@@ -32,19 +32,16 @@
 }
 
 /* ================================================================
-   UEFA CHAMPIONS LEAGUE GLOBAL STYLING
-   Primary wallpapers provided by user:
-   - ucl_main_bg.jpg: 207722-1920x1080-desktop-full-hd-uefa-background.jpg
-   - ucl_4k_wallpaper.jpg: champions league 4K wallpaper.jpg
-   - ucl_stadium_bg.jpg: wp7192399-uefa-champions-league-wallpapers.jpg
-   - ucl_stars_dark.jpg: 1096908052983243477.jpg
+   THE IMMORTAL ERA — RETIREMENT TRIBUTE STYLING
+   Honoring Lionel Messi · Cristiano Ronaldo · Neymar Jr.
+   Primary wallpaper: ronaldo-messi-tribute-walk.webp (7680x4320)
    ================================================================ */
 
 .theme-bg {
   background: transparent !important;
 }
 
-/* Glassmorphism card surfaces for UCL theme */
+/* Dark Editorial Card Surfaces */
 .bg-\[\#080808\],
 .bg-\[\#0c0c0c\],
 .bg-\[\#101010\],
@@ -54,16 +51,16 @@
 .bg-\[\#161208\],
 .bg-\[\#181012\],
 .bg-\[\#141414\] {
-  background-color: rgba(4, 14, 38, 0.82) !important;
+  background-color: rgba(8, 12, 22, 0.82) !important;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-color: rgba(59, 130, 246, 0.28) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
 }
 
 .border-\[\#222222\],
 .border-\[\#262626\],
 .border-\[\#1c1c1c\] {
-  border-color: rgba(59, 130, 246, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 /* Scrollbars */
@@ -73,20 +70,20 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #020718;
+  background: #04060B;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e3a8a;
+  background: #D4AF37;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  background: #FDE047;
 }
 
-/* UCL ambient lighting effects */
-.ucl-ambient {
+/* Tribute Subtle Ambient Lighting */
+.tribute-ambient {
   pointer-events: none;
   position: fixed;
   inset: 0;
@@ -94,7 +91,7 @@
   overflow: hidden;
 }
 
-.ucl-ambient::before {
+.tribute-ambient::before {
   content: '';
   position: absolute;
   top: -15%;
@@ -102,11 +99,11 @@
   width: 75vw;
   height: 75vw;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(30, 80, 220, 0.20) 0%, transparent 70%);
-  animation: ucl-glow-pulse 8s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
+  animation: tribute-glow-pulse 9s ease-in-out infinite;
 }
 
-.ucl-ambient::after {
+.tribute-ambient::after {
   content: '';
   position: absolute;
   bottom: -20%;
@@ -114,38 +111,42 @@
   width: 65vw;
   height: 65vw;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(124, 58, 237, 0.16) 0%, transparent 70%);
-  animation: ucl-glow-pulse 10s ease-in-out infinite reverse;
+  background: radial-gradient(circle, rgba(225, 29, 72, 0.10) 0%, transparent 70%);
+  animation: tribute-glow-pulse 11s ease-in-out infinite reverse;
 }
 
-@keyframes ucl-glow-pulse {
-  0%, 100% { opacity: 0.45; filter: blur(50px); }
-  50%       { opacity: 0.75; filter: blur(65px); }
+@keyframes tribute-glow-pulse {
+  0%, 100% { opacity: 0.40; filter: blur(50px); }
+  50%       { opacity: 0.70; filter: blur(65px); }
 }
 
-@keyframes ucl-shimmer {
+@keyframes gold-shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
 
-.ucl-shimmer {
-  background: linear-gradient(90deg, #c0c0c0 0%, #ffffff 30%, #a8c4e0 50%, #ffffff 70%, #c0c0c0 100%);
+.gold-shimmer {
+  background: linear-gradient(90deg, #D4AF37 0%, #FFFFFF 30%, #FDE047 50%, #FFFFFF 70%, #D4AF37 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: ucl-shimmer 3s linear infinite;
+  animation: gold-shimmer 4s linear infinite;
 }
 
-/* Custom Editorial Aesthetics */
-.text-stroke-red,
-.text-stroke-ucl {
-  -webkit-text-stroke: 1.5px #3b82f6;
+/* Custom Editorial Strokes */
+.text-stroke-gold {
+  -webkit-text-stroke: 1.5px #D4AF37;
+  color: transparent;
+}
+
+.text-stroke-crimson {
+  -webkit-text-stroke: 1.5px #E11D48;
   color: transparent;
 }
 
 .text-stroke-white {
-  -webkit-text-stroke: 1px rgba(245, 245, 245, 0.4);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
   color: transparent;
 }
 
@@ -155,4 +156,13 @@
 
 .clip-slanted {
   clip-path: polygon(0 0, 100% 0, 96% 100%, 0% 100%);
+}
+
+/* Accessibility: Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -494,7 +494,7 @@ class RegistrationsView(ctk.CTkScrollableFrame):
         self.load_table_data()
 
     def open_add_manual_modal(self):
-        modal = BaseModal(self, title="Add Registration Manually", width=450, height=380)
+        modal = BaseModal(self, title="Add Registration Manually", width=480, height=440, scrollable=True)
 
         # Fields
         ctk.CTkLabel(modal.body_frame, text="Participant Name:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w", pady=(4, 2))
@@ -527,7 +527,7 @@ class RegistrationsView(ctk.CTkScrollableFrame):
         ctk.CTkButton(modal.body_frame, text="Save Registration", fg_color=theme.ACCENT_GREEN, hover_color=theme.ACCENT_GREEN_HOVER, text_color=theme.TEXT_DARK, font=ctk.CTkFont(weight="bold"), command=save).pack(fill="x", pady=(6, 0))
 
     def open_edit_modal(self, reg):
-        modal = BaseModal(self, title=f"Edit Registration #{reg.id}", width=450, height=420)
+        modal = BaseModal(self, title=f"Edit Registration #{reg.id}", width=480, height=480, scrollable=True)
 
         ctk.CTkLabel(modal.body_frame, text="Participant Name:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w", pady=(4, 2))
         name_entry = ctk.CTkEntry(modal.body_frame, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)

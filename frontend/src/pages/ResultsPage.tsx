@@ -42,25 +42,25 @@ export const ResultsPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header Banner */}
-      <div className="mb-10 relative rounded-2xl overflow-hidden border border-blue-500/30 bg-gradient-to-r from-[#030d26] via-[#051336] to-[#020718] p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-25 sm:opacity-40 pointer-events-none">
+      {/* Header Banner with Neymar Black Studio Wallpaper */}
+      <div className="mb-10 relative rounded-2xl overflow-hidden border border-amber-400/30 bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-30 sm:opacity-50 pointer-events-none">
           <img
-            src="/assets/backgrounds/ucl_stadium_bg.jpg"
-            alt="UEFA Champions League Stadium"
-            className="w-full h-full object-cover object-center filter contrast-125"
+            src="/assets/backgrounds/legends/neymar-black-studio.webp"
+            alt="Neymar Jr Studio Portrait"
+            className="w-full h-full object-cover object-right filter contrast-125"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#030d26] via-[#030d26]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#04060B] via-[#04060B]/80 to-transparent" />
         </div>
         <div className="relative z-10">
-          <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-blue-400 mb-2">
+          <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-amber-400 mb-2">
             <Trophy className="w-4 h-4 text-amber-400" />
-            <span>OFFICIAL SCORES · UEFA STAGE</span>
+            <span>OFFICIAL SCORES · CHAMPIONSHIP ARCHIVE</span>
           </div>
           <h1 className="font-display text-4xl sm:text-5xl text-white tracking-wider">
             MATCH RESULTS
           </h1>
-          <p className="text-sm text-blue-200/80 mt-2 max-w-xl">
+          <p className="text-sm text-neutral-300 mt-2 max-w-xl">
             Official verified scores from completed matches in the Minaram Cup.
           </p>
         </div>

@@ -55,9 +55,18 @@ export const TeamDetailPage: React.FC = () => {
         <span>BACK TO TEAMS DIRECTORY</span>
       </Link>
 
-      {/* Team Header Profile */}
-      <div className="bg-[#121212] border border-[#222222] rounded-xl p-6 sm:p-8 mb-10">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      {/* Team Header Profile with Messi Captain Portrait Accent */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] border border-white/10 p-6 sm:p-8 mb-10 shadow-2xl">
+        <div className="absolute right-0 top-0 bottom-0 w-48 sm:w-64 opacity-20 pointer-events-none">
+          <img
+            src="/assets/backgrounds/legends/messi-captain-portrait.webp"
+            alt="Captain Portrait"
+            className="w-full h-full object-cover object-top"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#080c16] via-transparent to-transparent" />
+        </div>
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="flex items-center space-x-5">
             <div className="w-20 h-20 rounded-full bg-black border-2 border-neutral-700 flex items-center justify-center font-display text-3xl text-white shrink-0 shadow-lg">
               {team.name.substring(0, 2).toUpperCase()}

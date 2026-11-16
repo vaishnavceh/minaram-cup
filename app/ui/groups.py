@@ -267,7 +267,7 @@ class GroupsView(ctk.CTkScrollableFrame):
         total_teams = sum(len(tl) for tl in alloc.values())
         num_g = len(alloc)
         mode_title = "🎲 Randomized Auto Draw" if randomize else "⚡ Auto Distribution Preview"
-        modal = BaseModal(self, title=f"{mode_title} (Max {max_teams_per_group}/Group)", width=560, height=500)
+        modal = BaseModal(self, title=f"{mode_title} (Max {max_teams_per_group}/Group)", width=580, height=520)
 
         ctk.CTkLabel(
             modal.body_frame,
@@ -342,7 +342,7 @@ class GroupsView(ctk.CTkScrollableFrame):
         self.load_groups_view()
 
     def open_add_group_modal(self):
-        modal = BaseModal(self, title="Add New Group", width=380, height=220)
+        modal = BaseModal(self, title="Add New Group", width=400, height=240, scrollable=True)
 
         ctk.CTkLabel(modal.body_frame, text="Group Name (e.g. Group C):", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w", pady=(8, 4))
         name_entry = ctk.CTkEntry(modal.body_frame, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)
@@ -363,7 +363,7 @@ class GroupsView(ctk.CTkScrollableFrame):
         ctk.CTkButton(modal.body_frame, text="Create Group", fg_color=theme.ACCENT_GREEN, hover_color=theme.ACCENT_GREEN_HOVER, text_color=theme.TEXT_DARK, font=ctk.CTkFont(weight="bold"), command=save).pack(fill="x")
 
     def open_rename_group_modal(self, grp):
-        modal = BaseModal(self, title=f"Rename {grp.name}", width=380, height=220)
+        modal = BaseModal(self, title=f"Rename {grp.name}", width=400, height=240, scrollable=True)
 
         ctk.CTkLabel(modal.body_frame, text="New Group Name:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w", pady=(8, 4))
         name_entry = ctk.CTkEntry(modal.body_frame, fg_color=theme.BG_INPUT, border_color=theme.BORDER_COLOR)

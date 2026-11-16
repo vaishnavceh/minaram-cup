@@ -66,11 +66,17 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({ groupData }) => 
               <th className="py-2.5 px-2 text-center w-12 hidden sm:table-cell">GA</th>
               <th className="py-2.5 px-2 text-center w-12">GD</th>
               <th className="py-2.5 px-3 text-center w-14 font-bold text-white">PTS</th>
+              <th className="py-2.5 px-2 text-center w-20 hidden md:table-cell">FORM</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#1c1c1c] font-sans">
             {(groupData?.standings || []).map((row, idx) => {
               const qualifies = idx < 2;
+              const formList = Array.isArray(row.form)
+                ? row.form
+                : typeof row.form === 'string'
+                ? row.form.split('')
+                : [];
               return (
                 <tr
                   key={row.team_id}
@@ -133,6 +139,31 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({ groupData }) => 
                   </td>
                   <td className="py-3 px-3 text-center font-mono text-sm tabular-nums font-bold text-white bg-black/30">
                     {row.points}
+                  </td>
+
+                  {/* Form */}
+                  <td className="py-3 px-2 text-center hidden md:table-cell">
+                    <div className="flex items-center justify-center space-x-1">
+                      {formList.length > 0 ? (
+                        formList.slice(-5).map((f, i) => (
+                          <span
+                            key={i}
+                            className={`w-4 h-4 rounded text-[9px] font-mono font-bold flex items-center justify-center ${
+                              f === 'W'
+                                ? 'bg-emerald-600 text-white'
+                                : f === 'D'
+                                ? 'bg-neutral-600 text-neutral-200'
+                                : 'bg-rose-600 text-white'
+                            }`}
+                            title={f === 'W' ? 'Win' : f === 'D' ? 'Draw' : 'Loss'}
+                          >
+                            {f}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-neutral-600 text-[10px] font-mono">-</span>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );

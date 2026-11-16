@@ -5,108 +5,100 @@ import {
   VolumeX,
   Play,
   Pause,
-  Moon,
-  Sun,
+  Square,
+  Music,
   ChevronDown,
   ChevronUp,
-  Music,
-  Minus,
-  Plus
+  Info,
+  Sparkles,
+  Disc3
 } from 'lucide-react';
 
 export const AudioPlayer: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Time-based automatic night stabilization:
-  // Daytime (6 AM to 8 PM): Standard dynamic playback at 50% default volume.
-  // Nighttime (8 PM to 6 AM): Automatically stabilized for nighttime so peak brass & choir don't blast.
-  const getTimeState = () => {
-    const now = new Date();
-    const hour = now.getHours();
-    const minute = now.getMinutes();
-    const isNight = hour >= 20 || hour < 6;
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour % 12 === 0 ? 12 : hour % 12;
-    const formattedMinute = minute < 10 ? `0${minute}` : minute;
-    const timeString = `${displayHour}:${formattedMinute} ${ampm}`;
-    return {
-      isNight,
-      timeString
-    };
-  };
-
-  const [timeState, setTimeState] = useState(getTimeState());
-  const [userOverride, setUserOverride] = useState<boolean | null>(null); // null = auto detect
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [volume, setVolume] = useState<number>(0.5); // Default 50% base volume
+  const [volume, setVolume] = useState<number>(0.5); // Default 50% volume
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
-  const [isMinimized, setIsMinimized] = useState<boolean>(false);
+  const [isMinimized, setIsMinimized] = useState<boolean>(true); // Start in minimized pill state like uploaded screenshot
+  const [showCredits, setShowCredits] = useState<boolean>(false); // Expandable only
   const [autoplayBlocked, setAutoplayBlocked] = useState<boolean>(false);
 
-  // Active night stabilizer status (user override takes precedence if set, otherwise auto follows time)
-  const isNightStabilizerActive = userOverride !== null ? userOverride : timeState.isNight;
-
-  // Night-stabilized effective volume calculation:
-  // At night: volume is attenuated and stabilized (0.70x, yielding ~0.35 max when slider is 50%)
-  // so the anthem is soft and respectful at night, not loud.
-  const effectiveVolume = isMuted ? 0 : isNightStabilizerActive ? volume * 0.70 : volume;
-
+  // Sync volume with HTML audio element
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = Math.max(0, Math.min(1, effectiveVolume));
+      audioRef.current.volume = isMuted ? 0 : volume;
     }
-  }, [effectiveVolume]);
+  }, [volume, isMuted]);
 
-  // Periodically check local time every 15 seconds to automatically react when time changes
-  useEffect(() => {
-    const check = () => {
-      setTimeState(getTimeState());
-    };
-    const timer = setInterval(check, 15000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Automatically play anthem on start:
-  // First attempt immediate playback. If browser autoplay policy blocks unprompted audio,
-  // register a one-time global user gesture listener (click, keydown, touch) so it starts instantly on first interaction.
+  // Autoplay on mount at 50% volume with robust browser policy unlock
   useEffect(() => {
     let unmounted = false;
 
     const startPlayback = async () => {
-      if (!audioRef.current) return;
+      const el = audioRef.current;
+      if (!el) return;
+
+      el.volume = 0.5;
+      setVolume(0.5);
+
+      // Attempt 1: Direct unmuted playback at 50% volume
       try {
-        await audioRef.current.play();
+        await el.play();
         if (!unmounted) {
           setIsPlaying(true);
+          setIsMuted(false);
           setAutoplayBlocked(false);
+        }
+        return;
+      } catch (err) {
+        // Direct unmuted playback blocked by browser Media Engagement policy
+      }
+
+      // Attempt 2: Start playing muted immediately so timeline advances & buffers
+      try {
+        el.muted = true;
+        await el.play();
+        if (!unmounted) {
+          setIsPlaying(true);
+          setAutoplayBlocked(true);
         }
       } catch {
         if (!unmounted) {
           setAutoplayBlocked(true);
         }
-        const onFirstInteraction = () => {
-          if (audioRef.current && audioRef.current.paused) {
-            audioRef.current
-              .play()
-              .then(() => {
-                if (!unmounted) {
-                  setIsPlaying(true);
-                  setAutoplayBlocked(false);
-                }
-              })
-              .catch(() => {});
-          }
-          window.removeEventListener('click', onFirstInteraction);
-          window.removeEventListener('keydown', onFirstInteraction);
-          window.removeEventListener('touchstart', onFirstInteraction);
-        };
-
-        window.addEventListener('click', onFirstInteraction, { once: true });
-        window.addEventListener('keydown', onFirstInteraction, { once: true });
-        window.addEventListener('touchstart', onFirstInteraction, { once: true });
       }
+
+      // Global capture-phase unlocker on first user gesture anywhere
+      const unlockSound = () => {
+        if (el) {
+          el.muted = false;
+          el.volume = 0.5;
+          el.play()
+            .then(() => {
+              if (!unmounted) {
+                setIsPlaying(true);
+                setIsMuted(false);
+                setAutoplayBlocked(false);
+              }
+            })
+            .catch(() => {});
+        }
+
+        const events = ['pointerdown', 'mousedown', 'touchstart', 'click', 'keydown'];
+        events.forEach((ev) => {
+          document.removeEventListener(ev, unlockSound, true);
+          window.removeEventListener(ev, unlockSound, true);
+        });
+      };
+
+      const events = ['pointerdown', 'mousedown', 'touchstart', 'click', 'keydown'];
+      events.forEach((ev) => {
+        document.addEventListener(ev, unlockSound, { capture: true, once: true });
+        window.addEventListener(ev, unlockSound, { capture: true, once: true });
+      });
     };
 
     startPlayback();
@@ -116,7 +108,6 @@ export const AudioPlayer: React.FC = () => {
     };
   }, []);
 
-  // Sync playback state with audio element
   const togglePlay = () => {
     if (!audioRef.current) return;
     if (isPlaying) {
@@ -135,6 +126,26 @@ export const AudioPlayer: React.FC = () => {
     }
   };
 
+  const handleStop = () => {
+    if (!audioRef.current) return;
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
+    setCurrentTime(0);
+    setIsPlaying(false);
+  };
+
+  const toggleMute = () => {
+    setIsMuted((prev) => !prev);
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVol = parseFloat(e.target.value);
+    setVolume(newVol);
+    if (newVol > 0 && isMuted) {
+      setIsMuted(false);
+    }
+  };
+
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
@@ -148,194 +159,192 @@ export const AudioPlayer: React.FC = () => {
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const seekTime = parseFloat(e.target.value);
+    const time = parseFloat(e.target.value);
+    setCurrentTime(time);
     if (audioRef.current) {
-      audioRef.current.currentTime = seekTime;
-      setCurrentTime(seekTime);
+      audioRef.current.currentTime = time;
     }
   };
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVol = parseFloat(e.target.value);
-    setVolume(newVol);
-    if (newVol > 0 && isMuted) {
-      setIsMuted(false);
-    }
+  const formatTime = (seconds: number): string => {
+    if (isNaN(seconds) || seconds <= 0) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  const adjustVolumeBy = (delta: number) => {
-    setVolume((prev) => {
-      const updated = Math.max(0, Math.min(1, Math.round((prev + delta) * 100) / 100));
-      if (updated > 0 && isMuted) setIsMuted(false);
-      return updated;
-    });
-  };
-
-  const toggleMute = () => {
-    setIsMuted(!isMuted);
-  };
-
-  const formatTime = (secs: number) => {
-    if (isNaN(secs)) return '0:00';
-    const m = Math.floor(secs / 60);
-    const s = Math.floor(secs % 60);
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
-  };
-
-  const currentPercent = Math.round(volume * 100);
+  const currentPercent = isMuted ? 0 : Math.round(volume * 100);
 
   return (
     <>
-      {/* Hidden audio element loading local UEFA Champions League Anthem */}
+      {/* Hidden HTML5 Audio Element */}
       <audio
         ref={audioRef}
-        src="/assets/audio/uefa_champions_league_anthem.mp3"
+        src="/assets/audio/viva_la_vida.mp3"
+        autoPlay
+        playsInline
+        preload="auto"
+        loop
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
-        loop
-        autoPlay
-        preload="auto"
       />
 
-      {/* Floating Bottom Audio Player */}
-      <div className="fixed bottom-4 right-4 z-50 transition-all duration-300">
+      {/* Floating Audio Player Widget */}
+      <div
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 transition-all duration-300 font-sans select-none"
+        role="region"
+        aria-label="Tournament Theme Audio Player"
+      >
         {isMinimized ? (
-          /* Minimized Compact Pill */
-          <div className="flex items-center space-x-3 px-3.5 py-2 rounded-full bg-black/90 border border-brand-gold/50 shadow-[0_4px_25px_rgba(212,175,55,0.25)] backdrop-blur-md">
-            <button
-              onClick={togglePlay}
-              className="w-8 h-8 rounded-full bg-gradient-to-r from-brand-gold to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black flex items-center justify-center transition-transform hover:scale-105 cursor-pointer shadow-md"
-              title={isPlaying ? 'Pause UCL Anthem' : 'Play UCL Anthem'}
-            >
-              {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
-            </button>
+          /* Minimized Disc Pill — Starts like this on page load */
+          <button
+            type="button"
+            onClick={() => {
+              if (audioRef.current) {
+                audioRef.current.muted = false;
+                audioRef.current.volume = 0.5;
+                audioRef.current
+                  .play()
+                  .then(() => {
+                    setIsPlaying(true);
+                    setIsMuted(false);
+                    setAutoplayBlocked(false);
+                  })
+                  .catch(() => {});
+              }
+              setIsMinimized(false);
+            }}
+            className="flex items-center space-x-3 px-4 py-2 rounded-full bg-black/95 border border-amber-400/60 text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(212,175,55,0.3)] hover:border-amber-300 hover:scale-105 transition-all duration-200 group cursor-pointer"
+            title="Click to open audio controls"
+            aria-label="Expand Viva la Vida audio controls"
+          >
+            {/* Spinning Disc Badge */}
+            <div className="relative w-8 h-8 rounded-full border border-amber-400/80 bg-amber-950/50 flex items-center justify-center text-amber-400 shadow-[0_0_12px_rgba(212,175,55,0.4)] shrink-0">
+              <Disc3 className={`w-5 h-5 ${isPlaying ? 'animate-spin' : ''}`} style={{ animationDuration: '3s' }} />
+            </div>
 
-            <div className="flex items-center space-x-2 cursor-pointer" onClick={() => setIsMinimized(false)}>
-              <span className="font-display text-xs tracking-wider text-white">UCL ANTHEM</span>
-              {/* Equalizer animation bars if playing */}
-              {isPlaying && (
-                <div className="flex items-end space-x-0.5 h-3">
-                  <span className="w-0.5 bg-brand-gold animate-[bounce_0.6s_ease-in-out_infinite] h-full" />
-                  <span className="w-0.5 bg-brand-gold animate-[bounce_0.9s_ease-in-out_infinite] h-2" />
-                  <span className="w-0.5 bg-brand-gold animate-[bounce_0.4s_ease-in-out_infinite] h-full" />
-                </div>
-              )}
-              <span className="text-[10px] font-mono text-brand-gold font-bold flex items-center space-x-1">
-                <span>{currentPercent}%</span>
-                {isNightStabilizerActive ? (
-                  <span title="Night Acoustic Limiter Active">
-                    <Moon className="w-2.5 h-2.5 text-indigo-400" />
-                  </span>
+            {/* Song Title & Live Status */}
+            <div className="flex flex-col text-left pr-1">
+              <span className="text-xs font-display uppercase tracking-wider text-white group-hover:text-amber-300 transition-colors font-bold leading-none">
+                VIVA LA VIDA
+              </span>
+              <span className="text-[10px] font-mono text-neutral-400 tracking-wider uppercase leading-none mt-1 flex items-center space-x-1">
+                {autoplayBlocked ? (
+                  <>
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping inline-block" />
+                    <span className="text-amber-300">CLICK TO UNMUTE</span>
+                  </>
+                ) : isPlaying ? (
+                  <span>{formatTime(currentTime)} · PLAYING</span>
                 ) : (
-                  <span title="Daytime Standard Dynamics Active">
-                    <Sun className="w-2.5 h-2.5 text-amber-400" />
-                  </span>
+                  <span>0:00 · CLICK TO PLAY</span>
                 )}
               </span>
             </div>
 
-            <button
-              onClick={() => setIsMinimized(false)}
-              className="p-1 rounded text-neutral-400 hover:text-white"
-              title="Expand Anthem Player"
-            >
-              <ChevronUp className="w-4 h-4" />
-            </button>
-          </div>
+            {/* Expand Indicator */}
+            <ChevronUp className="w-4 h-4 text-neutral-400 group-hover:text-amber-300 transition-colors shrink-0" />
+          </button>
         ) : (
-          /* Expanded Full Player */
-          <div className="w-[320px] sm:w-[380px] rounded-2xl bg-gradient-to-b from-[#0c101c] via-[#080b14] to-[#04060c] border-2 border-brand-gold/60 p-4 shadow-[0_8px_35px_rgba(0,0,0,0.8),0_0_30px_rgba(212,175,55,0.18)] backdrop-blur-xl animate-fade-in">
-            {/* Header / Track Info */}
-            <div className="flex items-start justify-between mb-3 pb-2.5 border-b border-[#1c2438]">
-              <div className="flex items-center space-x-2.5">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-gold to-amber-700 flex items-center justify-center text-black shadow-md shrink-0">
-                  <Music className="w-5 h-5" />
+          /* Expanded Player Console */
+          <div className="w-[320px] sm:w-[360px] max-w-[calc(100vw-32px)] rounded-2xl bg-[#04060B]/95 border border-amber-400/30 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.85)] p-4 text-white relative overflow-hidden transition-all duration-300">
+            {/* Top Shimmer Border */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-75" />
+
+            {/* Header: Title, Artist, Minimize Button */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center space-x-2.5 overflow-hidden">
+                <div className={`w-8 h-8 rounded-lg bg-amber-950/40 border border-amber-400/40 flex items-center justify-center text-amber-400 shrink-0 ${isPlaying ? 'shadow-[0_0_12px_rgba(212,175,55,0.3)]' : ''}`}>
+                  <Music className="w-4 h-4" />
                 </div>
-                <div className="overflow-hidden">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-[9px] font-mono font-bold tracking-widest uppercase px-1.5 py-0.5 rounded bg-brand-gold/20 text-brand-gold border border-brand-gold/40">
-                      OFFICIAL ANTHEM
+                <div className="flex flex-col truncate">
+                  <div className="flex items-center space-x-1.5">
+                    <span className="font-display text-sm tracking-wider text-white truncate">
+                      VIVA LA VIDA
                     </span>
+                    <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
                   </div>
-                  <h4 className="font-display text-sm text-white tracking-wide truncate mt-0.5">
-                    UEFA CHAMPIONS LEAGUE
-                  </h4>
-                  <p className="text-[10px] font-mono text-neutral-400 truncate">
-                    Full Orchestral & Choir Version
-                  </p>
+                  <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase truncate">
+                    Coldplay · Legends Anthem
+                  </span>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-1 shrink-0">
+              <div className="flex items-center space-x-1">
+                {/* Expandable Credits Toggle */}
                 <button
+                  type="button"
+                  onClick={() => setShowCredits((prev) => !prev)}
+                  className={`p-1.5 rounded-lg border text-xs font-mono transition-colors flex items-center space-x-1 ${
+                    showCredits
+                      ? 'bg-amber-400/20 border-amber-400/60 text-amber-300'
+                      : 'bg-neutral-900 border-white/10 text-neutral-400 hover:text-white hover:border-white/20'
+                  }`}
+                  title={showCredits ? 'Hide Credits' : 'View Credits'}
+                  aria-expanded={showCredits}
+                >
+                  <Info className="w-3.5 h-3.5" />
+                  <span className="text-[10px] uppercase tracking-wider font-semibold">Credits</span>
+                </button>
+
+                {/* Minimize Player Button */}
+                <button
+                  type="button"
                   onClick={() => setIsMinimized(true)}
-                  className="p-1.5 rounded-lg hover:bg-neutral-800 text-neutral-400 hover:text-white transition-colors"
+                  className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
                   title="Minimize Player"
+                  aria-label="Minimize Audio Player"
                 >
                   <ChevronDown className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* Time-Based Night Stabilization Strip */}
-            <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-[#0f1626] border border-[#1e2c47] flex items-center justify-between text-[11px] font-mono">
-              <div className="flex items-center space-x-2">
-                {isNightStabilizerActive ? (
-                  <Moon className="w-3.5 h-3.5 text-indigo-400 shrink-0 animate-pulse" />
-                ) : (
-                  <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                )}
-                <div>
-                  <div className="flex items-center space-x-1.5">
-                    <span className="text-white font-bold">{timeState.timeString}</span>
-                    <span className="text-[8px] uppercase px-1 rounded bg-black/60 text-neutral-400 border border-neutral-700">
-                      {userOverride === null ? 'AUTO DETECTED' : 'MANUAL'}
-                    </span>
+            {/* EXPANDABLE ONLY: Song Credits & Attribution */}
+            {showCredits && (
+              <div className="mt-3 p-3 rounded-xl bg-gradient-to-b from-neutral-900/90 to-black/90 border border-amber-400/25 text-[11px] font-mono space-y-2 animate-fadeIn transition-all">
+                <div className="flex items-center justify-between pb-1.5 border-b border-white/10 text-amber-300 font-bold uppercase tracking-wider text-[10px]">
+                  <span>OFFICIAL SONG CREDITS</span>
+                  <span className="text-neutral-500 font-normal">EXPANDABLE</span>
+                </div>
+                <div className="space-y-1 text-neutral-300 leading-snug">
+                  <div>
+                    <span className="text-neutral-500 uppercase tracking-widest text-[9px] block">Title & Artist</span>
+                    <strong className="text-white">Viva la Vida</strong> — Coldplay
                   </div>
-                  <span className="text-[10px] text-neutral-300">
-                    {isNightStabilizerActive
-                      ? 'Night Mode: Stabilized for Night (Not Too Loud)'
-                      : 'Daytime Mode: Standard 50% Dynamics'}
-                  </span>
+                  <div>
+                    <span className="text-neutral-500 uppercase tracking-widest text-[9px] block">Album</span>
+                    <span>Viva la Vida or Death and All His Friends (2008)</span>
+                  </div>
+                  <div>
+                    <span className="text-neutral-500 uppercase tracking-widest text-[9px] block">Writers</span>
+                    <span>Guy Berryman, Jonny Buckland, Will Champion, Chris Martin</span>
+                  </div>
+                  <div>
+                    <span className="text-neutral-500 uppercase tracking-widest text-[9px] block">Producers</span>
+                    <span>Brian Eno, Markus Dravs, Rik Simpson</span>
+                  </div>
+                  <div className="pt-1 text-[10px] text-amber-200/80 italic border-t border-white/5">
+                    Tribute anthem celebrating the immortal football era of Lionel Messi, Cristiano Ronaldo, and Neymar Jr. Non-commercial collegiate presentation for Minaram Cup 2026.
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center space-x-1 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setUserOverride(!isNightStabilizerActive)}
-                  className={`text-[9px] uppercase px-1.5 py-0.5 rounded font-bold transition-colors cursor-pointer ${
-                    isNightStabilizerActive
-                      ? 'bg-indigo-950 text-indigo-300 border border-indigo-700'
-                      : 'bg-amber-950 text-amber-300 border border-amber-700'
-                  }`}
-                  title="Toggle night-time acoustic limiter"
-                >
-                  {isNightStabilizerActive ? 'NIGHT ON' : 'DAY ON'}
-                </button>
-                {userOverride !== null && (
-                  <button
-                    type="button"
-                    onClick={() => setUserOverride(null)}
-                    className="text-[8px] uppercase px-1 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white border border-neutral-700 cursor-pointer"
-                    title="Reset to auto time detection"
-                  >
-                    AUTO
-                  </button>
-                )}
-              </div>
-            </div>
+            )}
 
-            {/* Scrub Progress Bar */}
-            <div className="mb-3 space-y-1">
+            {/* Scrub Progress Bar & Timers */}
+            <div className="mt-3 space-y-1">
               <input
                 type="range"
                 min="0"
                 max={duration || 100}
-                step="0.5"
+                step="0.25"
                 value={currentTime}
                 onChange={handleSeek}
-                className="w-full h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-brand-gold"
+                className="w-full h-1 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-400"
+                aria-label="Track Progress Slider"
               />
               <div className="flex items-center justify-between text-[10px] font-mono text-neutral-400 px-0.5">
                 <span>{formatTime(currentTime)}</span>
@@ -343,82 +352,79 @@ export const AudioPlayer: React.FC = () => {
               </div>
             </div>
 
-            {/* Main Controls & Volume Strip */}
-            <div className="flex items-center justify-between gap-3 pt-1">
-              {/* Play / Pause Primary Button */}
-              <button
-                onClick={togglePlay}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-gold to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-display text-sm tracking-wider uppercase transition-all shadow-[0_0_15px_rgba(212,175,55,0.4)] flex items-center space-x-2 shrink-0 cursor-pointer"
-              >
-                {isPlaying ? (
-                  <>
-                    <Pause className="w-4 h-4 fill-current" />
-                    <span>PAUSE</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-4 h-4 fill-current ml-0.5" />
-                    <span>PLAY</span>
-                  </>
-                )}
-              </button>
+            {/* Main Controls: Play, Stop, Volume Slider */}
+            <div className="mt-3 flex items-center justify-between gap-3">
+              {/* Play / Pause / Stop Buttons */}
+              <div className="flex items-center space-x-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={togglePlay}
+                  className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-display text-xs tracking-wider uppercase transition-all shadow-[0_0_15px_rgba(212,175,55,0.35)] flex items-center space-x-1.5 cursor-pointer font-bold"
+                  title={isPlaying ? 'Pause Anthem' : 'Play Anthem'}
+                >
+                  {isPlaying ? (
+                    <>
+                      <Pause className="w-3.5 h-3.5 fill-current" />
+                      <span>PAUSE</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
+                      <span>PLAY</span>
+                    </>
+                  )}
+                </button>
 
-              {/* Volume Slider & Increments */}
+                <button
+                  type="button"
+                  onClick={handleStop}
+                  className="p-1.5 rounded-xl bg-neutral-900 border border-white/10 hover:border-rose-500/50 hover:bg-rose-950/30 text-neutral-400 hover:text-rose-400 transition-colors cursor-pointer"
+                  title="Stop and Reset to Start"
+                  aria-label="Stop Anthem"
+                >
+                  <Square className="w-3.5 h-3.5 fill-current" />
+                </button>
+              </div>
+
+              {/* Volume Strip */}
               <div className="flex items-center space-x-2 flex-grow justify-end">
                 <button
+                  type="button"
                   onClick={toggleMute}
-                  className="p-1.5 rounded-lg hover:bg-neutral-800 text-neutral-300 hover:text-brand-gold transition-colors shrink-0"
+                  className="p-1.5 rounded-lg hover:bg-neutral-800 text-neutral-300 hover:text-amber-400 transition-colors shrink-0"
                   title={isMuted ? 'Unmute' : 'Mute'}
+                  aria-label={isMuted ? 'Unmute' : 'Mute'}
                 >
                   {isMuted || volume === 0 ? (
                     <VolumeX className="w-4 h-4 text-rose-400" />
                   ) : volume < 0.5 ? (
                     <Volume1 className="w-4 h-4 text-amber-400" />
                   ) : (
-                    <Volume2 className="w-4 h-4 text-brand-gold" />
+                    <Volume2 className="w-4 h-4 text-amber-400" />
                   )}
                 </button>
 
-                {/* Decrease Button */}
-                <button
-                  onClick={() => adjustVolumeBy(-0.1)}
-                  className="w-6 h-6 rounded bg-neutral-900 border border-neutral-700 hover:border-brand-gold text-neutral-300 hover:text-white flex items-center justify-center text-xs transition-colors shrink-0"
-                  title="Reduce Volume -10%"
-                >
-                  <Minus className="w-3 h-3" />
-                </button>
-
-                {/* Range Slider */}
                 <input
                   type="range"
                   min="0"
                   max="1"
-                  step="0.05"
+                  step="0.02"
                   value={isMuted ? 0 : volume}
                   onChange={handleVolumeChange}
-                  className="w-20 sm:w-24 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-brand-gold"
+                  className="w-16 sm:w-20 h-1 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-400"
+                  aria-label="Volume Slider"
                 />
 
-                {/* Increase Button */}
-                <button
-                  onClick={() => adjustVolumeBy(0.1)}
-                  className="w-6 h-6 rounded bg-neutral-900 border border-neutral-700 hover:border-brand-gold text-neutral-300 hover:text-white flex items-center justify-center text-xs transition-colors shrink-0"
-                  title="Increase Volume +10%"
-                >
-                  <Plus className="w-3 h-3" />
-                </button>
-
-                {/* Percent Display */}
-                <span className="text-xs font-mono font-bold text-white min-w-[36px] text-right tabular-nums">
-                  {isMuted ? '0%' : `${currentPercent}%`}
+                <span className="text-[11px] font-mono font-bold text-white min-w-[32px] text-right tabular-nums">
+                  {currentPercent}%
                 </span>
               </div>
             </div>
 
-            {/* Hint Notice */}
+            {/* Autoplay blocked notice */}
             {autoplayBlocked && (
-              <div className="mt-2.5 p-1.5 rounded bg-amber-950/60 border border-amber-600/50 text-[10px] font-mono text-amber-300 text-center">
-                Click PLAY to listen to the official anthem
+              <div className="mt-2.5 p-1.5 rounded bg-amber-950/60 border border-amber-500/40 text-[10px] font-mono text-amber-300 text-center flex items-center justify-center space-x-1">
+                <span>Click PLAY to start official anthem</span>
               </div>
             )}
           </div>

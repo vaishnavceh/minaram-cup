@@ -401,7 +401,7 @@ class FixturesView(ctk.CTkScrollableFrame):
         team_names = [t["name"] for t in teams]
         team_id_map = {t["name"]: t["id"] for t in teams}
 
-        modal = BaseModal(self, title="Add Manual Fixture", width=460, height=440)
+        modal = BaseModal(self, title="Add Manual Fixture", width=480, height=520, scrollable=True)
 
         ctk.CTkLabel(modal.body_frame, text="Home Team:", font=ctk.CTkFont(size=11), text_color=theme.TEXT_SECONDARY).pack(anchor="w", pady=(2, 2))
         h_menu = ctk.CTkOptionMenu(modal.body_frame, values=team_names, fg_color=theme.BG_INPUT)
@@ -466,7 +466,7 @@ class FixturesView(ctk.CTkScrollableFrame):
         ctk.CTkButton(modal.body_frame, text="Save Fixture", fg_color=theme.ACCENT_GREEN, hover_color=theme.ACCENT_GREEN_HOVER, text_color=theme.TEXT_DARK, font=ctk.CTkFont(weight="bold"), command=save).pack(fill="x")
 
     def open_reschedule_modal(self, match):
-        modal = BaseModal(self, title=f"Reschedule Match #{match.match_number}", width=420, height=340)
+        modal = BaseModal(self, title=f"Reschedule Match #{match.match_number}", width=460, height=420, scrollable=True)
 
         ctk.CTkLabel(modal.body_frame, text=f"{match.home_team_name} vs {match.away_team_name}", font=ctk.CTkFont(size=13, weight="bold"), text_color=theme.TEXT_PRIMARY).pack(pady=(0, 10))
 

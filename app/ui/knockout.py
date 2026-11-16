@@ -203,23 +203,14 @@ class KnockoutView(ctk.CTkScrollableFrame):
                     ).pack(side="right")
 
     def open_quick_result_modal(self, match):
-        from app.ui.results import ResultsView
-        # If navigate is available, switch to results or launch direct modal
-        modal = ctk.CTkToplevel(self)
-        modal.title(f"Enter Score — {match.bracket_slot or match.stage}")
-        modal.geometry("400x320")
-        modal.configure(fg_color=theme.BG_MAIN)
-        modal.transient(self)
-        modal.grab_set()
+        from app.ui.modal import BaseModal
+        modal = BaseModal(self, title=f"Enter Score — {match.bracket_slot or match.stage}", width=440, height=380, scrollable=True)
 
-        cont = ctk.CTkFrame(modal, fg_color=theme.BG_CARD, corner_radius=10, border_color=theme.BORDER_COLOR, border_width=1)
-        cont.pack(fill="both", expand=True, padx=16, pady=16)
-
-        ctk.CTkLabel(cont, text=f"{match.home_team_name} vs {match.away_team_name}", font=ctk.CTkFont(size=14, weight="bold"), text_color=theme.TEXT_PRIMARY).pack(pady=(12, 10))
+        ctk.CTkLabel(modal.body_frame, text=f"{match.home_team_name} vs {match.away_team_name}", font=ctk.CTkFont(size=14, weight="bold"), text_color=theme.TEXT_PRIMARY).pack(pady=(4, 10))
 
         # Scores
-        sf = ctk.CTkFrame(cont, fg_color="transparent")
-        sf.pack(fill="x", padx=16, pady=(0, 10))
+        sf = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
+        sf.pack(fill="x", pady=(0, 10))
         sf.columnconfigure(0, weight=1)
         sf.columnconfigure(1, weight=1)
 
@@ -232,9 +223,9 @@ class KnockoutView(ctk.CTkScrollableFrame):
         ae.grid(row=0, column=1, padx=4)
 
         # Penalties
-        ctk.CTkLabel(cont, text="Penalties (if draw):", font=ctk.CTkFont(size=10), text_color=theme.TEXT_MUTED).pack()
-        pf = ctk.CTkFrame(cont, fg_color="transparent")
-        pf.pack(fill="x", padx=16, pady=(0, 14))
+        ctk.CTkLabel(modal.body_frame, text="Penalties (if draw):", font=ctk.CTkFont(size=10), text_color=theme.TEXT_MUTED).pack()
+        pf = ctk.CTkFrame(modal.body_frame, fg_color="transparent")
+        pf.pack(fill="x", pady=(0, 14))
         pf.columnconfigure(0, weight=1)
         pf.columnconfigure(1, weight=1)
 
@@ -266,4 +257,4 @@ class KnockoutView(ctk.CTkScrollableFrame):
                 modal.destroy()
                 self.load_bracket_view()
 
-        ctk.CTkButton(cont, text="Save Score", fg_color=theme.ACCENT_GREEN, hover_color=theme.ACCENT_GREEN_HOVER, text_color=theme.TEXT_DARK, font=ctk.CTkFont(weight="bold"), command=save).pack(fill="x", padx=16)
+        ctk.CTkButton(modal.body_frame, text="Save Score", fg_color=theme.ACCENT_GREEN, hover_color=theme.ACCENT_GREEN_HOVER, text_color=theme.TEXT_DARK, font=ctk.CTkFont(weight="bold"), command=save).pack(fill="x", pady=(4, 8))

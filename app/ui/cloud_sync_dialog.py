@@ -21,9 +21,7 @@ from app.cloud_sync_service import (
 
 class CloudSyncModal(BaseModal):
     def __init__(self, parent, on_sync_completed: Optional[Callable[[], None]] = None):
-        super().__init__(parent, title="☁️ Cloud Sync (Render API)", width=580, height=520)
-        self.resizable(True, True)
-        self.minsize(540, 480)
+        super().__init__(parent, title="☁️ Cloud Sync (Render API)", width=580, height=540, scrollable=True, min_width=480, min_height=400)
         self.on_sync_completed = on_sync_completed
         self.is_syncing = False
 

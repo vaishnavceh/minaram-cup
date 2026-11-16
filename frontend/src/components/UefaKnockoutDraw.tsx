@@ -639,32 +639,32 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* UEFA-Style Luxury Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#030d26] via-[#051336] to-[#020718] border-2 border-blue-500/50 p-6 sm:p-8 shadow-[0_0_40px_rgba(37,99,235,0.25)]">
+      {/* Legends Ceremonial Luxury Banner */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] border-2 border-amber-400/40 p-6 sm:p-8 shadow-[0_0_40px_rgba(212,175,55,0.2)]">
         {/* Background Stadium Wallpaper */}
         <div className="absolute inset-0 opacity-25 pointer-events-none">
           <img
-            src="/assets/backgrounds/ucl_stadium_bg.jpg"
-            alt="UEFA Champions League Stadium"
-            className="w-full h-full object-cover object-center filter contrast-125"
+            src="/assets/backgrounds/legends/messi-world-cup-neon.webp"
+            alt="Messi World Cup Trophy Tribute"
+            className="w-full h-full object-cover object-right-top filter contrast-125"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#030d26] via-[#030d26]/80 to-[#020718]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#04060B] via-[#04060B]/80 to-[#04060B]" />
         </div>
 
         {/* Glow Spheres */}
-        <div className="absolute top-0 right-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-1/4 w-72 h-72 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-rose-600/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-500/40 text-xs font-mono text-blue-300 tracking-widest uppercase mb-3 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-black/80 border border-amber-400/40 text-xs font-mono text-amber-300 tracking-widest uppercase mb-3 shadow-[0_0_15px_rgba(212,175,55,0.25)]">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>OFFICIAL CEREMONIAL DRAW DESK</span>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-white tracking-wider uppercase leading-none">
-              UEFA-STYLE KNOCKOUT DRAW
+              LEGENDS CEREMONIAL KNOCKOUT DRAW
             </h2>
-            <p className="mt-2 text-xs sm:text-sm font-mono text-blue-200/80 max-w-2xl leading-relaxed">
+            <p className="mt-2 text-xs sm:text-sm font-mono text-neutral-300 max-w-2xl leading-relaxed">
               Experience the suspense of the live preliminary draw ceremony. 28 group stage qualifiers seeded into 14 knockout fixtures with automatic same-group protection.
             </p>
           </div>

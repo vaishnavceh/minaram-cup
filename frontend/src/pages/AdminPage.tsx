@@ -286,28 +286,40 @@ export const AdminPage: React.FC = () => {
   // Admin Dashboard
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Admin Top Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#222222] mb-8 gap-4">
-        <div>
-          <span className="text-xs font-mono text-emerald-400 tracking-widest uppercase">
-            AUTHENTICATED SESSION
+      {/* Admin Top Bar with Neymar Rain Focused Wallpaper */}
+      <div className="mb-8 relative rounded-2xl overflow-hidden border border-amber-400/30 bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] p-6 sm:p-8 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-25 sm:opacity-40 pointer-events-none">
+          <img
+            src="/assets/backgrounds/legends/neymar-rain-portrait.webp"
+            alt="Neymar Jr Focused in Rain"
+            className="w-full h-full object-cover object-right filter contrast-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#04060B] via-[#04060B]/80 to-transparent" />
+        </div>
+        <div className="relative z-10">
+          <span className="text-xs font-mono text-emerald-400 tracking-widest uppercase flex items-center space-x-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>AUTHENTICATED DESK · MINARAM OFFICIALS</span>
           </span>
-          <h1 className="font-display text-4xl text-white tracking-wider">
+          <h1 className="font-display text-4xl text-white tracking-wider mt-1">
             ADMINISTRATOR CONTROLS
           </h1>
+          <p className="text-xs font-mono text-neutral-400 mt-1">
+            Real-time score entry, knockout draw management, and broadcast telemetry.
+          </p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="relative z-10 flex items-center space-x-3">
           <button
             onClick={handleAdvanceStage}
-            className="px-4 py-2 bg-neutral-900 border border-neutral-700 hover:border-brand-gold text-xs font-mono text-brand-gold rounded transition-colors flex items-center space-x-1.5"
+            className="px-4 py-2 bg-neutral-900 border border-amber-400/60 hover:border-amber-400 text-xs font-mono text-amber-300 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer shadow-sm"
           >
             <Trophy className="w-3.5 h-3.5" />
             <span>ADVANCE STAGE</span>
           </button>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 bg-neutral-900 border border-neutral-700 hover:border-neutral-500 text-xs font-mono text-neutral-300 rounded transition-colors flex items-center space-x-1.5"
+            className="px-4 py-2 bg-neutral-900 border border-neutral-700 hover:border-neutral-500 text-xs font-mono text-neutral-300 rounded-lg transition-colors flex items-center space-x-1.5 cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>LOGOUT</span>

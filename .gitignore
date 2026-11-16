@@ -53,3 +53,8 @@ backups/backups_manifest.json
 *.db-shm
 * - Copy*.db
 
+# Local raw media assets (uncompressed source clips)
+Bg videos/
+New Bgs/
+
+

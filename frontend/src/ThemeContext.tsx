@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type Theme = 'ucl' | 'classic';
+export type Theme = 'legends' | 'classic';
 
 interface ThemeContextValue {
   theme: Theme;
@@ -9,26 +9,26 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: 'ucl',
+  theme: 'legends',
   setTheme: () => {},
   toggleTheme: () => {},
 });
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>('ucl');
+  const [theme, setThemeState] = useState<Theme>('legends');
 
-  const setTheme = (_t: Theme) => {
-    setThemeState('ucl');
-    localStorage.setItem('minaram_theme', 'ucl');
+  const setTheme = (t: Theme) => {
+    setThemeState(t);
+    localStorage.setItem('minaram_theme', t);
   };
 
-  const toggleTheme = () => setTheme('ucl');
+  const toggleTheme = () => setTheme(theme === 'legends' ? 'classic' : 'legends');
 
   useEffect(() => {
-    localStorage.setItem('minaram_theme', 'ucl');
+    localStorage.setItem('minaram_theme', 'legends');
     const root = document.documentElement;
-    root.classList.add('theme-ucl');
-    root.classList.remove('theme-classic');
+    root.classList.add('theme-legends');
+    root.classList.remove('theme-ucl', 'theme-classic');
   }, [theme]);
 
   return (

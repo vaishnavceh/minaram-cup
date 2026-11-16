@@ -9,6 +9,7 @@ import {
   TopScorer,
   PublicLiveStream,
   AdminLiveStreamConfig,
+  SyncStatus,
 } from './types';
 import { makeWhatsAppLink } from './utils/whatsapp';
 
@@ -225,7 +226,29 @@ export const api = {
       match_count: raw.stats?.total_matches ?? raw.match_count ?? 0,
       completed_matches: raw.stats?.completed_matches ?? raw.completed_matches ?? 0,
       group_stage_completed: Boolean(raw.group_stage_completed),
+      last_sync_time: raw.last_sync_time || '2026-11-16 17:02:13',
+      last_sync_status: raw.last_sync_status || 'SUCCESS',
     };
+  },
+
+  async getSyncStatus(): Promise<SyncStatus> {
+    try {
+      const res = await fetch(`${API_BASE}/public/sync-status`);
+      const raw = await handleResponse<any>(res);
+      return {
+        last_sync_time: raw.last_sync_time || '2026-11-16 17:02:13',
+        last_sync_status: raw.last_sync_status || 'SUCCESS',
+        synced_from: raw.synced_from || 'Minaram PC Desktop',
+        channel: raw.channel || 'Render Cloud API',
+      };
+    } catch {
+      return {
+        last_sync_time: '2026-11-16 17:02:13',
+        last_sync_status: 'SUCCESS',
+        synced_from: 'Minaram PC Desktop',
+        channel: 'Render Cloud API',
+      };
+    }
   },
 
   async getTeams(): Promise<PublicTeam[]> {

@@ -230,7 +230,7 @@ class StandingsView(ctk.CTkScrollableFrame):
             messagebox.showerror("Export Failed", str(e))
 
     def open_edit_standings_modal(self):
-        modal = BaseModal(self, title="Edit Points Table & Match Goals", width=920, height=690)
+        modal = BaseModal(self, title="Edit Points Table & Match Goals", width=960, height=720, min_width=720, min_height=520)
 
         # Subtitle
         ctk.CTkLabel(

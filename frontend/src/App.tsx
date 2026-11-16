@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './ThemeContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { AudioPlayer } from './components/AudioPlayer';
 import { HomePage } from './pages/HomePage';
 import { FixturesPage } from './pages/FixturesPage';
 import { ResultsPage } from './pages/ResultsPage';
@@ -13,7 +14,6 @@ import { BracketPage } from './pages/BracketPage';
 import { RulesPage } from './pages/RulesPage';
 import { AdminPage } from './pages/AdminPage';
 import { LivePage } from './pages/LivePage';
-import { AudioPlayer } from './components/AudioPlayer';
 import { useLiveUpdates } from './hooks/useLiveUpdates';
 import { Radio } from 'lucide-react';
 
@@ -66,8 +66,8 @@ export const App: React.FC = () => {
               <Route path="/standings" element={<StandingsPage />} />
               <Route path="/teams" element={<TeamsPage />} />
               <Route path="/teams/:id" element={<TeamDetailPage />} />
-              <Route path="/bracket" element={<Navigate to="/fixtures" replace />} />
-              <Route path="/knockout" element={<Navigate to="/fixtures" replace />} />
+              <Route path="/bracket" element={<BracketPage />} />
+              <Route path="/knockout" element={<BracketPage />} />
               <Route path="/live" element={<LivePage />} />
               <Route path="/rules" element={<RulesPage />} />
               <Route path="/admin" element={<AdminPage />} />
@@ -76,6 +76,8 @@ export const App: React.FC = () => {
           </main>
 
           <Footer />
+
+          {/* Official Tournament Anthem Player */}
           <AudioPlayer />
         </div>
       </BrowserRouter>

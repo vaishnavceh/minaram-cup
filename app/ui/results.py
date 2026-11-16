@@ -240,7 +240,7 @@ class ResultsView(ctk.CTkScrollableFrame):
             messagebox.showwarning("Incomplete Match", "Both teams must be determined before entering a result.")
             return
 
-        modal = BaseModal(self, title=f"Enter Result — Match #{match.match_number}", width=480, height=530)
+        modal = BaseModal(self, title=f"Enter Result — Match #{match.match_number}", width=520, height=660, scrollable=True)
 
         # Team Matchup Header
         match_box = ctk.CTkFrame(modal.body_frame, fg_color=theme.BG_INPUT, corner_radius=8)
@@ -487,7 +487,7 @@ class ResultsView(ctk.CTkScrollableFrame):
         )
 
     def open_audit_modal(self, match_id: int):
-        modal = BaseModal(self, title=f"Audit Trail — Match #{match_id}", width=520, height=400)
+        modal = BaseModal(self, title=f"Audit Trail — Match #{match_id}", width=540, height=440)
 
         audits = self.results_mgr.get_audit_trail(match_id)
         if not audits:

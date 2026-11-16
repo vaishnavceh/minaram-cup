@@ -136,10 +136,19 @@ export const LivePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#080808] text-[#F5F5F5] pb-16">
-      {/* Editorial Broadcast Header */}
-      <section className="relative border-b border-[#222222] bg-[#0c0c0c]/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="min-h-screen bg-transparent text-[#F8FAFC] pb-16">
+      {/* Editorial Broadcast Header with Ronaldo Rain Celebration Wallpaper */}
+      <section className="relative border-b border-white/10 bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] overflow-hidden">
+        <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-25 sm:opacity-40 pointer-events-none">
+          <img
+            src="/assets/backgrounds/legends/ronaldo-rain-celebration.webp"
+            alt="Ronaldo Live Action in Rain"
+            className="w-full h-full object-cover object-center filter contrast-125"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#04060B] via-[#04060B]/80 to-transparent" />
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             {/* Titles & Badge */}
             <div className="flex items-start space-x-4">

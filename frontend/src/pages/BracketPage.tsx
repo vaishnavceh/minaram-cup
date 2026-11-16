@@ -94,8 +94,8 @@ export const BracketPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative">
-      {/* UCL Ambient Background Glow */}
-      <div className="ucl-ambient" aria-hidden />
+      {/* Tribute Ambient Background Glow */}
+      <div className="tribute-ambient" aria-hidden />
 
       {/* Toast Notification */}
       {lastNotification && (
@@ -130,27 +130,27 @@ export const BracketPage: React.FC = () => {
         </div>
       )}
 
-      {/* Knockout Banner with UCL Stadium Wallpaper */}
-      <div className="mb-8 relative rounded-2xl overflow-hidden border border-blue-500/30 bg-gradient-to-r from-[#030d26] via-[#051336] to-[#020718] p-6 sm:p-8 shadow-2xl">
+      {/* Knockout Banner with Messi World Cup Chalk Art Wallpaper */}
+      <div className="mb-8 relative rounded-2xl overflow-hidden border border-amber-400/30 bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] p-6 sm:p-8 shadow-2xl">
         <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-30 sm:opacity-50 pointer-events-none">
           <img
-            src="/assets/backgrounds/ucl_stadium_bg.jpg"
-            alt="UEFA Champions League Stadium"
-            className="w-full h-full object-cover object-center filter contrast-125"
+            src="/assets/backgrounds/legends/messi-world-cup-neon.webp"
+            alt="Messi World Cup Trophy Tribute"
+            className="w-full h-full object-cover object-right-top filter contrast-125"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#030d26] via-[#030d26]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#04060B] via-[#04060B]/80 to-transparent" />
         </div>
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-blue-400 mb-2">
+            <div className="flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-amber-400 mb-2">
               <Trophy className="w-4 h-4 text-amber-400" />
-              <span>MINARAM CUP 2026 PLAYOFFS · UEFA CHAMPIONS LEAGUE STAGE</span>
+              <span>MINARAM CUP 2026 PLAYOFFS · THE ROAD TO IMMORTALITY</span>
             </div>
             <h1 className="font-display text-4xl sm:text-5xl text-white tracking-wider">
               KNOCKOUT / QUALIFIERS
             </h1>
-            <p className="text-sm text-blue-200/80 mt-2 max-w-2xl">
+            <p className="text-sm text-neutral-300 mt-2 max-w-2xl">
               Complete 30-team championship structure: 28 preliminary contenders battle through 14 matches to join the 2 Direct Round of 16 Qualifiers.
             </p>
           </div>
@@ -158,23 +158,23 @@ export const BracketPage: React.FC = () => {
           {/* Action Controls */}
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             {/* Bracket Sync Status Badge */}
-            <div className="flex items-center space-x-2 px-3.5 py-2 rounded bg-blue-950/80 border border-blue-500/50 text-xs font-mono text-blue-200 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-              <span className="text-blue-300 font-bold uppercase tracking-wider">ADMIN DRAW SYNCED</span>
+            <div className="flex items-center space-x-2 px-3.5 py-2 rounded-lg bg-black/80 border border-amber-400/40 text-xs font-mono text-amber-300 shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <span className="text-amber-300 font-bold uppercase tracking-wider">ADMIN DRAW SYNCED</span>
             </div>
 
             {/* Toggle Ceremonial Draw Desk Action */}
             <button
               type="button"
               onClick={() => setShowDrawDesk(!showDrawDesk)}
-              className={`inline-flex items-center space-x-1.5 px-3.5 py-2 rounded text-xs font-mono font-bold tracking-wider uppercase transition-all duration-200 border cursor-pointer select-none shadow-sm ${
+              className={`inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-mono font-bold tracking-wider uppercase transition-all duration-200 border cursor-pointer select-none shadow-sm ${
                 showDrawDesk
-                  ? 'bg-amber-500/25 text-amber-300 border-amber-500/80 shadow-[0_0_15px_rgba(245,158,11,0.25)]'
-                  : 'bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white border-amber-500/60'
+                  ? 'bg-amber-400/25 text-amber-300 border-amber-400/80 shadow-[0_0_15px_rgba(212,175,55,0.25)]'
+                  : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black border-amber-400/60'
               }`}
-              title="Open or close the interactive UEFA Ceremonial Draw Desk"
+              title="Open or close the interactive Legends Ceremonial Draw Desk"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <Sparkles className="w-3.5 h-3.5 text-black" />
               <span>{showDrawDesk ? 'HIDE DRAW DESK' : 'CEREMONIAL DRAW DESK'}</span>
             </button>
 
