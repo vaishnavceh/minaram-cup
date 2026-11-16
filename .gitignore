@@ -56,5 +56,6 @@ backups/backups_manifest.json
 # Local raw media assets (uncompressed source clips)
 Bg videos/
 New Bgs/
+Bgs/
 
 

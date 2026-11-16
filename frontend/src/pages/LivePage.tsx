@@ -141,7 +141,7 @@ export const LivePage: React.FC = () => {
       <section className="relative border-b border-white/10 bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-25 sm:opacity-40 pointer-events-none">
           <img
-            src="/assets/backgrounds/legends/ronaldo-rain-celebration.webp"
+            src="/assets/backgrounds/ea-sports-fc-26-standard-edition-game-dz-1366x768.jpg"
             alt="Ronaldo Live Action in Rain"
             className="w-full h-full object-cover object-center filter contrast-125"
             loading="lazy"

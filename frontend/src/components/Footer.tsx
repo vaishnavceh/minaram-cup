@@ -8,7 +8,7 @@ export const Footer: React.FC = () => {
       {/* Background Rain & Crowd Atmosphere Texture (neymar-crowd-rain) */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <img
-          src="/assets/backgrounds/legends/neymar-crowd-rain.webp"
+          src="/assets/backgrounds/wp4900925-football-pc-4k-wallpapers.jpg"
           alt="Stadium Atmosphere"
           className="w-full h-full object-cover object-bottom"
           loading="lazy"

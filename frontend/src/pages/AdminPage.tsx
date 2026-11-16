@@ -290,7 +290,7 @@ export const AdminPage: React.FC = () => {
       <div className="mb-8 relative rounded-2xl overflow-hidden border border-amber-400/30 bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] p-6 sm:p-8 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-25 sm:opacity-40 pointer-events-none">
           <img
-            src="/assets/backgrounds/legends/neymar-rain-portrait.webp"
+            src="/assets/backgrounds/real-madrid-cf-8k-3840x2160-15503.jpg"
             alt="Neymar Jr Focused in Rain"
             className="w-full h-full object-cover object-right filter contrast-125"
           />

@@ -120,7 +120,7 @@ export const GoldenBootShowcase: React.FC<GoldenBootShowcaseProps> = ({ compact 
         {/* Neymar Studio Background Texture on Right */}
         <div className="absolute right-0 top-0 bottom-0 w-full md:w-1/2 opacity-15 md:opacity-25 pointer-events-none">
           <img
-            src="/assets/backgrounds/legends/neymar-black-studio.webp"
+            src="/assets/backgrounds/neymar-black-studio.webp"
             alt="Neymar Jr Golden Boot"
             className="w-full h-full object-cover object-right"
             loading="lazy"

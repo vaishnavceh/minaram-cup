@@ -59,7 +59,7 @@ export const TeamDetailPage: React.FC = () => {
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] border border-white/10 p-6 sm:p-8 mb-10 shadow-2xl">
         <div className="absolute right-0 top-0 bottom-0 w-48 sm:w-64 opacity-20 pointer-events-none">
           <img
-            src="/assets/backgrounds/legends/messi-captain-portrait.webp"
+            src="/assets/backgrounds/cristiano-ronaldo-5120x2880-17345.webp"
             alt="Captain Portrait"
             className="w-full h-full object-cover object-top"
             loading="lazy"

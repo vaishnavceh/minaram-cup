@@ -4,7 +4,7 @@ import { api } from '../api';
 import { PublicTournament } from '../types';
 import { GoldenBootShowcase } from '../components/GoldenBootShowcase';
 import { Ticker } from '../components/Ticker';
-import { CinematicSlideshowBackground } from '../components/CinematicSlideshowBackground';
+import { CinematicHeroBackground } from '../components/CinematicHeroBackground';
 import { Trophy, Calendar, BarChart3, ArrowRight, Sparkles, Award, Shield, Star } from 'lucide-react';
 import { PRIZE_POOL, TOTAL_PRIZE_POOL } from '../constants';
 import { useLiveUpdates } from '../hooks/useLiveUpdates';
@@ -46,8 +46,8 @@ export const HomePage: React.FC = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden border-b border-white/10">
-        {/* Dynamic Cinematic Legends Slideshow Background */}
-        <CinematicSlideshowBackground fallbackImage="/assets/backgrounds/legends/efootball-messi-hero.webp" />
+        {/* Dynamic Cinematic Hero Background from Bgs */}
+        <CinematicHeroBackground fallbackImage="/assets/backgrounds/lionel-messi-world-3840x2160-19207.jpg" />
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28 text-center flex flex-col items-center">
@@ -240,7 +240,7 @@ export const HomePage: React.FC = () => {
             <div className="relative rounded-2xl overflow-hidden border border-sky-400/30 bg-gradient-to-b from-[#081220] via-[#040810] to-[#04060B] flex flex-col justify-between shadow-[0_8px_30px_rgba(56,189,248,0.15)] group hover:border-sky-400/60 transition-all duration-300">
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src="/assets/backgrounds/legends/messi-debut-2006.webp"
+                  src="/assets/backgrounds/lionel-messi-world-3840x2160-19207.jpg"
                   alt="Young Lionel Messi 2006 Debut"
                   className="w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-700 filter brightness-90"
                   loading="lazy"
@@ -284,7 +284,7 @@ export const HomePage: React.FC = () => {
             <div className="relative rounded-2xl overflow-hidden border border-rose-500/30 bg-gradient-to-b from-[#18080c] via-[#0c0406] to-[#04060B] flex flex-col justify-between shadow-[0_8px_30px_rgba(225,29,72,0.15)] group hover:border-rose-500/60 transition-all duration-300">
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src="/assets/backgrounds/legends/ronaldo-youth-07.webp"
+                  src="/assets/backgrounds/cristiano-ronaldo-3840x2160-14010.jpg"
                   alt="Young Cristiano Ronaldo #7 Portugal"
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 filter brightness-90"
                   loading="lazy"
@@ -328,7 +328,7 @@ export const HomePage: React.FC = () => {
             <div className="relative rounded-2xl overflow-hidden border border-yellow-400/30 bg-gradient-to-b from-[#181406] via-[#0c0a04] to-[#04060B] flex flex-col justify-between shadow-[0_8px_30px_rgba(234,179,8,0.15)] group hover:border-yellow-400/60 transition-all duration-300">
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src="/assets/backgrounds/legends/neymar-debut-celebration.webp"
+                  src="/assets/backgrounds/neymar-debut-celebration.webp"
                   alt="Young Neymar Jr Debut Brazil Goal Celebration"
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 filter brightness-95"
                   loading="lazy"
@@ -573,7 +573,7 @@ export const HomePage: React.FC = () => {
         <section className="relative rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-r from-[#0c0508] via-[#080a12] to-[#04060B] min-h-[400px] flex items-center shadow-2xl">
           <div className="absolute right-0 top-0 bottom-0 w-full lg:w-3/5 opacity-35 lg:opacity-65 pointer-events-none">
             <img
-              src="/assets/backgrounds/legends/ronaldo-victory-fist.webp"
+              src="/assets/backgrounds/cristiano-ronaldo-5120x2880-17335.webp"
               alt="Cristiano Ronaldo Celebrating Triumph"
               className="w-full h-full object-cover object-center filter contrast-115"
               loading="lazy"

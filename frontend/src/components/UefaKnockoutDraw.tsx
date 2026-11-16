@@ -644,7 +644,7 @@ export const UefaKnockoutDraw: React.FC<UefaKnockoutDrawProps> = ({ bracket, tok
         {/* Background Stadium Wallpaper */}
         <div className="absolute inset-0 opacity-25 pointer-events-none">
           <img
-            src="/assets/backgrounds/legends/messi-world-cup-neon.webp"
+            src="/assets/backgrounds/lionel-messi-world-3840x2160-19207.jpg"
             alt="Messi World Cup Trophy Tribute"
             className="w-full h-full object-cover object-right-top filter contrast-125"
           />

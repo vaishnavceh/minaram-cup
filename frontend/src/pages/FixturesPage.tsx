@@ -150,7 +150,7 @@ export const FixturesPage: React.FC = () => {
       <div className="mb-10 relative rounded-2xl overflow-hidden border border-amber-400/30 bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] p-6 sm:p-8 shadow-2xl">
         <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-30 sm:opacity-50 pointer-events-none">
           <img
-            src="/assets/backgrounds/legends/ronaldo-pitch-walk.webp"
+            src="/assets/backgrounds/cristiano-ronaldo-3840x2160-14010.jpg"
             alt="Cristiano Ronaldo Pitch Walk"
             className="w-full h-full object-cover object-center-top filter contrast-125"
           />

@@ -134,7 +134,7 @@ export const BracketPage: React.FC = () => {
       <div className="mb-8 relative rounded-2xl overflow-hidden border border-amber-400/30 bg-gradient-to-r from-[#080c16] via-[#050810] to-[#04060B] p-6 sm:p-8 shadow-2xl">
         <div className="absolute right-0 top-0 bottom-0 w-full sm:w-2/3 opacity-30 sm:opacity-50 pointer-events-none">
           <img
-            src="/assets/backgrounds/legends/messi-world-cup-neon.webp"
+            src="/assets/backgrounds/kylian-mbappe-real-3840x2160-27350.jpg"
             alt="Messi World Cup Trophy Tribute"
             className="w-full h-full object-cover object-right-top filter contrast-125"
           />
