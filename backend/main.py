@@ -63,6 +63,18 @@ app.add_middleware(
 # Compression middleware for high performance and minimal network overhead
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
+@app.middleware("http")
+async def add_performance_cache_headers(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith("/assets/"):
+        # Fingerprinted assets, webp images, and audio: aggressive caching
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    elif path == "/" or path.endswith(".html"):
+        # SPA index HTML: revalidate to ensure users always receive latest releases
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+    return response
+
 # Mount API Routers
 app.include_router(public.router)
 app.include_router(admin.router)
