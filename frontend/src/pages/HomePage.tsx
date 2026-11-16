@@ -4,7 +4,7 @@ import { api } from '../api';
 import { PublicTournament } from '../types';
 import { GoldenBootShowcase } from '../components/GoldenBootShowcase';
 import { Ticker } from '../components/Ticker';
-import { CinematicVideoBackground } from '../components/CinematicVideoBackground';
+import { CinematicSlideshowBackground } from '../components/CinematicSlideshowBackground';
 import { Trophy, Calendar, BarChart3, ArrowRight, Sparkles, Award, Shield, Star } from 'lucide-react';
 import { PRIZE_POOL, TOTAL_PRIZE_POOL } from '../constants';
 import { useLiveUpdates } from '../hooks/useLiveUpdates';
@@ -46,8 +46,8 @@ export const HomePage: React.FC = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden border-b border-white/10">
-        {/* Dynamic Random Cinematic YouTube Tribute Video Background */}
-        <CinematicVideoBackground fallbackImage="/assets/backgrounds/legends/efootball-messi-hero.webp" />
+        {/* Dynamic Cinematic Legends Slideshow Background */}
+        <CinematicSlideshowBackground fallbackImage="/assets/backgrounds/legends/efootball-messi-hero.webp" />
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28 text-center flex flex-col items-center">
