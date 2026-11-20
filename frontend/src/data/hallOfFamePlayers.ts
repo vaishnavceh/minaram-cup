@@ -38,7 +38,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/lionel-messi.webp",
+    "image": "/images/hall-of-fame-cards/lionel-messi.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "8-time Ballon d'Or winner and 2022 World Cup champion, widely celebrated as the greatest footballer of all time.",
     "isFeatured": true
@@ -62,7 +62,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/cristiano-ronaldo.webp",
+    "image": "/images/hall-of-fame-cards/cristiano-ronaldo.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "5-time Ballon d'Or winner and all-time international top scorer with over 900 career goals and 5 Champions League crowns.",
     "isFeatured": true
@@ -85,7 +85,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2006,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/zinedine-zidane.webp",
+    "image": "/images/hall-of-fame-cards/zinedine-zidane.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "1998 World Cup hero and Ballon d'Or maestro whose grace, vision, and volleyed Champions League winner defined an era.",
     "isFeatured": true
@@ -109,7 +109,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2011,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/ronaldo-nazario.webp",
+    "image": "/images/hall-of-fame-cards/ronaldo-nazario.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'O Fenômeno' revolutionized the striker position with unstoppable speed, stepovers, and 8 goals in Brazil's 2002 World Cup victory.",
     "isFeatured": true
@@ -130,7 +130,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2009,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/paolo-maldini.webp",
+    "image": "/images/hall-of-fame-cards/paolo-maldini.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "One-club Milan icon who captured 5 Champions League titles and played over 1,000 matches with immaculate defensive elegance.",
     "isFeatured": true
@@ -152,7 +152,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2019,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/xavi-hernandez.webp",
+    "image": "/images/hall-of-fame-cards/xavi-hernandez.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "The metronomic architect of Tiki-Taka, dictating tempo for Spain's World Cup triumph and Barcelona's historic sextuple.",
     "isFeatured": false
@@ -175,7 +175,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2024,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/andres-iniesta.webp",
+    "image": "/images/hall-of-fame-cards/andres-iniesta.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Poetic midfield magician who scored Spain's 2010 World Cup-winning goal in extra time and won 32 trophies with Barcelona.",
     "isFeatured": true
@@ -199,7 +199,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2018,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/ronaldinho.webp",
+    "image": "/images/hall-of-fame-cards/ronaldinho.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "The joyful sorcerer of Joga Bonito whose elastico, no-look passes, and radiant smile earned standing ovations at the Bernabéu.",
     "isFeatured": true
@@ -223,7 +223,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/thierry-henry.webp",
+    "image": "/images/hall-of-fame-cards/thierry-henry.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Arsenal's all-time record goalscorer and talisman of 'The Invincibles', blending blistering pace with clinical finishing precision.",
     "isFeatured": true
@@ -246,7 +246,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "1990s–2020s",
-    "image": "/images/hall-of-fame/gianluigi-buffon.webp",
+    "image": "/images/hall-of-fame-cards/gianluigi-buffon.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2006 World Cup champion and record 176-cap Italian goalkeeper who dominated European football across nearly three decades.",
     "isFeatured": true
@@ -270,7 +270,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2017,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/andrea-pirlo.webp",
+    "image": "/images/hall-of-fame-cards/andrea-pirlo.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'L'Architetto' redefined the regista role with effortless composure, laser passing, and sublime free-kick mastery.",
     "isFeatured": true
@@ -294,7 +294,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2017,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/kaka.webp",
+    "image": "/images/hall-of-fame-cards/kaka.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2007 Ballon d'Or winner whose electric vertical drives and elegant finishing propelled Milan to Champions League glory.",
     "isFeatured": true
@@ -317,7 +317,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/sergio-ramos.webp",
+    "image": "/images/hall-of-fame-cards/sergio-ramos.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Fierce Real Madrid captain with 4 Champions Leagues, unforgettable 93rd-minute clutch headers, and 180 Spain caps.",
     "isFeatured": false
@@ -341,7 +341,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2008,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/cafu.webp",
+    "image": "/images/hall-of-fame-cards/cafu.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "The only player in history to appear in 3 consecutive World Cup Finals (1994, 1998, 2002), lifting the trophy twice as Brazil captain.",
     "isFeatured": false
@@ -365,7 +365,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2012,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/roberto-carlos.webp",
+    "image": "/images/hall-of-fame-cards/roberto-carlos.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Legendary left-back famed for thunderous free-kicks, superhuman endurance, and 3 Champions League titles with Real Madrid.",
     "isFeatured": false
@@ -389,7 +389,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2011,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/fabio-cannavaro.webp",
+    "image": "/images/hall-of-fame-cards/fabio-cannavaro.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Il Muro di Berlino' captained Italy to 2006 World Cup triumph, becoming the rare defender to win the Ballon d'Or.",
     "isFeatured": false
@@ -413,7 +413,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2010s–2020s",
-    "image": "/images/hall-of-fame/neymar.webp",
+    "image": "/images/hall-of-fame-cards/neymar.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Brazil's all-time record goalscorer, famous for hypnotic dribbling, 2015 Barcelona treble, and transcendent football creativity.",
     "isFeatured": true
@@ -438,7 +438,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/luis-suarez.webp",
+    "image": "/images/hall-of-fame-cards/luis-suarez.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Ruthless predator and Golden Shoe winner with over 500 career goals who powered Barcelona's iconic MSN forward trident.",
     "isFeatured": false
@@ -462,7 +462,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/dani-alves.webp",
+    "image": "/images/hall-of-fame-cards/dani-alves.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "One of football's most decorated players in history, winning 43 senior trophies with relentless attacking energy.",
     "isFeatured": false
@@ -484,7 +484,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2020,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/iker-casillas.webp",
+    "image": "/images/hall-of-fame-cards/iker-casillas.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'San Iker' captained Spain to 2010 World Cup and back-to-back Euros, producing miraculous reflex saves for Real Madrid.",
     "isFeatured": false
@@ -506,7 +506,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/manuel-neuer.webp",
+    "image": "/images/hall-of-fame-cards/manuel-neuer.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Modern goalkeeper who redefined the position as an outfield sweeper-keeper, winning the 2014 World Cup and two trebles.",
     "isFeatured": false
@@ -530,7 +530,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2019,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/samuel-etoo.webp",
+    "image": "/images/hall-of-fame-cards/samuel-etoo.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "4-time African Footballer of the Year and only player to win back-to-back European trebles with two different clubs.",
     "isFeatured": false
@@ -551,7 +551,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2017,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/francesco-totti.webp",
+    "image": "/images/hall-of-fame-cards/francesco-totti.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Il Capitano' devoted 25 seasons solely to AS Roma, scoring 307 goals and winning the 2006 World Cup with Italy.",
     "isFeatured": false
@@ -574,7 +574,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/alessandro-del-piero.webp",
+    "image": "/images/hall-of-fame-cards/alessandro-del-piero.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Juventus's all-time top scorer and appearance holder whose curled 'Del Piero zone' finishes enchanted fans for decades.",
     "isFeatured": false
@@ -598,7 +598,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2009,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/luis-figo.webp",
+    "image": "/images/hall-of-fame-cards/luis-figo.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2000 Ballon d'Or winner and leader of Portugal's 'Golden Generation', renowned for pinpoint crossing and dribbling.",
     "isFeatured": false
@@ -623,7 +623,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2013,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/david-beckham.webp",
+    "image": "/images/hall-of-fame-cards/david-beckham.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Global icon celebrated for legendary curling free-kicks, passing vision, and treble triumph with Manchester United.",
     "isFeatured": false
@@ -645,7 +645,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2016,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/steven-gerrard.webp",
+    "image": "/images/hall-of-fame-cards/steven-gerrard.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Inspirational Liverpool captain whose thunderous long-range strikes inspired the 'Miracle of Istanbul' in 2005.",
     "isFeatured": false
@@ -669,7 +669,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2016,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/frank-lampard.webp",
+    "image": "/images/hall-of-fame-cards/frank-lampard.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Chelsea's all-time top scorer with 211 goals from midfield, famed for unmatched late box arrivals and Champions League triumph.",
     "isFeatured": false
@@ -690,7 +690,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2013,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/paul-scholes.webp",
+    "image": "/images/hall-of-fame-cards/paul-scholes.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Master midfield technician celebrated by peers globally for unmatched vision, passing range, and 11 Premier League titles.",
     "isFeatured": false
@@ -714,7 +714,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2021,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/wayne-rooney.webp",
+    "image": "/images/hall-of-fame-cards/wayne-rooney.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Manchester United's all-time top scorer with 253 goals, combining fierce competitive hunger with technical brilliance.",
     "isFeatured": false
@@ -741,7 +741,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/zlatan-ibrahimovic.webp",
+    "image": "/images/hall-of-fame-cards/zlatan-ibrahimovic.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Colossal forward known for acrobatic bicycle kicks, taekwondo athleticism, and league championships across four countries.",
     "isFeatured": false
@@ -764,7 +764,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/karim-benzema.webp",
+    "image": "/images/hall-of-fame-cards/karim-benzema.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2022 Ballon d'Or winner and 5-time Champions League conqueror with Real Madrid, renowned for link-up play and clutch knockout hat-tricks.",
     "isFeatured": false
@@ -786,7 +786,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/sergio-busquets.webp",
+    "image": "/images/hall-of-fame-cards/sergio-busquets.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "The definitive midfield anchor whose calm press resistance and tactical positioning formed the backbone of Spain and Barça.",
     "isFeatured": false
@@ -808,7 +808,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2017,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/philipp-lahm.webp",
+    "image": "/images/hall-of-fame-cards/philipp-lahm.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'The Magic Dwarf' captained Germany to 2014 World Cup glory and Bayern to a treble with flawless defensive IQ and discipline.",
     "isFeatured": false
@@ -831,7 +831,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/alessandro-nesta.webp",
+    "image": "/images/hall-of-fame-cards/alessandro-nesta.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Master of the immaculate sliding tackle and positioning, lifting two Champions League titles with AC Milan.",
     "isFeatured": false
@@ -852,7 +852,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/carles-puyol.webp",
+    "image": "/images/hall-of-fame-cards/carles-puyol.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Barcelona's fearless lion-hearted captain who led with unmatched passion, discipline, and 2010 World Cup semi-final winner.",
     "isFeatured": false
@@ -876,7 +876,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2021,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/arjen-robben.webp",
+    "image": "/images/hall-of-fame-cards/arjen-robben.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Famed for his trademark unstoppable cut-inside and curling finish, scoring Bayern's 89th-minute 2013 Champions League winner.",
     "isFeatured": false
@@ -900,7 +900,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2022,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/franck-ribery.webp",
+    "image": "/images/hall-of-fame-cards/franck-ribery.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2013 UEFA Best Player in Europe and Bayern's dynamite winger who created the legendary 'Robbery' flank partnership.",
     "isFeatured": false
@@ -924,7 +924,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2018,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/didier-drogba.webp",
+    "image": "/images/hall-of-fame-cards/didier-drogba.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Chelsea's ultimate cup-final talisman who scored the equalizer and winning penalty in the 2012 Champions League Final.",
     "isFeatured": false
@@ -948,7 +948,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2021,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/sergio-aguero.webp",
+    "image": "/images/hall-of-fame-cards/sergio-aguero.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Manchester City's record goalscorer with 260 goals and author of the iconic '93:20' title-winning goal in Premier League history.",
     "isFeatured": false
@@ -972,7 +972,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2020,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/david-villa.webp",
+    "image": "/images/hall-of-fame-cards/david-villa.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Spain's all-time record goalscorer (59 goals) who led La Roja to Euro 2008 and 2010 World Cup triumphs.",
     "isFeatured": false
@@ -995,7 +995,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2015,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/raul.webp",
+    "image": "/images/hall-of-fame-cards/raul.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'El Ferrari' scored 323 goals for Real Madrid, lifting 3 Champions League titles as the beloved symbol of the club.",
     "isFeatured": false
@@ -1018,7 +1018,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2012,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/andriy-shevchenko.webp",
+    "image": "/images/hall-of-fame-cards/andriy-shevchenko.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2004 Ballon d'Or winner and lethal Milan marksman who netted 175 goals for the Rossoneri.",
     "isFeatured": false
@@ -1042,7 +1042,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2016,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/miroslav-klose.webp",
+    "image": "/images/hall-of-fame-cards/miroslav-klose.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "All-time World Cup top goalscorer with 16 tournament goals, lifting the 2014 World Cup trophy in Brazil.",
     "isFeatured": false
@@ -1065,7 +1065,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2024,
     "era": "2010s–2020s",
-    "image": "/images/hall-of-fame/toni-kroos.webp",
+    "image": "/images/hall-of-fame-cards/toni-kroos.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Pass-master with 6 Champions League crowns and 2014 World Cup, celebrated for superhuman 95%+ precision passing.",
     "isFeatured": false
@@ -1088,7 +1088,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2019,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/bastian-schweinsteiger.webp",
+    "image": "/images/hall-of-fame-cards/bastian-schweinsteiger.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Fußballgott' poured his blood and soul into Germany's 2014 World Cup Final victory and won 8 Bundesliga titles with Bayern.",
     "isFeatured": false
@@ -1112,7 +1112,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2011,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/patrick-vieira.webp",
+    "image": "/images/hall-of-fame-cards/patrick-vieira.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Towering midfield general who captained Arsenal's 2003–04 'Invincibles' with relentless dominance, tackling, and leadership.",
     "isFeatured": false
@@ -1136,7 +1136,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2011,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/claude-makelele.webp",
+    "image": "/images/hall-of-fame-cards/claude-makelele.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Had an entire tactical position named after him ('The Makélélé Role') due to his unmatched defensive shielding and interception mastery.",
     "isFeatured": false
@@ -1161,7 +1161,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/clarence-seedorf.webp",
+    "image": "/images/hall-of-fame-cards/clarence-seedorf.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "The only player in football history to win the UEFA Champions League with three different clubs (Ajax, Real Madrid, AC Milan).",
     "isFeatured": false
@@ -1185,7 +1185,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2011,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/edwin-van-der-sar.webp",
+    "image": "/images/hall-of-fame-cards/edwin-van-der-sar.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Champions League winner with Ajax and Manchester United, holding the world league record for 1,311 consecutive minutes without conceding.",
     "isFeatured": false
@@ -1207,7 +1207,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2008,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/oliver-kahn.webp",
+    "image": "/images/hall-of-fame-cards/oliver-kahn.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Der Titan' is the only goalkeeper in history to win the Golden Ball as best player at a FIFA World Cup (2002).",
     "isFeatured": false
@@ -1231,7 +1231,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2019,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/petr-cech.webp",
+    "image": "/images/hall-of-fame-cards/petr-cech.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Holds the Premier League record for most clean sheets (202) and conceded just 15 goals in Chelsea's historic 2004–05 season.",
     "isFeatured": false
@@ -1256,7 +1256,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2003,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/peter-schmeichel.webp",
+    "image": "/images/hall-of-fame-cards/peter-schmeichel.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Iconic star-jump shot-stopper who captained Manchester United to the 1999 Treble and won Euro 1992 with Denmark.",
     "isFeatured": false
@@ -1280,7 +1280,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2015,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/rio-ferdinand.webp",
+    "image": "/images/hall-of-fame-cards/rio-ferdinand.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Elegantly composed ball-playing center back who won 6 Premier Leagues and the Champions League in an impenetrable partnership with Vidić.",
     "isFeatured": false
@@ -1302,7 +1302,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2018,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/john-terry.webp",
+    "image": "/images/hall-of-fame-cards/john-terry.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Captain, Leader, Legend' who lifted 5 Premier League crowns and the Champions League, famed for brave body-on-the-line defending.",
     "isFeatured": false
@@ -1326,7 +1326,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2016,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/nemanja-vidic.webp",
+    "image": "/images/hall-of-fame-cards/nemanja-vidic.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Two-time Premier League Player of the Season and warrior center-back renowned for fearsome aerial prowess and tackle bravery.",
     "isFeatured": false
@@ -1350,7 +1350,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2024,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/pepe.webp",
+    "image": "/images/hall-of-fame-cards/pepe.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Uncompromising defensive titan who anchored Real Madrid's 3 Champions League titles and was Man of the Match in the Euro 2016 Final.",
     "isFeatured": false
@@ -1374,7 +1374,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/giorgio-chiellini.webp",
+    "image": "/images/hall-of-fame-cards/giorgio-chiellini.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Master of Italian defensive art, winning 9 consecutive Serie A titles with Juventus and captaining Italy to Euro 2020 glory.",
     "isFeatured": false
@@ -1397,7 +1397,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/marcelo.webp",
+    "image": "/images/hall-of-fame-cards/marcelo.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Real Madrid's dazzling attacking left-back who won 5 Champions Leagues and 25 total trophies with magical wing flair.",
     "isFeatured": false
@@ -1420,7 +1420,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2022,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/gerard-pique.webp",
+    "image": "/images/hall-of-fame-cards/gerard-pique.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Decorated center-back who won the 2010 World Cup, Euro 2012, and 3 Champions Leagues as Barcelona's defensive anchor.",
     "isFeatured": false
@@ -1444,7 +1444,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2008,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/lilian-thuram.webp",
+    "image": "/images/hall-of-fame-cards/lilian-thuram.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "1998 World Cup and Euro 2000 champion, famous for his historic two-goal comeback in the 1998 semi-final vs Croatia.",
     "isFeatured": false
@@ -1466,7 +1466,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/javier-zanetti.webp",
+    "image": "/images/hall-of-fame-cards/javier-zanetti.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Il Capitano' played 858 games for Inter Milan, lifting the 2010 treble with tireless runs, leadership, and fair play.",
     "isFeatured": false
@@ -1490,7 +1490,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2019,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/ashley-cole.webp",
+    "image": "/images/hall-of-fame-cards/ashley-cole.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Widely rated by Cristiano Ronaldo as his toughest opponent, winning titles with Arsenal's 'Invincibles' and Chelsea.",
     "isFeatured": false
@@ -1514,7 +1514,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/gianluca-zambrotta.webp",
+    "image": "/images/hall-of-fame-cards/gianluca-zambrotta.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Dynamic wing-back named to the 2006 World Cup All-Star Team after stellar box-to-box contributions in Italy's title.",
     "isFeatured": false
@@ -1538,7 +1538,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2020,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/javier-mascherano.webp",
+    "image": "/images/hall-of-fame-cards/javier-mascherano.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'El Jefecito' gave everything on the pitch, memorably producing heroic goal-saving tackles for Argentina and Barcelona.",
     "isFeatured": false
@@ -1561,7 +1561,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2020,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/vincent-kompany.webp",
+    "image": "/images/hall-of-fame-cards/vincent-kompany.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Colossal Manchester City captain whose leadership and sensational 30-yard screamer vs Leicester sealed the 2019 title.",
     "isFeatured": false
@@ -1585,7 +1585,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2017,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/ricardo-carvalho.webp",
+    "image": "/images/hall-of-fame-cards/ricardo-carvalho.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Intelligent, anticipatory center-back who won the Champions League with Porto and set the record-low goals conceded with Chelsea.",
     "isFeatured": false
@@ -1609,7 +1609,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2006,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/marcel-desailly.webp",
+    "image": "/images/hall-of-fame-cards/marcel-desailly.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'The Rock' won back-to-back Champions Leagues with different clubs (Marseille, Milan) and lifted the 1998 World Cup and Euro 2000.",
     "isFeatured": false
@@ -1632,7 +1632,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/mats-hummels.webp",
+    "image": "/images/hall-of-fame-cards/mats-hummels.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "World Cup 2014 winner renowned for exquisite outside-of-the-boot passing and dominant defensive displays in European finals.",
     "isFeatured": false
@@ -1656,7 +1656,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2024,
     "era": "2010s–2020s",
-    "image": "/images/hall-of-fame/raphael-varane.webp",
+    "image": "/images/hall-of-fame-cards/raphael-varane.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Speedy, refined French center-back who won 4 Champions Leagues with Real Madrid and the 2018 World Cup with France.",
     "isFeatured": false
@@ -1680,7 +1680,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2020,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/yaya-toure.webp",
+    "image": "/images/hall-of-fame-cards/yaya-toure.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "4-time African Footballer of the Year whose unstoppable 20-goal 2013–14 season led Man City to Premier League glory.",
     "isFeatured": false
@@ -1703,7 +1703,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/david-silva.webp",
+    "image": "/images/hall-of-fame-cards/david-silva.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'El Mago' illuminated the Premier League for a decade with Manchester City, winning 4 league titles, Euro 2008/2012, and the 2010 World Cup.",
     "isFeatured": false
@@ -1727,7 +1727,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2017,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/xabi-alonso.webp",
+    "image": "/images/hall-of-fame-cards/xabi-alonso.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Possessed a legendary passing range, scoring in Liverpool's 2005 Istanbul comeback and winning the World Cup and Champions Leagues.",
     "isFeatured": false
@@ -1751,7 +1751,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/mesut-ozil.webp",
+    "image": "/images/hall-of-fame-cards/mesut-ozil.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Playmaking savant with 2014 World Cup victory, renowned for signature bounce-passes and topping assist charts across Europe.",
     "isFeatured": false
@@ -1775,7 +1775,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2019,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/wesley-sneijder.webp",
+    "image": "/images/hall-of-fame-cards/wesley-sneijder.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Mastermind of Inter Milan's 2010 treble and joint top scorer at the 2010 World Cup with lethal two-footed shooting.",
     "isFeatured": false
@@ -1798,7 +1798,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2009,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/pavel-nedved.webp",
+    "image": "/images/hall-of-fame-cards/pavel-nedved.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2003 Ballon d'Or winner nicknamed 'The Czech Fury' for his relentless engine, fierce shots, and lead role in Juventus's golden years.",
     "isFeatured": false
@@ -1819,7 +1819,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/ryan-giggs.webp",
+    "image": "/images/hall-of-fame-cards/ryan-giggs.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "The most decorated player in English football history, winning 13 Premier League titles and 2 Champions Leagues across 963 matches.",
     "isFeatured": false
@@ -1843,7 +1843,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2015,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/rivaldo.webp",
+    "image": "/images/hall-of-fame-cards/rivaldo.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "1999 Ballon d'Or winner and 2002 World Cup champion famous for his iconic overhead-kick hat-trick winner for Barcelona.",
     "isFeatured": false
@@ -1868,7 +1868,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2004,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/roberto-baggio.webp",
+    "image": "/images/hall-of-fame-cards/roberto-baggio.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Il Divin Codino' (The Divine Ponytail), 1993 Ballon d'Or winner, captivated the world with sublime dribbling and grace.",
     "isFeatured": false
@@ -1891,7 +1891,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2006,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/dennis-bergkamp.webp",
+    "image": "/images/hall-of-fame-cards/dennis-bergkamp.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "The Dutch master of first touches, famous for his impossible spinning flick goal vs Newcastle and 1998 World Cup masterpiece vs Argentina.",
     "isFeatured": false
@@ -1916,7 +1916,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2012,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/ruud-van-nistelrooy.webp",
+    "image": "/images/hall-of-fame-cards/ruud-van-nistelrooy.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Lethal penalty-box poacher who won top-scorer awards in the Premier League, La Liga, and Champions League.",
     "isFeatured": false
@@ -1940,7 +1940,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2019,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/robin-van-persie.webp",
+    "image": "/images/hall-of-fame-cards/robin-van-persie.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Netherlands' all-time top scorer (50 goals) and Premier League champion, remembered for his iconic 'Flying Dutchman' diving header in 2014.",
     "isFeatured": false
@@ -1963,7 +1963,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2006,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/alan-shearer.webp",
+    "image": "/images/hall-of-fame-cards/alan-shearer.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Premier League's undisputed all-time record goalscorer with 260 goals, powered by an unstoppable right-foot strike.",
     "isFeatured": false
@@ -1987,7 +1987,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2013,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/michael-owen.webp",
+    "image": "/images/hall-of-fame-cards/michael-owen.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2001 Ballon d'Or winner who announced himself to the world with an unforgettable solo goal against Argentina at the 1998 World Cup.",
     "isFeatured": false
@@ -2011,7 +2011,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2019,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/fernando-torres.webp",
+    "image": "/images/hall-of-fame-cards/fernando-torres.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'El Niño' scored Spain's Euro 2008 final winner, sealed Chelsea's 2012 Champions League journey, and captured fans worldwide.",
     "isFeatured": false
@@ -2035,7 +2035,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2009,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/henrik-larsson.webp",
+    "image": "/images/hall-of-fame-cards/henrik-larsson.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Celtic's king with 242 goals who came off the bench to assist both goals in Barcelona's 2006 Champions League Final triumph.",
     "isFeatured": false
@@ -2059,7 +2059,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2001,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/gheorghe-hagi.webp",
+    "image": "/images/hall-of-fame-cards/gheorghe-hagi.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'The Maradona of the Carpathians', celebrated for magical dribbling, long-range 40-yard chips, and leading Romania at USA 1994.",
     "isFeatured": false
@@ -2082,7 +2082,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2015,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/juan-roman-riquelme.webp",
+    "image": "/images/hall-of-fame-cards/juan-roman-riquelme.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "The last romantic number 10, adored for protecting the ball, pausing time, and guiding Boca Juniors to multiple Copa Libertadores titles.",
     "isFeatured": false
@@ -2105,7 +2105,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2003,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/hristo-stoichkov.webp",
+    "image": "/images/hall-of-fame-cards/hristo-stoichkov.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "1994 Ballon d'Or winner and World Cup Golden Boot talisman of Cruyff's Barcelona 'Dream Team'.",
     "isFeatured": false
@@ -2129,7 +2129,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/gareth-bale.webp",
+    "image": "/images/hall-of-fame-cards/gareth-bale.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "5-time Champions League winner celebrated for blistering speed, Copa del Rey sprint winner, and breathtaking Kiev overhead kick.",
     "isFeatured": false
@@ -2154,7 +2154,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/angel-di-maria.webp",
+    "image": "/images/hall-of-fame-cards/angel-di-maria.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'El Fideo' scored in the 2008 Olympics final, 2021 Copa América final, and 2022 World Cup Final, cementing status as Argentina's big-game angel.",
     "isFeatured": false
@@ -2177,7 +2177,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2010s–2020s",
-    "image": "/images/hall-of-fame/antoine-griezmann.webp",
+    "image": "/images/hall-of-fame-cards/antoine-griezmann.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2018 World Cup champion and Atlético Madrid's all-time top scorer, revered for selflessness, vision, and tactical intelligence.",
     "isFeatured": false
@@ -2200,7 +2200,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/eden-hazard.webp",
+    "image": "/images/hall-of-fame-cards/eden-hazard.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Premier League Player of the Season whose low center of gravity and slalom dribbling mesmerized fans during 7 years at Chelsea.",
     "isFeatured": false
@@ -2225,7 +2225,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/nani.webp",
+    "image": "/images/hall-of-fame-cards/nani.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Euro 2016 champion and Champions League winner with Manchester United, known for backflip celebrations and electric wing play.",
     "isFeatured": false
@@ -2248,7 +2248,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/juninho-pernambucano.webp",
+    "image": "/images/hall-of-fame-cards/juninho-pernambucano.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "The greatest free-kick taker in football history with 77 direct set-piece goals, pioneering the dipping 'knuckleball' technique.",
     "isFeatured": false
@@ -2272,7 +2272,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2008,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/jay-jay-okocha.webp",
+    "image": "/images/hall-of-fame-cards/jay-jay-okocha.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'So good they named him twice', the Nigerian dribbling magician lit up the Premier League and won 1996 Olympic Gold.",
     "isFeatured": false
@@ -2296,7 +2296,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2013,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/deco.webp",
+    "image": "/images/hall-of-fame-cards/deco.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "UEFA Club Footballer of the Year who won Champions Leagues with Porto (2004) and Barcelona (2006) with brilliant playmaking.",
     "isFeatured": false
@@ -2319,7 +2319,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2008,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/rui-costa.webp",
+    "image": "/images/hall-of-fame-cards/rui-costa.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'The Maestro' of Portugal's Golden Generation, celebrated for exquisite through balls, vision, and 2003 Champions League glory.",
     "isFeatured": false
@@ -2343,7 +2343,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2003,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/claudio-taffarel.webp",
+    "image": "/images/hall-of-fame-cards/claudio-taffarel.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Brazil's 1994 World Cup-winning goalkeeper who stood tall in the historic penalty shootout triumph against Italy.",
     "isFeatured": false
@@ -2367,7 +2367,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2015,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/dida.webp",
+    "image": "/images/hall-of-fame-cards/dida.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2002 World Cup champion and two-time Champions League winner with AC Milan, celebrated for exceptional penalty shoot-out saves.",
     "isFeatured": false
@@ -2391,7 +2391,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2018,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/julio-cesar.webp",
+    "image": "/images/hall-of-fame-cards/julio-cesar.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Crucial goalkeeper in Inter Milan's historic 2010 treble and recipient of Serie A Goalkeeper of the Year award.",
     "isFeatured": false
@@ -2415,7 +2415,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/hugo-lloris.webp",
+    "image": "/images/hall-of-fame-cards/hugo-lloris.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Captained France to World Cup victory in 2018 and holds the all-time appearance record for France with 145 international caps.",
     "isFeatured": false
@@ -2439,7 +2439,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2011,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/jens-lehmann.webp",
+    "image": "/images/hall-of-fame-cards/jens-lehmann.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Goalkeeper of Arsenal's unbeaten 'Invincibles' season and Germany's 2006 World Cup hero with the famous penalty cheat-sheet.",
     "isFeatured": false
@@ -2463,7 +2463,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2021,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/branislav-ivanovic.webp",
+    "image": "/images/hall-of-fame-cards/branislav-ivanovic.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Powerful, aerial Chelsea defender who scored the 93rd-minute header to win the 2013 UEFA Europa League final.",
     "isFeatured": false
@@ -2487,7 +2487,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2016,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/walter-samuel.webp",
+    "image": "/images/hall-of-fame-cards/walter-samuel.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Il Muro' (The Wall) anchored Inter Milan's 2010 treble defence and AS Roma's 2001 Scudetto with immense physical power.",
     "isFeatured": false
@@ -2512,7 +2512,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2020,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/lucio.webp",
+    "image": "/images/hall-of-fame-cards/lucio.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2002 World Cup and 2010 treble champion known for dominant defending and famous surging forward runs from deep.",
     "isFeatured": false
@@ -2537,7 +2537,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/diego-godin.webp",
+    "image": "/images/hall-of-fame-cards/diego-godin.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "The warrior heart of Simeone's Atlético Madrid, winning La Liga with a famous header at Camp Nou and 2011 Copa América.",
     "isFeatured": false
@@ -2561,7 +2561,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2024,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/leonardo-bonucci.webp",
+    "image": "/images/hall-of-fame-cards/leonardo-bonucci.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Euro 2020 champion with Italy and 8-time Serie A winner, famed for long-range quarterback passing from defense.",
     "isFeatured": false
@@ -2585,7 +2585,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2019,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/patrice-evra.webp",
+    "image": "/images/hall-of-fame-cards/patrice-evra.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "5-time Premier League champion and 2008 Champions League winner with Manchester United, known for dynamic wing play.",
     "isFeatured": false
@@ -2609,7 +2609,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/eric-abidal.webp",
+    "image": "/images/hall-of-fame-cards/eric-abidal.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Inspirational defender who defeated liver cancer to lift the 2011 Champions League trophy at Wembley as Barcelona captain.",
     "isFeatured": false
@@ -2633,7 +2633,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2017,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/kolo-toure.webp",
+    "image": "/images/hall-of-fame-cards/kolo-toure.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Achieved unprecedented unbeaten domestic seasons with both Arsenal (2003–04 Invincibles) and Celtic (2016–17).",
     "isFeatured": false
@@ -2658,7 +2658,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2018,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/rafael-marquez.webp",
+    "image": "/images/hall-of-fame-cards/rafael-marquez.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'El Káiser de Michoacán' won two Champions Leagues with Barcelona and captained Mexico at an incredible 5 consecutive World Cups.",
     "isFeatured": false
@@ -2681,7 +2681,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2011,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/sami-hyypia.webp",
+    "image": "/images/hall-of-fame-cards/sami-hyypia.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Towering Liverpool center back who was indispensable in the 2005 Champions League triumph and won 10 Finnish Player of the Year awards.",
     "isFeatured": false
@@ -2706,7 +2706,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2017,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/ze-roberto.webp",
+    "image": "/images/hall-of-fame-cards/ze-roberto.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Miracle of football longevity who played at the highest level past age 43, winning 4 Bundesliga doubles with Bayern.",
     "isFeatured": false
@@ -2730,7 +2730,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2013,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/gilberto-silva.webp",
+    "image": "/images/hall-of-fame-cards/gilberto-silva.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'The Invisible Wall' who anchored both Brazil's 2002 World Cup victory and Arsenal's 2003–04 unbeaten 'Invincibles'.",
     "isFeatured": false
@@ -2754,7 +2754,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2020,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/michael-essien.webp",
+    "image": "/images/hall-of-fame-cards/michael-essien.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'The Bison' dominated midfields with immense physical power and scored legendary volleys for Chelsea vs Arsenal and Barcelona.",
     "isFeatured": false
@@ -2778,7 +2778,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2013,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/gennaro-gattuso.webp",
+    "image": "/images/hall-of-fame-cards/gennaro-gattuso.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Ringhio' (The Snarl) brought unmatched tenacity and grit to Milan's midfield, winning two Champions Leagues and the 2006 World Cup.",
     "isFeatured": false
@@ -2801,7 +2801,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2006,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/roy-keane.webp",
+    "image": "/images/hall-of-fame-cards/roy-keane.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Fierce, inspirational Manchester United captain whose unforgettable heroic display in Turin sparked the 1999 Treble comeback.",
     "isFeatured": false
@@ -2826,7 +2826,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/edgar-davids.webp",
+    "image": "/images/hall-of-fame-cards/edgar-davids.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'The Pitbull' was instantly recognizable for his protective goggles, dreadlocks, combative tackling, and Ajax Champions League win.",
     "isFeatured": false
@@ -2851,7 +2851,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2015,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/robert-pires.webp",
+    "image": "/images/hall-of-fame-cards/robert-pires.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "FWA Footballer of the Year and key creative force in Arsenal's 'Invincibles', winning the 1998 World Cup and Euro 2000 with France.",
     "isFeatured": false
@@ -2875,7 +2875,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2012,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/michael-ballack.webp",
+    "image": "/images/hall-of-fame-cards/michael-ballack.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Powerhouse German captain famed for aerial dominance, ferocious strikes, and 3 German Footballer of the Year awards.",
     "isFeatured": false
@@ -2900,7 +2900,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2017,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/esteban-cambiasso.webp",
+    "image": "/images/hall-of-fame-cards/esteban-cambiasso.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Tactical brain of Mourinho's 2010 Inter Milan treble and author of the famous 26-pass team goal for Argentina at 2006 World Cup.",
     "isFeatured": false
@@ -2926,7 +2926,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2017,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/juan-sebastian-veron.webp",
+    "image": "/images/hall-of-fame-cards/juan-sebastian-veron.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'La Brujita' orchestrated play with pinpoint 60-yard passes, winning the 1999 UEFA Cup with Parma and 2009 Copa Libertadores with Estudiantes.",
     "isFeatured": false
@@ -2951,7 +2951,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/cesc-fabregas.webp",
+    "image": "/images/hall-of-fame-cards/cesc-fabregas.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Assisted Iniesta's 2010 World Cup-winning goal and holds the second most assists in Premier League history with 111 assists.",
     "isFeatured": false
@@ -2974,7 +2974,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2024,
     "era": "2010s–2020s",
-    "image": "/images/hall-of-fame/thiago-alcantara.webp",
+    "image": "/images/hall-of-fame-cards/thiago-alcantara.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Midfield virtuoso blessed with Brazilian samba flair and La Masia precision, winning Champions Leagues with Barcelona and Bayern.",
     "isFeatured": false
@@ -2996,7 +2996,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2020,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/daniele-de-rossi.webp",
+    "image": "/images/hall-of-fame-cards/daniele-de-rossi.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "2006 World Cup champion who dedicated 18 seasons to AS Roma, renowned for thunderous tackling and passionate commitment.",
     "isFeatured": false
@@ -3020,7 +3020,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/santi-cazorla.webp",
+    "image": "/images/hall-of-fame-cards/santi-cazorla.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Two-time Euro champion with Spain and pure two-footed genius who overcame career-threatening Achilles injuries with pure love for football.",
     "isFeatured": false
@@ -3044,7 +3044,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2023,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/marek-hamsik.webp",
+    "image": "/images/hall-of-fame-cards/marek-hamsik.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Napoli's iconic mohawked talisman who surpassed Diego Maradona's club goal record during 12 passionate years in southern Italy.",
     "isFeatured": false
@@ -3067,7 +3067,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2013,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/dejan-stankovic.webp",
+    "image": "/images/hall-of-fame-cards/dejan-stankovic.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Key member of Inter Milan's 2010 treble side, famed for thunderous volleys from midfield, including a famous halfway-line strike vs Schalke.",
     "isFeatured": false
@@ -3092,7 +3092,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2006,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/hidetoshi-nakata.webp",
+    "image": "/images/hall-of-fame-cards/hidetoshi-nakata.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Pioneering Asian icon who conquered Serie A, winning the Scudetto with Roma and nominated for the Ballon d'Or three times.",
     "isFeatured": false
@@ -3115,7 +3115,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/park-ji-sung.webp",
+    "image": "/images/hall-of-fame-cards/park-ji-sung.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Three-Lungs Park' became the first Asian player to win the Champions League with Manchester United through relentless stamina.",
     "isFeatured": false
@@ -3139,7 +3139,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2005,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/gabriel-batistuta.webp",
+    "image": "/images/hall-of-fame-cards/gabriel-batistuta.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Batigol' was a ferocious goal machine who scored 207 goals for Fiorentina and is the only player to score hat-tricks in two World Cups.",
     "isFeatured": false
@@ -3165,7 +3165,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2012,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/hernan-crespo.webp",
+    "image": "/images/hall-of-fame-cards/hernan-crespo.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Prolific Argentine striker who scored over 300 career goals, including a famous brace in the 2005 Champions League Final.",
     "isFeatured": false
@@ -3190,7 +3190,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2021,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/carlos-tevez.webp",
+    "image": "/images/hall-of-fame-cards/carlos-tevez.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'El Apache' played with ferocious street grit, winning the Champions League with Man United and Premier League with Man City.",
     "isFeatured": false
@@ -3215,7 +3215,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2019,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/diego-forlan.webp",
+    "image": "/images/hall-of-fame-cards/diego-forlan.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Golden Ball winner as the best player of the 2010 World Cup, famed for mesmerizing volleys with the Jabulani and two European Golden Shoes.",
     "isFeatured": false
@@ -3240,7 +3240,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2009,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/romario.webp",
+    "image": "/images/hall-of-fame-cards/romario.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "1994 World Cup champion and FIFA World Player of the Year, revered as one of the most clinical toe-poke penalty box finishers ever.",
     "isFeatured": false
@@ -3265,7 +3265,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2016,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/adriano.webp",
+    "image": "/images/hall-of-fame-cards/adriano.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'L'Imperatore' struck fear into defenders with superhuman physique, speed, and 105 mph left-footed rocket shots for Inter Milan.",
     "isFeatured": false
@@ -3290,7 +3290,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2008,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/patrick-kluivert.webp",
+    "image": "/images/hall-of-fame-cards/patrick-kluivert.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Scored Ajax's 1995 Champions League-winning goal at just 18 years old and won the Euro 2000 Golden Boot.",
     "isFeatured": false
@@ -3314,7 +3314,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2010,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/roy-makaay.webp",
+    "image": "/images/hall-of-fame-cards/roy-makaay.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Das Phantom' scored the fastest goal in Champions League history (10.12 seconds vs Real Madrid) and won the 2003 European Golden Shoe.",
     "isFeatured": false
@@ -3339,7 +3339,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/edinson-cavani.webp",
+    "image": "/images/hall-of-fame-cards/edinson-cavani.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'El Matador' scored 200 goals for PSG, famed for tireless off-the-ball running, aerial prowess, and acrobatic finishes.",
     "isFeatured": false
@@ -3363,7 +3363,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2014,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/david-trezeguet.webp",
+    "image": "/images/hall-of-fame-cards/david-trezeguet.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Scored the historic golden goal to win Euro 2000 for France and netted 171 goals as Juventus's all-time foreign top scorer.",
     "isFeatured": false
@@ -3388,7 +3388,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2015,
     "era": "1990s–2010s",
-    "image": "/images/hall-of-fame/nicolas-anelka.webp",
+    "image": "/images/hall-of-fame-cards/nicolas-anelka.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Premier League Golden Boot winner and Champions League champion with Real Madrid, renowned for silky speed and technique.",
     "isFeatured": false
@@ -3413,7 +3413,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2009,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/dwight-yorke.webp",
+    "image": "/images/hall-of-fame-cards/dwight-yorke.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Formed an almost telepathic strike partnership with Andy Cole in Manchester United's historic 1999 Treble triumph.",
     "isFeatured": false
@@ -3438,7 +3438,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/radamel-falcao.webp",
+    "image": "/images/hall-of-fame-cards/radamel-falcao.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'El Tigre' is Colombia's all-time top scorer, legendary for back-to-back Europa League golden boots and a European Super Cup hat-trick vs Chelsea.",
     "isFeatured": false
@@ -3463,7 +3463,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Active",
     "retirementYear": null,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/edin-dzeko.webp",
+    "image": "/images/hall-of-fame-cards/edin-dzeko.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'The Bosnian Diamond' has scored 50+ goals in the Bundesliga, Premier League, and Serie A, captaining his nation with pride.",
     "isFeatured": false
@@ -3488,7 +3488,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2018,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/dimitar-berbatov.webp",
+    "image": "/images/hall-of-fame-cards/dimitar-berbatov.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "Poet of the first touch, winning the Premier League Golden Boot and famous for his gravity-defying baseline spin assist vs West Ham.",
     "isFeatured": false
@@ -3513,7 +3513,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2022,
     "era": "2000s–2020s",
-    "image": "/images/hall-of-fame/gonzalo-higuain.webp",
+    "image": "/images/hall-of-fame-cards/gonzalo-higuain.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'El Pipita' broke the all-time single-season Serie A scoring record with 36 goals for Napoli and won 3 La Liga titles with Real Madrid.",
     "isFeatured": false
@@ -3537,7 +3537,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2016,
     "era": "2000s–2010s",
-    "image": "/images/hall-of-fame/diego-milito.webp",
+    "image": "/images/hall-of-fame-cards/diego-milito.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "'Il Principe' scored all decisive goals in Inter Milan's 2010 treble: the Coppa Italia final, Serie A decider, and both goals in the UCL Final.",
     "isFeatured": false
@@ -3562,7 +3562,7 @@ export const HALL_OF_FAME_PLAYERS: HallOfFamePlayer[] = [
     "clubRetirementStatus": "Retired",
     "retirementYear": 2010,
     "era": "1990s–2000s",
-    "image": "/images/hall-of-fame/fernando-morientes.webp",
+    "image": "/images/hall-of-fame-cards/fernando-morientes.webp?v=fc27",
     "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
     "bio": "3-time Champions League winner with Real Madrid, renowned for lethal aerial headers and leading Monaco to the 2004 UCL final.",
     "isFeatured": false

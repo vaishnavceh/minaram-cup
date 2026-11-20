@@ -108,26 +108,26 @@ export const FeaturedLegendBanner: React.FC<FeaturedLegendBannerProps> = ({
         {/* Right: Dramatic Showcase Card */}
         <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-md shrink-0 flex flex-col items-center">
           <div
+            role="button"
+            tabIndex={0}
             onClick={() => onSelectPlayer(current)}
-            className="group relative w-72 sm:w-80 h-[430px] rounded-3xl overflow-hidden cursor-pointer border-2 border-amber-400/60 shadow-[0_15px_40px_rgba(0,0,0,0.8)] transition-transform duration-500 hover:scale-105"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onSelectPlayer(current);
+              }
+            }}
+            className="group relative w-72 sm:w-80 h-[440px] flex items-center justify-center cursor-pointer transition-transform duration-500 hover:scale-105"
           >
+            {/* Glowing Golden Aura Behind Card */}
+            <div className="absolute inset-4 bg-gradient-to-tr from-amber-500/25 via-yellow-500/15 to-amber-600/25 rounded-full blur-2xl group-hover:blur-3xl transition-all duration-700 pointer-events-none" />
+
+            {/* Authentic Collectible Card */}
             <img
               src={current.image}
               alt={current.name}
-              className="w-full h-full object-cover object-top filter brightness-95"
+              className="max-h-full max-w-full object-contain filter drop-shadow-[0_20px_45px_rgba(0,0,0,0.95)] transition-transform duration-500 group-hover:-translate-y-2"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-            <div className="absolute bottom-5 inset-x-5 text-center">
-              <span className="inline-block px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/60 text-xs font-mono font-bold text-amber-300 uppercase tracking-widest backdrop-blur-md mb-2">
-                HALL OF FAME #1 SELECTION
-              </span>
-              <h3 className="font-display text-3xl text-white uppercase tracking-wide">
-                {current.name}
-              </h3>
-              <p className="text-xs font-mono text-neutral-300 mt-1 uppercase">
-                {current.detailedPosition}
-              </p>
-            </div>
           </div>
 
           {/* Carousel Next/Prev Controls */}

@@ -82,7 +82,7 @@ def generate_ts():
             "clubRetirementStatus": p["clubRetirementStatus"],
             "retirementYear": p["retirementYear"],
             "era": p["era"],
-            "image": f"/images/hall-of-fame/{slug}.webp",
+            "image": f"/images/hall-of-fame-cards/{slug}.webp?v=fc27",
             "imageAttribution": "Wikimedia Commons / CC-BY-SA (reusable public football portrait)",
             "bio": p.get("bio", f"Legendary football icon celebrating an immortal career in the beautiful game."),
             "isFeatured": is_featured

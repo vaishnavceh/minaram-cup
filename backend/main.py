@@ -67,9 +67,12 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 async def add_performance_cache_headers(request: Request, call_next):
     response = await call_next(request)
     path = request.url.path
-    if path.startswith("/assets/") or path.startswith("/images/"):
-        # Fingerprinted assets, webp images, and audio: aggressive caching
+    if path.startswith("/assets/"):
+        # Fingerprinted Vite assets: aggressive caching
         response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    elif path.startswith("/images/"):
+        # Image assets: revalidate immediately so card replacements are visible without stale cache
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
     elif path == "/" or path.endswith(".html"):
         # SPA index HTML: revalidate to ensure users always receive latest releases
         response.headers["Cache-Control"] = "no-cache, must-revalidate"
