@@ -1,0 +1,2162 @@
+[
+  {
+    "slug": "pele",
+    "alt": "Pel\u00e9 - 95 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-237067.875a8290b757887bd51c29ed8b1ba5a15672116fa67716626b8e2f022935282e.webp",
+    "link": "/players/237067-pele/27-237067/",
+    "rating": 95,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "diego-maradona",
+    "alt": "Maradona - 95 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-190042.d25e6bd1faaad12e4a63bf613c220265d80e7009b02a06526a8ecaa8244e56a4.webp",
+    "link": "/players/190042-diego-maradona/27-190042/",
+    "rating": 95,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "mia-hamm",
+    "alt": "Hamm - 93 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-275243.bce7e65748fd578e5250e7835bb6d41b012e6ae04f42715f733ee6656308ff82.webp",
+    "link": "/players/275243-mia-hamm/27-275243/",
+    "rating": 93,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "franz-beckenbauer",
+    "alt": "Beckenbauer - 93 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-168473.649e3b51a9c361c3e5978a6b3f046b996ee535af17061375c9cf41fee3e6f7c1.webp",
+    "link": "/players/168473-franz-beckenbauer/27-168473/",
+    "rating": 93,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "johan-cruyff",
+    "alt": "Cruyff - 93 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-190045.df3db4cc7941ddd7ea953dd9b31595b76bd7619d303947612bb5ab3cda2e97a4.webp",
+    "link": "/players/190045-johan-cruyff/27-190045/",
+    "rating": 93,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "garrincha",
+    "alt": "Garrincha - 93 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-247553.c2f2dc4427676cc44c8a64c9e70c19959ec6f1713016a428d00773749f7538d7.webp",
+    "link": "/players/247553-garrincha/27-247553/",
+    "rating": 93,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ferenc-puskas",
+    "alt": "Pusk\u00e1s - 92 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-254642.f8b26c1862c25577032f2cb12c829088fda60589b27338297264e57600aa7260.webp",
+    "link": "/players/254642-ferenc-puskas/27-254642/",
+    "rating": 92,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "bobby-charlton",
+    "alt": "Charlton - 92 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-230025.a985dc58899cb74e8a1414a936423d75fb7d01f8bc9dd8296fece872e3ea5f38.webp",
+    "link": "/players/230025-bobby-charlton/27-230025/",
+    "rating": 92,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "gerd-muller",
+    "alt": "M\u00fcller - 92 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-190048.a2c4abbbaca4376beb5e0adade72a6f419bd36b9c1a996f86e9f8f3f906e35c7.webp",
+    "link": "/players/190048-gerd-muller/27-190048/",
+    "rating": 92,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "christine-sinclair",
+    "alt": "Sinclair - 92 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-226359.bb6282ae5f6d87012c90941b0afbfb1d1cc508549892e648bdaa527766f6f9de.webp",
+    "link": "/players/226359-christine-sinclair/27-226359/",
+    "rating": 92,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "birgit-prinz",
+    "alt": "Prinz - 92 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-275276.ca8d28f8d349c361fc70b15b0176aa6646b1f2cf35c81398be5bd60c608b88aa.webp",
+    "link": "/players/275276-birgit-prinz/27-275276/",
+    "rating": 92,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "nadine-angerer",
+    "alt": "Angerer - 92 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-226293.ccc32ed8dee509c9237b079bb71a26e2dfac0b742ca1194f6b701c954947f61a.webp",
+    "link": "/players/226293-nadine-angerer/27-226293/",
+    "rating": 92,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "eusebio",
+    "alt": "Eus\u00e9bio - 91 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-242519.0a0434424233a4055aee32ff2a57dfd0a21b6431eaca603e5e675fcbeea05be0.webp",
+    "link": "/players/242519-eusebio/27-242519/",
+    "rating": 91,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "morgan",
+    "alt": "Morgan - 91 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-226301.7fbf020e807fbf2557dc49537ff02136490fbfc8dd1bfc0fcfb98f128c49a7de.webp",
+    "link": "/players/226301-morgan/27-226301/",
+    "rating": 91,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ruud-gullit",
+    "alt": "Gullit - 91 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-214100.7b673f0603b6e4165356d3254393672608aa21eba3df545f2c2bd91b53b72238.webp",
+    "link": "/players/214100-ruud-gullit/27-214100/",
+    "rating": 91,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "zico",
+    "alt": "Zico - 91 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-166691.ea3abc5ee12490929caa5237a554e6dccee7bc2dc25d84e06f6864f5186fe4a4.webp",
+    "link": "/players/166691-zico/27-166691/",
+    "rating": 91,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "carlos-alberto",
+    "alt": "Carlos Alberto - 91 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-167135.2591ee0ddf5347b3d2db68ec74e34a0dd89c6d595f5f7130e3436c411c512788.webp",
+    "link": "/players/167135-carlos-alberto/27-167135/",
+    "rating": 91,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "homare-sawa",
+    "alt": "Sawa - 91 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-227006.f701ffd9ed2fd6b137a64c45f01542fc8ca41602a77d9ff1e1d1e001397c7ae6.webp",
+    "link": "/players/227006-homare-sawa/27-227006/",
+    "rating": 91,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "marco-van-basten",
+    "alt": "van Basten - 91 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-192181.1962432ca6c019ced0184da96924316aa96942e9121101a933b8aa76fafc5fc8.webp",
+    "link": "/players/192181-marco-van-basten/27-192181/",
+    "rating": 91,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "franco-baresi",
+    "alt": "Baresi - 91 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-166906.388d0326dcdd46e6350df27981069ea1401858697487277667416c0079e101c2.webp",
+    "link": "/players/166906-franco-baresi/27-166906/",
+    "rating": 91,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "lothar-matthaus",
+    "alt": "Matth\u00e4us - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238435.bbb9828404315edb7e63cda3d8292da69ba5826eb6c22bb639315568e7dc7a8d.webp",
+    "link": "/players/238435-lothar-matthaus/27-238435/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "miraildes-maciel-mota-formiga",
+    "alt": "Formiga - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-226895.71efc615738f3986746c50fcc0326809b9bd5f16cd370f86841b38e107df397c.webp",
+    "link": "/players/226895-miraildes-maciel-mota-formiga/27-226895/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "david-ginola",
+    "alt": "Ginola - 90 - Ultimate Scream Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84078052.54baec09eaaeb32a035188b9c3822cbb577349eac6d989e544b279f953995f77.webp",
+    "link": "/players/191972-david-ginola/27-84078052/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "kenny-dalglish",
+    "alt": "Dalglish - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-247699.385c5e9275c4ae10c571f89a63404f782c64df3c9746aa3dc7cd5afba891aa92.webp",
+    "link": "/players/247699-kenny-dalglish/27-247699/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "george-best",
+    "alt": "Best - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-226764.8b32a599b2f2f30997ff6156b374846cc3d931abddd0dc51129e8958bd11bc17.webp",
+    "link": "/players/226764-george-best/27-226764/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "karl-heinz-rummenigge",
+    "alt": "Rummenigge - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-243075.50088af948ebb5e4a4e5528cf121c45dcca8ebcec082fb1c1b8afe38fb122d99.webp",
+    "link": "/players/243075-karl-heinz-rummenigge/27-243075/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "lotta-schelin",
+    "alt": "Schelin - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-226369.351d29d797181a4e586306db17b2f78ec525282c3505ec9c66f4488cc8c9ab85.webp",
+    "link": "/players/226369-lotta-schelin/27-226369/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "caroline-seger",
+    "alt": "Seger - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-226975.b4930e7996e195bf9bbf3f302672df68cb8b8ebd764e9b74ad1f0cf3b315e99a.webp",
+    "link": "/players/226975-caroline-seger/27-226975/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "tobin-heath",
+    "alt": "Heath - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-226330.394abf72f768b0f02536467b7a40f4323302a31a6c5cb4de8174786be837207f.webp",
+    "link": "/players/226330-tobin-heath/27-226330/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "rivellino",
+    "alt": "Rivellino - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-191190.90c8bf967b644a4ce8b3835b4777ab78c192a5e5a43bc1fdf2d945b52f07b1ec.webp",
+    "link": "/players/191190-rivellino/27-191190/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "aya-miyama",
+    "alt": "Miyama - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-227002.4ade9344141f3fdc3570d45329f4b88ca39587ffc7d0b341307b17ad66e06113.webp",
+    "link": "/players/227002-aya-miyama/27-227002/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "julie-foudy",
+    "alt": "Foudy - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-71608.1f2390b4744d0028c491151c54cefb8c8cb575f00079f9bc239bd6f5858bffd8.webp",
+    "link": "/players/71608-julie-foudy/27-71608/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "hege-riise",
+    "alt": "Riise - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84415.ec7d79299004baa3383c92d6cbcfe12dadf7f052195731b1f5c48fdd8d3d34db.webp",
+    "link": "/players/84415-hege-riise/27-84415/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "camille-abily",
+    "alt": "Abily - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-227324.027d3b5c801b19c3e96fc4fe5e54a2abea761f3150e3921cfa83694cc951e542.webp",
+    "link": "/players/227324-camille-abily/27-227324/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "bobby-moore",
+    "alt": "Moore - 90 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-190044.f5187efa0c7ea687a385dc8b43ad5b642705a3704d9a983c9b84c1276a9e1b6b.webp",
+    "link": "/players/190044-bobby-moore/27-190044/",
+    "rating": 90,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "jairzinho",
+    "alt": "Jairzinho - 89 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-268513.986f3c973f92b75c7a4041619cdb5ebc1048f76d2c0631bc6d24ccc560f73c62.webp",
+    "link": "/players/268513-jairzinho/27-268513/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "gianfranco-zola",
+    "alt": "Zola - 89 - Ultimate Scream Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-83887281.01d3c763663572d424c21d1035befba9bb4a5221c9a2452f1c9c5629c4485d91.webp",
+    "link": "/players/1201-gianfranco-zola/27-83887281/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "simone-laudehr",
+    "alt": "Laudehr - 89 - Ultimate Scream Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84112387.b1840f0a989d49e4052860a07ebcfce5c074a82345559c866d5c96f3e1e4870c.webp",
+    "link": "/players/226307-simone-laudehr/27-84112387/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "emilio-butragueno",
+    "alt": "Emilio Butrague\u00f1o - 89 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-191695.18844c630285c4640efe73399b796440162ce7b44657d7f3de83537deefb68a8.webp",
+    "link": "/players/191695-emilio-butragueno/27-191695/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "eric-cantona",
+    "alt": "Cantona - 89 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-167198.998916dba0219e6672b796e99f17cbce65c386258757646963e7be3184434515.webp",
+    "link": "/players/167198-eric-cantona/27-167198/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "socrates",
+    "alt": "S\u00f3crates - 89 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-190046.04293e3874840bc1f12ec59d856039f4d882c6cf06ac2312540f9a894fd7dfc2.webp",
+    "link": "/players/190046-socrates/27-190046/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "abedi-pele",
+    "alt": "Abedi Pel\u00e9 - 89 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-167425.71c18b088ed32558bbdb607df4eb6abf14c6bc18e3b5fed9fe08b640b129197d.webp",
+    "link": "/players/167425-abedi-pele/27-167425/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "kelly-smith",
+    "alt": "Smith - 89 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-227263.5bbe4fa4cdf6c7fd7eb3bd51214478a1e92a6eac6b6650fb8f523aa506420392.webp",
+    "link": "/players/227263-kelly-smith/27-227263/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "rudi-voller",
+    "alt": "V\u00f6ller - 89 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-166676.942c50564590d3d7451f155b8ce9c286b8a12044ff1713744d074be820d8f714.webp",
+    "link": "/players/166676-rudi-voller/27-166676/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "hugo-sanchez",
+    "alt": "S\u00e1nchez - 89 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-166149.5132ed4b1c7077d648e3e33c54eeed618c08560a0076c23d697823e9c734179d.webp",
+    "link": "/players/166149-hugo-sanchez/27-166149/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ronald-koeman",
+    "alt": "Koeman - 89 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-167680.3ec4231953b6c6394c4509eb72ec9e0161941b9f72832acb8e483191f3350186.webp",
+    "link": "/players/167680-ronald-koeman/27-167680/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "steffi-jones",
+    "alt": "Jones - 89 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-77676.3c5c88b8849ffb3d4802afe6382faa444022c7dac15c5bd32aff0cb054c5ba4a.webp",
+    "link": "/players/77676-steffi-jones/27-77676/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "jean-pierre-papin",
+    "alt": "Papin - 89 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-167134.bf8eb72f6599488f6563a9568a30350e17d647b5080144d74e46fb1b975d135d.webp",
+    "link": "/players/167134-jean-pierre-papin/27-167134/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "gary-lineker",
+    "alt": "Lineker - 89 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-214267.432957be030bf0371911089e3a9a94e7842b3bfd1ae455cf90a202a0593dfd98.webp",
+    "link": "/players/214267-gary-lineker/27-214267/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "jurgen-kohler",
+    "alt": "Kohler - 89 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-261593.bea46a965899b2c3f1e753896ffeab4815715fa9295e8719c2dbe37dabd8f1e3.webp",
+    "link": "/players/261593-jurgen-kohler/27-261593/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "gianluca-vialli",
+    "alt": "Vialli - 89 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-233700.f532cc1c182a9b4def67ce8e877945e569a7519f248285a19360d8f8eabc576c.webp",
+    "link": "/players/233700-gianluca-vialli/27-233700/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "celia-sasic",
+    "alt": "\u0160a\u0161i\u0107 - 89 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-226306.7e20ab71d0e4f614a1fd272c7dfb4751914c412b096197616327e30479a6de6b.webp",
+    "link": "/players/226306-celia-sasic/27-226306/",
+    "rating": 89,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "jaap-stam",
+    "alt": "Stam - 88 - Ultimate Scream Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-83891820.48e175f2b85e644d43fa0d2dc975f21b856f30a802faa765c5149b0a4504b5e0.webp",
+    "link": "/players/5740-jaap-stam/27-83891820/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "antonio-di-natale",
+    "alt": "Di Natale - 88 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-120274.1bb72e4bbeedd9eeac337c7bdaaee63a351278947f9e4555a67a0e573e8deb47.webp",
+    "link": "/players/120274-antonio-di-natale/27-120274/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "marinette-pichon",
+    "alt": "Pichon - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-71587.6b7d0fcf6230c576271e866ba67223b987db4ca458dd45d265a9efa9160856f5.webp",
+    "link": "/players/71587-marinette-pichon/27-71587/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "cha-bum-kun",
+    "alt": "Cha Bum Kun - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-191208.e3f5cfff7b735b7201981332cfedabded16deb5bd6ba02df12e3bb94181ff30a.webp",
+    "link": "/players/191208-cha-bum-kun/27-191208/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "paulo-futre",
+    "alt": "Paulo Futre - 88 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-214101.0c5e87e2dd953a95e8c3c81b3571e1c2c74e5c861df799883fbd183eb2d9a735.webp",
+    "link": "/players/214101-paulo-futre/27-214101/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "john-barnes",
+    "alt": "Barnes - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-247515.aec1ebed76ae40f8a5c688d6b9e331efd770c70fa4429260a9402cd33c1232ba.webp",
+    "link": "/players/247515-john-barnes/27-247515/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ian-wright",
+    "alt": "Wright - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-248146.62905a8f4f9c0690cbb7f21e3640e72cfccc7986967032ed85933fc3e5c2b9a1.webp",
+    "link": "/players/248146-ian-wright/27-248146/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "yuki-nagasato",
+    "alt": "Nagasato - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-267275.44a26d573412ca61c8af04cb561e582e36e21c02b1a4d81c4301a9bc416efdc9.webp",
+    "link": "/players/267275-yuki-nagasato/27-267275/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "frank-rijkaard",
+    "alt": "Rijkaard - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-214098.cf4af775876888928eec7bdeb3ac64ede0b81b0474fad480a1098e058bcea2bd.webp",
+    "link": "/players/214098-frank-rijkaard/27-214098/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "laurent-blanc",
+    "alt": "Blanc - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238443.691794439baf19494ced9b83e146428390ca2a54ab6260db625a0825eead57f2.webp",
+    "link": "/players/238443-laurent-blanc/27-238443/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "dunga",
+    "alt": "Dunga - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-192190.d1d2afe6bcb1eb2f52b541e1c98c3288214eedfd497c5c4dfe27ad694010f67d.webp",
+    "link": "/players/192190-dunga/27-192190/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ellen-white",
+    "alt": "White - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-227270.2cb116b7779060a5512cdf3f2f9c3aafd0a590b1e9efeb75d7a63e7e4f254052.webp",
+    "link": "/players/227270-ellen-white/27-227270/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "michael-laudrup",
+    "alt": "Laudrup - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-222000.ad40ace854a578113c8fbc9162e40c8f0869eece3922d3e9020f8e3bfe4e745a.webp",
+    "link": "/players/222000-michael-laudrup/27-222000/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "bixente-lizarazu",
+    "alt": "Lizarazu - 88 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-5454.01f9cec09e5ad4ed5f0d4d9c060156574a14da3dccceb542debdf9a57f2aaec6.webp",
+    "link": "/players/5454-bixente-lizarazu/27-5454/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "mario-kempes",
+    "alt": "Kempes - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-82092.da4c7ff68500cc1693c34d6c20096634cb843d66151a50bca2caa00861ba3340.webp",
+    "link": "/players/82092-mario-kempes/27-82092/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "enzo-francescoli",
+    "alt": "Francescoli - 88 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-275049.0912cb1789855824b8733f2d90e13002a873a88b1de5363a4612771ce34eac3b.webp",
+    "link": "/players/275049-enzo-francescoli/27-275049/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "emmanuel-petit",
+    "alt": "Petit - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1620.318dc0334373ad49b9a582cabd921b70cf4915e8f63ce4cad76c4b143633ef10.webp",
+    "link": "/players/1620-emmanuel-petit/27-1620/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "nadine-kessler",
+    "alt": "Ke\u00dfler - 88 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-226373.c831a14b7d8a9d0025a3d00200625a0500242812567f31f2bfb45ffce39197ef.webp",
+    "link": "/players/226373-nadine-kessler/27-226373/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "sol-campbell",
+    "alt": "Campbell - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-243029.d5bd0959b941ea39162d3ac3ac57357df0ecde311548b0fae1a9eaab84a184ac.webp",
+    "link": "/players/243029-sol-campbell/27-243029/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "sissi",
+    "alt": "Sissi - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-77790.da13dfc903e1d0a548dc346517ebdc22c2f0309974e59680bc6d4819efdf8bc1.webp",
+    "link": "/players/77790-sissi/27-77790/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "jari-litmanen",
+    "alt": "Litmanen - 88 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-5673.d0bad5b9685a8a72d55f6683c5a7eea3a53195a0d75cb88a4461c1a2fbbeccc0.webp",
+    "link": "/players/5673-jari-litmanen/27-5673/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "geoffrey-hurst",
+    "alt": "Hurst - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-82094.e3e83c20d561c53521b8b9af7696c9a98b600521cfa5a2907355822fda954a58.webp",
+    "link": "/players/82094-geoffrey-hurst/27-82094/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "fernando-hierro",
+    "alt": "Fernando Hierro - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-161840.c3833f7a1809f1bb4a9ca18417da9f3f8f9e313a6c85b169ff506aa7e3a8b493.webp",
+    "link": "/players/161840-fernando-hierro/27-161840/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ian-rush",
+    "alt": "Rush - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-247703.ac42e8a1aa9e76449f4625ac044e0b941b89c7ecdaaf1c652090cc9e15fd35f0.webp",
+    "link": "/players/247703-ian-rush/27-247703/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "maicon-douglas-sisenando",
+    "alt": "Maicon - 88 - Base Icon",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-135455.bc61133899e1a77cd1c7d3184a5b349b61e16358556ea9d0f3494d297b421cae.webp",
+    "link": "/players/135455-maicon-douglas-sisenando/27-135455/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ivan-zamorano",
+    "alt": "Zamorano - 88 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-77787.bcd697450cc56fe38dda9e719381709dc9406f3691852ef3054cbea2f06acd64.webp",
+    "link": "/players/77787-ivan-zamorano/27-77787/",
+    "rating": 88,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "jill-scott",
+    "alt": "Scott - 87 - Ultimate Scream Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84113342.47e2578c2ed8202818184d9ea9d502c7600e3f2b52c73dc661b3d5f855c2a93f.webp",
+    "link": "/players/227262-jill-scott/27-84113342/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "mario-mandzukic",
+    "alt": "Mand\u017euki\u0107 - 87 - Ultimate Scream Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84067863.3c421318967b3911c3952b272d686272dbd94df82e9f6e6eb560134c902f0359.webp",
+    "link": "/players/181783-mario-mandzukic/27-84067863/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "quaresma",
+    "alt": "Quaresma - 87 - Ultimate Scream Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-83906855.83ae37498415560072c1c8adac9300f1425ecc38421b271c6edf6d852a138c3d.webp",
+    "link": "/players/20775-quaresma/27-83906855/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "andrea-barzagli",
+    "alt": "Barzagli - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-137186.fb089c610544258245d1dacfaaeb7d967bf6bd115bcdb7f31ad990a1c63005d8.webp",
+    "link": "/players/137186-andrea-barzagli/27-137186/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "jose-roberto-da-silva-junior",
+    "alt": "Z\u00e9 Roberto - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-28765.cc950866710fe8462b2b6ff262ae594107e3036f72f59aa788e692f75a070278.webp",
+    "link": "/players/28765-jose-roberto-da-silva-junior/27-28765/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "davor-suker",
+    "alt": "\u0160uker - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-214649.76295a0ff60b526edfc5383b1f420dfdce7d4275488c88d058c3f3e4ed7eb28e.webp",
+    "link": "/players/214649-davor-suker/27-214649/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "joe-cole",
+    "alt": "Cole - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-27.bd325d13ad287b3421fc2bbba05466a042baca8268dea368bc313170fd56dcbf.webp",
+    "link": "/players/27-joe-cole/27-27/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "claudio-marchisio",
+    "alt": "Marchisio - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-173210.e97f0e952a6e2ac5a5b82da874f4c4c05cb283d2430263ce4b90983acca2f82d.webp",
+    "link": "/players/173210-claudio-marchisio/27-173210/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "harry-kewell",
+    "alt": "Kewell - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-266801.626055cfa7a6dd15ca5e7d1f2f0761590d1134cfaef74eb56852353ef50db8b5.webp",
+    "link": "/players/266801-harry-kewell/27-266801/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ivan-cordoba",
+    "alt": "C\u00f3rdoba - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-16619.9fb96e6b954766d8119de6b22e7d431b1102d7f5a37c9896b54ba2456e78462c.webp",
+    "link": "/players/16619-ivan-cordoba/27-16619/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "laura-georges",
+    "alt": "Georges - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-227315.d8d911f30def771032103cb7160f95f5681a378e4e126d68be8c2e234d22ba6c.webp",
+    "link": "/players/227315-laura-georges/27-227315/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "louisa-necib",
+    "alt": "Necib - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84112442.8a5349efef000970a00b2ea7a76a7af29d65dd2327159cf2e4d449227335dfcb.webp",
+    "link": "/players/226362-louisa-necib/27-84112442/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "pablo-cesar-aimar",
+    "alt": "Aimar - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-10959.9103c177ed61acc0fb3a7259c652d8de27133ae0d7b7687f8e9d1c4a81dc15b9.webp",
+    "link": "/players/10959-pablo-cesar-aimar/27-10959/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "miguel-angel-salgado-fernandez",
+    "alt": "M\u00edchel Salgado - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-8348.a3fa20b4cce31dc911284f23fbaccfc1c4c64f6cab75982d161085eff0932190.webp",
+    "link": "/players/8348-miguel-angel-salgado-fernandez/27-8348/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "steve-mcmanaman",
+    "alt": "McManaman - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-273812.5778148dd1c6dd59f1917fe800dc75ac22fcbf492217d102cb6e51b4f78168dc.webp",
+    "link": "/players/273812-steve-mcmanaman/27-273812/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "mario-gomez",
+    "alt": "Gomez - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-150418.87a2a9020957af0959a7968fecec9f07b091ad34458fd98337c0b2a77c20318b.webp",
+    "link": "/players/150418-mario-gomez/27-150418/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "jorge-campos",
+    "alt": "Campos - 87 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-191694.5a0cc45325055bdc97f6351ae967bdb526c8662b8a6219fcaae8ff89d0733262.webp",
+    "link": "/players/191694-jorge-campos/27-191694/",
+    "rating": 87,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "blaise-matuidi",
+    "alt": "Matuidi - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-170890.9675b53591d9b81af0713e59e9e2fd3e512c0cd0bc90b0d1a5e7b21525d90d91.webp",
+    "link": "/players/170890-blaise-matuidi/27-170890/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ulrich-hoeness",
+    "alt": "Hoene\u00df - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-81644.ed5e9e86d9f8e2893beb550ab2a8ff38beffbb8e5b8194d1f9348c9724c5d7a9.webp",
+    "link": "/players/81644-ulrich-hoeness/27-81644/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ramires",
+    "alt": "Ramires - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-184943.b6e2c6a51fa5d9d1ad2c46effc1a2996cd46ab3010d060211b0def20922852f6.webp",
+    "link": "/players/184943-ramires/27-184943/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ledley-king",
+    "alt": "King - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50752.82fa3e99829bf6f5c642212b70ca60a59430f63995d125d19329b470d500b1ee.webp",
+    "link": "/players/50752-ledley-king/27-50752/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "robbie-keane",
+    "alt": "Keane - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-330.cb60830801bdaac697690f7cb879c0772bf7e575e18668292c6da7a72f3020c2.webp",
+    "link": "/players/330-robbie-keane/27-330/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "freddie-ljungberg",
+    "alt": "Ljungberg - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-6975.ad5de16b5e70cb736e63bfcb13c08a1326a33ce56a31c2f443b6fb88df88fe72.webp",
+    "link": "/players/6975-freddie-ljungberg/27-6975/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "landon-donovan",
+    "alt": "Donovan - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-7743.9c3a1d36c6b6bbd0c9a783853ca3662dcb9c2dfd3e061777cfc72aaa88859d5a.webp",
+    "link": "/players/7743-landon-donovan/27-7743/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ludovic-giuly",
+    "alt": "Giuly - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1551.3aeb439691a3ded88fbc18b66f4eb01ccfb51be2bcd67324da072b999d5e76c5.webp",
+    "link": "/players/1551-ludovic-giuly/27-1551/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "sami-al-jaber",
+    "alt": "Al Jaber - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-168886.6f3c0066bc9f8483f841dbae4626b23fd1852855af13e473f5ef51ad98316ec7.webp",
+    "link": "/players/168886-sami-al-jaber/27-168886/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "ole-gunnar-solskjaer",
+    "alt": "Solskj\u00e6r - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1845.3083ec11bb43737b58f3685dca18668042aad1bf688a75d839cfc64ab5ae66cb.webp",
+    "link": "/players/1845-ole-gunnar-solskjaer/27-1845/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "sonia-bompastor",
+    "alt": "Bompastor - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-275092.8ab21ada80fce4d74770a21c39aaf2785cd91be153d8ac64c048dc6f6522afa6.webp",
+    "link": "/players/275092-sonia-bompastor/27-275092/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "luis-hernandez",
+    "alt": "Hern\u00e1ndez - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-156353.d4c9233cb010387d89d3a9f80df3c60b7dad53e766723d76bc4cf9bcde3bb426.webp",
+    "link": "/players/156353-luis-hernandez/27-156353/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "jerzy-dudek",
+    "alt": "Dudek - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-44897.fffc53a8bfa93065a39ad0e77044ce0bd493b61cc35f8cc9539038b4ec247471.webp",
+    "link": "/players/44897-jerzy-dudek/27-44897/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "tomas-rosicky",
+    "alt": "Rosick\u00fd - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-8473.e3a1d12d771e832d90cfc67f4c9460418d95bcb79aef406ea889ea33f1cb60cc.webp",
+    "link": "/players/8473-tomas-rosicky/27-8473/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "fara-williams",
+    "alt": "Williams - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-227271.229284ceef648fd1cfb61a45b7904b8ae3beefd53fd71a18e2cb3b4c83093590.webp",
+    "link": "/players/227271-fara-williams/27-227271/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "capdevila",
+    "alt": "Capdevila - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-25924.d84b0bb79899d4731de21f7d949274184245f4cb827cd732d019d03e9c32e07a.webp",
+    "link": "/players/25924-capdevila/27-25924/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "guti",
+    "alt": "Guti - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-262285.3489cf93ed6a97f685502bfb3b35fad123ebac896002eab609652d895ee912c6.webp",
+    "link": "/players/262285-guti/27-262285/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "claudio-pizarro",
+    "alt": "Pizarro - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-25420.26b3f63c394c39a471e6d72eb4d46571d66a826fe6ef7b2901d9d57a9e9285c5.webp",
+    "link": "/players/25420-claudio-pizarro/27-25420/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "john-arne-riise",
+    "alt": "Riise - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-274967.3e72b91ce3976359da60d5c603279037d7ba00398f8b0a4585584ef85c2e200d.webp",
+    "link": "/players/274967-john-arne-riise/27-274967/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "dirk-kuyt",
+    "alt": "Kuyt - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-15723.1abec5dea408593c1bd4111d7665f5713ee1673915d1b1217797251a37c22f2a.webp",
+    "link": "/players/15723-dirk-kuyt/27-15723/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "oliver-bierhoff",
+    "alt": "Bierhoff - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-215732.1e40a09683987bc07c959c2ab14b90cab604ec91ef5f02e1eb112cf06209246f.webp",
+    "link": "/players/215732-oliver-bierhoff/27-215732/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "jamie-carragher",
+    "alt": "Carragher - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-5467.391e378ada8e743bf77df340030311587f027c353438e774e0477e1815406e96.webp",
+    "link": "/players/5467-jamie-carragher/27-5467/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "nwankwo-kanu",
+    "alt": "Kanu - 86 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-5679.658f00d120496c57730e0d9db31cbd0fa036dcf51fe56b3478b4f86eb3f07c14.webp",
+    "link": "/players/5679-nwankwo-kanu/27-5679/",
+    "rating": 86,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "saeed-al-owairan",
+    "alt": "Al Owairan - 85 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-266694.3f3d08838e0fc4a30b39be1294e943860804a2fb894b84622daa440ffc9f0b93.webp",
+    "link": "/players/266694-saeed-al-owairan/27-266694/",
+    "rating": 85,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "damarcus-beasley",
+    "alt": "Beasley - 85 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-39386.376c9fb376f33f8822056d716ede1eed307e8a80f67764f6353e02171a1461ae.webp",
+    "link": "/players/39386-damarcus-beasley/27-39386/",
+    "rating": 85,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "tim-howard",
+    "alt": "Howard - 85 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-16254.7de7d2a6be564fb64b7eee4fa687afadbacfca95d8aaac434aa54b561201db72.webp",
+    "link": "/players/16254-tim-howard/27-16254/",
+    "rating": 85,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "clint-dempsey",
+    "alt": "Dempsey - 85 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-155897.21ef581f34aef337cc96879324547be516a572fb589e445658a82ce271b9cfbf.webp",
+    "link": "/players/155897-clint-dempsey/27-155897/",
+    "rating": 85,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "tim-cahill",
+    "alt": "Cahill - 85 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-51412.5ce70fba258edb5c2a31007bd23b8dcfa5de808f889b28b7056ff5568af08bca.webp",
+    "link": "/players/51412-tim-cahill/27-51412/",
+    "rating": 85,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "peter-crouch",
+    "alt": "Crouch - 85 - Base Hero",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-51257.1796a9a42c6da4e67144a3e4dc167d4e215a5d0f1c459f66843ebc2d6f5e6186.webp",
+    "link": "/players/51257-peter-crouch/27-51257/",
+    "rating": 85,
+    "is_icon_hero": true
+  },
+  {
+    "slug": "kylian-mbappe",
+    "alt": "Mbapp\u00e9 - 92 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84117827.b5282dac1f6fdfa12506f61bcf40c6a55c943c406d57c6880ad7f58e2541f5a5.webp",
+    "link": "/players/231747-kylian-mbappe/27-84117827/",
+    "rating": 92,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "alexia-putellas",
+    "alt": "Alexia Putellas - 92 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50558851.d00d6e958ea11f747c60d7275386ce51e78d3f9e41299c0844401f8263116cd0.webp",
+    "link": "/players/227203-alexia-putellas/27-50558851/",
+    "rating": 92,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "ousmane-dembele",
+    "alt": "Demb\u00e9l\u00e9 - 91 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50563091.5369d18c02b5367527b4e17d8627693d5b4d4ea6cdf83041e4bd6d940be925a2.webp",
+    "link": "/players/231443-ousmane-dembele/27-50563091/",
+    "rating": 91,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "pedri",
+    "alt": "Pedri - 91 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50583502.3160aeaec311335675c4cc0a9851f58dd69f76127977d80abe5256b4fdefcf83.webp",
+    "link": "/players/251854-pedri/27-50583502/",
+    "rating": 91,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "jude-bellingham",
+    "alt": "Bellingham - 91 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-117692883.adee7d48ce52a68c260d16a71cf4200bceeb4279751cffc7ee995274bfdb7191.webp",
+    "link": "/players/252371-jude-bellingham/27-117692883/",
+    "rating": 91,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "erling-haaland",
+    "alt": "Haaland - 91 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50570733.d75fc4d07925ca1088781f0e221f8e4991801f3d0e1c3172224527061d575bbc.webp",
+    "link": "/players/239085-erling-haaland/27-50570733/",
+    "rating": 91,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "lamine-yamal-lamine-yamal",
+    "alt": "Lamine Yamal - 91 - Star Performer",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84163723.e4574500798c53f301846756f1f903c096cf738ca81529f96ca0748ff171f66e.webp",
+    "link": "/players/277643-lamine-yamal-lamine-yamal/27-84163723/",
+    "rating": 91,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "michael-olise",
+    "alt": "Olise - 91 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-100911123.e012418e3cd2c1598738d269663b05e40d991f0440a6f88618e3fb92423f86a0.webp",
+    "link": "/players/247827-michael-olise/27-100911123/",
+    "rating": 91,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "khadija-shaw",
+    "alt": "Shaw - 91 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50577867.13d92f2fee2dbbe3e557f07496d977ee6031ce15d120a82541002b4f014c52b5.webp",
+    "link": "/players/246219-khadija-shaw/27-50577867/",
+    "rating": 91,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "raphinha",
+    "alt": "Raphinha - 90 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-100896715.13561c6be6b165b6d3b829fd39d5212e07000dbf373a96557dc11bd4e54f3995.webp",
+    "link": "/players/233419-raphinha/27-100896715/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "thibaut-courtois",
+    "alt": "Courtois - 90 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-192119.448d08257ab4449584114d4700fb5d22d8f6665fc80c975001021a166cf6da38.webp",
+    "link": "/players/192119-thibaut-courtois/27-192119/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "luis-diaz",
+    "alt": "D\u00edaz - 90 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-134458812.b995c9cca72ffd8e1ed65fb7b593463605dc45619c2125d4dd26f1dcf5811128.webp",
+    "link": "/players/241084-luis-diaz/27-134458812/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "theo-walcott",
+    "alt": "Walcott - 90 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50496507.faa0d72edea568a3b3211b1e5648045ba79964735ed0ba8ba764fff2074ad62d.webp",
+    "link": "/players/164859-theo-walcott/27-50496507/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "givanildo-vieira-de-souza",
+    "alt": "Hulk - 90 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50521010.d798db569dcbd1e7dba0ad36224964701693c98ee50cdea56811ae7cafc961bf.webp",
+    "link": "/players/189362-givanildo-vieira-de-souza/27-50521010/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "aitana-bonmati",
+    "alt": "Aitana Bonmat\u00ed - 90 - UEFA Women&#x27;s Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50573315.8d52045e8d8a089a206c8922ab1e713068da6865ae1877b1f559901c41bba985.webp",
+    "link": "/players/241667-aitana-bonmati/27-50573315/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "gianluigi-donnarumma",
+    "alt": "Donnarumma - 90 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50562269.7f735e6d675387153432d0918c2a6e82b334899d24454acf80254f7ffd41ae45.webp",
+    "link": "/players/230621-gianluigi-donnarumma/27-50562269/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "rayan-vitor-simplicio-rocha-rayan",
+    "alt": "Rayan - 90 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50415142.a063497c18f7be8773eccb3a2b35ed0e57503635fdb56f4a1fc4ca1c06b24762.webp",
+    "link": "/players/83494-rayan-vitor-simplicio-rocha-rayan/27-50415142/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "ewa-pajor",
+    "alt": "Pajor - 90 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50573494.99519174b2c0ac2156226d6d87638075dd26d1023e476fa390cbb95795dbcae2.webp",
+    "link": "/players/241846-ewa-pajor/27-50573494/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "temwa-chawinga",
+    "alt": "Chawinga - 90 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50611447.ca8ec7834452e436dffc975569e8eeb8617f841d1865dd2439dd72dfa09e2373.webp",
+    "link": "/players/279799-temwa-chawinga/27-50611447/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "vicky-lopez",
+    "alt": "Vicky L\u00f3pez - 90 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50603094.125832c62c992e35f9c0ded0f56ba37e4b063fcaf4106bfc061b22ca73a1d1a2.webp",
+    "link": "/players/271446-vicky-lopez/27-50603094/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "vitinha",
+    "alt": "Vitinha - 90 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-255253.af597cfde7b3ba3767bfef0b53146074ed1458675276b8768b0eb64fe3f06025.webp",
+    "link": "/players/255253-vitinha/27-255253/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "rodri",
+    "alt": "Rodri - 90 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-231866.6c85556a8fb07d89b5667fdb7b44811c4c6f820824d86085111583ab27bffe04.webp",
+    "link": "/players/231866-rodri/27-231866/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "harry-kane",
+    "alt": "Kane - 90 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-202126.86c27ae147eb25b6a215a01faa684f1800bdec552828ba7586b6161da86b1a0b.webp",
+    "link": "/players/202126-harry-kane/27-202126/",
+    "rating": 90,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "yui-hasegawa",
+    "alt": "Hasegawa - 89 - UEFA Women&#x27;s Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50577478.839e76b5e28bec4cbcb21ce8f37b35dcbbc7bb79b83405e23e5dbe6fe7d48ddf.webp",
+    "link": "/players/245830-yui-hasegawa/27-50577478/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "melchie-dumornay",
+    "alt": "Dumornay - 89 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-67374762.4501173ceb12a44841435e66fe971728c43aefe64efb3aa0422e9b20c957d49e.webp",
+    "link": "/players/265898-melchie-dumornay/27-67374762/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "nuno-mendes",
+    "alt": "Nuno Mendes - 89 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50583793.acb1694bfd943c716f9ff2ac627ce6220790458097cd437fc84a15659bfc2976.webp",
+    "link": "/players/252145-nuno-mendes/27-50583793/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "tabitha-chawinga",
+    "alt": "Chawinga - 89 - UEFA Women&#x27;s Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50609867.75666c25a09656bcd22014f0dec6aac76f26aa54957ac55eaa3db5219d18feba.webp",
+    "link": "/players/278219-tabitha-chawinga/27-50609867/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "patri-guijarro",
+    "alt": "Patri Guijarro - 89 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50568937.065dcdc2ff647e17af7d15f51f92cf3520daaf97e5378cc6a85ffa366165b443.webp",
+    "link": "/players/237289-patri-guijarro/27-50568937/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "david-luiz-moreira-marinho",
+    "alt": "David Luiz - 89 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50511592.df6ec1fb2a0972f9c245c7755b8b1b239570976667bb642f0df1a065b4af90cd.webp",
+    "link": "/players/179944-david-luiz-moreira-marinho/27-50511592/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "vinicius-jr",
+    "alt": "Vini Jr. - 89 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238794.e7b2162833e5a4972cafb95ce05a0e7e721f61639cfa265c73c6e392588fbbe0.webp",
+    "link": "/players/238794-vinicius-jr/27-238794/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "khvicha-kvaratskhelia",
+    "alt": "Kvaratskhelia - 89 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50579283.2cfdffae404b44cac1340c52aebbc9c37ec15ad9d1288653ca08d98a6d09fd30.webp",
+    "link": "/players/247635-khvicha-kvaratskhelia/27-50579283/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "luis-antonio-valencia",
+    "alt": "Valencia - 89 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50499553.a6193e0e2c21a2a729c857325d142790e01eba643dd1a63bee59dd57b1661745.webp",
+    "link": "/players/167905-luis-antonio-valencia/27-50499553/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "claudia-pina",
+    "alt": "Claudia Pina - 89 - POTM Liga F",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50594179.9447499fe5558a8c0e83c63103c4ba51937a9243dfe6118cffb36680e6456a12.webp",
+    "link": "/players/262531-claudia-pina/27-50594179/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "kobbie-mainoo",
+    "alt": "Mainoo - 89 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50600784.20e23f6adda9babe6f65d98948e43d19aae454f134d7beee002a28a6aad91bf7.webp",
+    "link": "/players/269136-kobbie-mainoo/27-50600784/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "sophia-wilson",
+    "alt": "Wilson - 89 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50595660.6f07b0b8ecf7318f94d8f44d6462a83d55d1686781ea60b7a377fae7daeb8592.webp",
+    "link": "/players/264012-sophia-wilson/27-50595660/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "dayot-upamecano",
+    "alt": "Upamecano - 89 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50561206.4bca8a477f1d8d415a8a10f6cc1d8a0b515766d1c7733352447c2c2130739611.webp",
+    "link": "/players/229558-dayot-upamecano/27-50561206/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "caroline-graham-hansen",
+    "alt": "Graham Hansen - 89 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-227102.f70f8264692393d3aa51f7c139145e11b2618c16bf45d16cb208b3782ae4a837.webp",
+    "link": "/players/227102-caroline-graham-hansen/27-227102/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "mariona",
+    "alt": "Mariona - 89 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-237288.ea0ee321a04478003eb2c13d8a8aa9f40e0312dd990d0c116bdff0865e685789.webp",
+    "link": "/players/237288-mariona/27-237288/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "pubill",
+    "alt": "Pubill - 89 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50597687.a404a5867133a154dc805f477baebbfc1cb0c5c4afbd88f87216ae2703c3c51b.webp",
+    "link": "/players/266039-pubill/27-50597687/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "alessia-russo",
+    "alt": "Russo - 89 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50590628.eafd831297911a2e1002e3f8820a15e38d34facc37f884b82ea71a436b69e779.webp",
+    "link": "/players/258980-alessia-russo/27-50590628/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "rio-ngumoha",
+    "alt": "Ngumoha - 89 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50412024.1ddab9abf50bdead53295896799b457e2de8683355ad3fc81a97c8d3dd87b7ca.webp",
+    "link": "/players/80376-rio-ngumoha/27-50412024/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "william-pacho",
+    "alt": "Pacho - 89 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-256196.8d6002187183ad9da79c5d2d6dd606a17f170d17fcc21716a53c323b8f852f2f.webp",
+    "link": "/players/256196-william-pacho/27-256196/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "klara-buhl",
+    "alt": "B\u00fchl - 89 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50580470.00e531cb97f59e232ba258587d9d96c0a13c755d13caa59077a41ab0232c9fbc.webp",
+    "link": "/players/248822-klara-buhl/27-50580470/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "david-raya",
+    "alt": "David Raya - 89 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-67329765.6ee38176c05e9dfabf18b5d1eae782a2429e775f9da38108f48d60296d1c98d4.webp",
+    "link": "/players/220901-david-raya/27-67329765/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "bruno-fernandes",
+    "alt": "Bruno Fernandes - 89 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-212198.6b360fb2ec0527d18d01f16019f77eb45fb1f6b540696fa5f165ec442c0e4531.webp",
+    "link": "/players/212198-bruno-fernandes/27-212198/",
+    "rating": 89,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "federico-valverde",
+    "alt": "Valverde - 88 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50570701.f2a71d7d62305767b9d63b7c29ea866cb989061b7eaaa3c684f4abc06ab57bb2.webp",
+    "link": "/players/239053-federico-valverde/27-50570701/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "marouane-fellaini",
+    "alt": "Fellaini - 88 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50508592.0868db3a7a8a2a422f8d94029d93d037f93df0aaa9ed5a0d725cfbb0d369e9bf.webp",
+    "link": "/players/176944-marouane-fellaini/27-50508592/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "sakina-karchaoui",
+    "alt": "Karchaoui - 88 - UEFA Women&#x27;s Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50565310.3a41ea618415eddc24ab0987f2e8824e38b68c215d50a3575d01d45375a098a9.webp",
+    "link": "/players/233662-sakina-karchaoui/27-50565310/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "alexandre-pato",
+    "alt": "Alexandre Pato - 88 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50511823.991f27ac14e37ec9a1e8e1ffe50f74a332e093856bbbdb11ab92c646cdebd3fb.webp",
+    "link": "/players/180175-alexandre-pato/27-50511823/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "scott-mctominay",
+    "alt": "McTominay - 88 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50568886.1d250ca50d3a98f13bbf673f824a1568a7d798db9cdcb82ed239d6b7ddefd34a.webp",
+    "link": "/players/237238-scott-mctominay/27-50568886/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "salma-paralluelo",
+    "alt": "Salma Paralluelo - 88 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50601052.f787544ca408fedea4cf84ab1a6871b6964503c1b1073b57d8c36b0c73745a79.webp",
+    "link": "/players/269404-salma-paralluelo/27-50601052/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "ryan-gravenberch",
+    "alt": "Gravenberch - 88 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50577752.8ad8f145a2badcbb9715133cbf00128e07d6b47bb7b594da0a68beaa5ea07b84.webp",
+    "link": "/players/246104-ryan-gravenberch/27-50577752/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "freddy-guarin",
+    "alt": "Guar\u00edn - 88 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50500699.69a1afaafb8fe2adf0a2502ff48645eb48723d966ed06f76aed1c38c0e177582.webp",
+    "link": "/players/169051-freddy-guarin/27-50500699/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "marcos-llorente",
+    "alt": "Marcos Llorente - 88 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50557809.8f535faba53af54e9e8d7b357db7cbfa93d55794576664fb2e12284f4537c3de.webp",
+    "link": "/players/226161-marcos-llorente/27-50557809/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "kadidiatou-diani",
+    "alt": "Diani - 88 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50559009.ecc90f1b4e90ec579f978dbf2443f19200e5aa0d2eb0aaa78a24f80dda864694.webp",
+    "link": "/players/227361-kadidiatou-diani/27-50559009/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "seydou-doumbia",
+    "alt": "Doumbia - 88 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50520076.1a5bfbd7ae22035d20d2a318e0c21ae15f32e4110843234789fe1fc173bf814d.webp",
+    "link": "/players/188428-seydou-doumbia/27-50520076/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "dominik-szoboszlai",
+    "alt": "Szoboszlai - 88 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50568420.45370dcb918f4c4f11d6bd3beb11e9005c9757615b6a43ca7ff6e5fbf2a5e34d.webp",
+    "link": "/players/236772-dominik-szoboszlai/27-50568420/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "mohamed-salah",
+    "alt": "Salah - 88 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50540979.3e7b161d5ec8985db6636ee888178a006441685906b3be1d67330bebb8825a63.webp",
+    "link": "/players/209331-mohamed-salah/27-50540979/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "myles-lewis-skelly",
+    "alt": "Lewis-Skelly - 88 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50610421.1acfd36725da8f4b39e68c8788dc94aed659ef9c958cf9ff27418b60bb8c8196.webp",
+    "link": "/players/278773-myles-lewis-skelly/27-50610421/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "alessandro-bastoni",
+    "alt": "Bastoni - 88 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-67346247.b383b1503d67716d508a0162f73a3df06bcd64e4f907a25cf1a773872a2b102e.webp",
+    "link": "/players/237383-alessandro-bastoni/27-67346247/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "debinha",
+    "alt": "Debinha - 88 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50558541.df129ade2c1cd6f7fba0a514f2b362b40e3f0691b73aba9601c6f8c5caf59377.webp",
+    "link": "/players/226893-debinha/27-50558541/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "mario-balotelli",
+    "alt": "Balotelli - 88 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50518275.70a5caef75f9526a6e0c1e548804a2f0e4c1d6028ada6a786fb55810b724aa0b.webp",
+    "link": "/players/186627-mario-balotelli/27-50518275/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "achraf-hakimi",
+    "alt": "Hakimi - 88 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-235212.07cef2173f42ffffbc87c65c3406da49ad927d3548c0ee53e4323d70d051ebf2.webp",
+    "link": "/players/235212-achraf-hakimi/27-235212/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "paris-brunner",
+    "alt": "Brunner - 88 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50605774.42768e6b121bed87dbe2b02e1da5f2223c302f4bdcd6acd3446298b13e4bac00.webp",
+    "link": "/players/274126-paris-brunner/27-50605774/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "nicolas-paz-martinez-nico-paz",
+    "alt": "Nico Paz - 88 - Star Performer",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84163926.36d233bdd9ce607d62415df5042e298aa23faa6b5278fb1e6871e6794264b733.webp",
+    "link": "/players/277846-nicolas-paz-martinez-nico-paz/27-84163926/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "trinity-rodman",
+    "alt": "Rodman - 88 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50598576.09e866566c0973cfe64650c69911caef77afbe179ecad9eb94766d532420f55e.webp",
+    "link": "/players/266928-trinity-rodman/27-50598576/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "lauren-hemp",
+    "alt": "Hemp - 88 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50588656.ae5961bc239bc1b90bd80bf852705b492840500cc0c345d4df0ebdfc31a0f5ba.webp",
+    "link": "/players/257008-lauren-hemp/27-50588656/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "alexander-isak",
+    "alt": "Isak - 88 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50565379.c8939c028c7a92e6e942cac460c278d2f5fc604f6d4549a51c7c22f461b2163c.webp",
+    "link": "/players/233731-alexander-isak/27-50565379/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "joao-neves",
+    "alt": "Jo\u00e3o Neves - 88 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-272834.e736244f3794709d7a9378d66f204590b6ddcf586c17404968bc2a06213a6645.webp",
+    "link": "/players/272834-joao-neves/27-272834/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "jan-oblak",
+    "alt": "Oblak - 88 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-200389.162a94e85c0fb886f6340633452a3cda319e70ae59cbcc6a1b86d51b8663fe5c.webp",
+    "link": "/players/200389-jan-oblak/27-200389/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "mika-godts",
+    "alt": "Godts - 88 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50590026.6055b5b4d6e5cb58fc87db50173b6198938ce8a8db90d171a68f0ae08e927f31.webp",
+    "link": "/players/258378-mika-godts/27-50590026/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "franco-mastantuono",
+    "alt": "Mastantuono - 88 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84165253.c14dcd8fb276019cb980fd0fd13ca1bcec7737d2d32d28cc7df971f6efc117fd.webp",
+    "link": "/players/279173-franco-mastantuono/27-84165253/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "cucurella",
+    "alt": "Cucurella - 88 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50570879.70f5a20da34352cd302d047c36784d33af0f6976098ef6f9bcc5a9439a2de1dd.webp",
+    "link": "/players/239231-cucurella/27-50570879/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "barbra-banda",
+    "alt": "Banda - 88 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-276359.9a43cd6d32d69bfb5db494e059203a04cb951d7ba5a5fed3e05a0e50bf7d0607.webp",
+    "link": "/players/276359-barbra-banda/27-276359/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "pernille-harder",
+    "alt": "Harder - 88 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50590935.d53847a94225883b6c6e8b2c9c0e1b13166f3bc97bd990714b6ffd5b8d1f171f.webp",
+    "link": "/players/259287-pernille-harder/27-50590935/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "joshua-kimmich",
+    "alt": "Kimmich - 88 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-212622.57ad7c1f5653f390c63d56abf58ecf26cdabd2545a8e1ef9dc017445ae9dee29.webp",
+    "link": "/players/212622-joshua-kimmich/27-212622/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "marquinhos",
+    "alt": "Marquinhos - 88 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50539513.3e2df2fba05858e17595a36eff4499186fda0957de3c059c94b5777a6053304d.webp",
+    "link": "/players/207865-marquinhos/27-50539513/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "william-saliba",
+    "alt": "Saliba - 88 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-243715.5f761ca16d2ede74f1ff60d08b6ac7269d8d2d65487fbd07302c1fd770dd1cdb.webp",
+    "link": "/players/243715-william-saliba/27-243715/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "virgil-van-dijk",
+    "alt": "van Dijk - 88 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-203376.5f555470b7e52ae5cb09c3cd4804609a91f4b850d0708ae1ed65b6f23d331060.webp",
+    "link": "/players/203376-virgil-van-dijk/27-203376/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "mapi-leon",
+    "alt": "Mapi Le\u00f3n - 88 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-236479.c35dbdf77c675030d82fae419cc6532d227a3fa4496e0bbd1f80b04bf38a716e.webp",
+    "link": "/players/236479-mapi-leon/27-236479/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "declan-rice",
+    "alt": "Rice - 88 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-234378.ca9ad525998f13a049c2ab54ced7095fc6e172472183180c3559479abd25570e.webp",
+    "link": "/players/234378-declan-rice/27-234378/",
+    "rating": 88,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "alessandro-florenzi",
+    "alt": "Florenzi - 87 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50535199.b99aaa1b5385300259162704c20986190c4fee0d151583f55011b8d355b94136.webp",
+    "link": "/players/203551-alessandro-florenzi/27-50535199/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "georgia-stanway",
+    "alt": "Stanway - 87 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50575052.6850bed8449f8e1798ca288e2d446749306c7f0883607d1bf126dbeadad24afa.webp",
+    "link": "/players/243404-georgia-stanway/27-50575052/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "jeremy-doku",
+    "alt": "Doku - 87 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50578068.54460aed18f28bef92e4b631131c72e69117a7bbc3343c01798904d4655d86fd.webp",
+    "link": "/players/246420-jeremy-doku/27-50578068/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "linda-caicedo",
+    "alt": "Caicedo - 87 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50604801.c902007720aca0027c783ecf40b7a12a4c8d388f41346af879fcc6183f446c56.webp",
+    "link": "/players/273153-linda-caicedo/27-50604801/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "gervinho",
+    "alt": "Gervinho - 87 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50502381.179c8bdb51dbe042caec4d1d4f11fd87b9f76bb07686edf1b2c5f362391209ce.webp",
+    "link": "/players/170733-gervinho/27-50502381/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "giovani-dos-santos",
+    "alt": "dos Santos - 87 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50502017.9da49ceeb5964873133fa7a94c5575970ca4f08481638803fd60fb317e544d2e.webp",
+    "link": "/players/170369-giovani-dos-santos/27-50502017/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "marcel-sabitzer",
+    "alt": "Sabitzer - 87 - Star Performer",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50536571.60f2480fad940d550a10b5dc1dca046e773483dc25da3aa948c779283599dfe3.webp",
+    "link": "/players/204923-marcel-sabitzer/27-50536571/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "fabian",
+    "alt": "Fabi\u00e1n Ruiz - 87 - Star Performer",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50557919.75981a7b94eab12078f73ae6d8ecc8da3c9bf6ee0904e949bfaf572f05e72850.webp",
+    "link": "/players/226271-fabian/27-50557919/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "gisele-thompson",
+    "alt": "Thompson - 87 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50606461.aee0eb940b6744b9348d2d5d0bf1342b1e9ba7cdaebe9f96a4d453da96343a5b.webp",
+    "link": "/players/274813-gisele-thompson/27-50606461/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "desire-doue",
+    "alt": "Dou\u00e9 - 87 - Star Performer",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50603069.9a7a739d15b50707f9e7b7da679ec19205ab58c7c22c1d3c04caa814de8c7598.webp",
+    "link": "/players/271421-desire-doue/27-50603069/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "rafael-leao",
+    "alt": "Rafael Le\u00e3o - 87 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-67350585.911c0fe1396d1cd1d04141c12281922ec6ff78d0e3863ee12f31123eea2fba5f.webp",
+    "link": "/players/241721-rafael-leao/27-67350585/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "jakub-blaszczykowski",
+    "alt": "B\u0142aszczykowski - 87 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50496642.f6985be5cb915108eb67d93514cfdb8ef7e4d806f5cc33574650fb6cb25d52db.webp",
+    "link": "/players/164994-jakub-blaszczykowski/27-50496642/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "romelu-lukaku",
+    "alt": "Lukaku - 87 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50524153.f4207c9ed417d691a05e9a1fd7bea6fe61f7cd80407a6b4b51d6dbe774a677d3.webp",
+    "link": "/players/192505-romelu-lukaku/27-50524153/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "cole-palmer",
+    "alt": "Palmer - 87 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50589182.006534d077e8151bf587e7750725f5db122ad510ff6808bdc9817084e7cefab0.webp",
+    "link": "/players/257534-cole-palmer/27-50589182/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "nathaniel-brown",
+    "alt": "Brown - 87 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50601349.b383e21fa9aac5f650963c849bff8340f69bd9dd254a42819cc1d0fa98889570.webp",
+    "link": "/players/269701-nathaniel-brown/27-50601349/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "gregor-kobel",
+    "alt": "Kobel - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-235073.fec52497ee3a8eb55ddfcd6e522381d0c02966dba5d3b0ec7a0161c3b673be1b.webp",
+    "link": "/players/235073-gregor-kobel/27-235073/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "alisson",
+    "alt": "Alisson - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-212831.0bbda579c512f42e67acef178f83a54e6c060353aabb12bdd70c1c4da14a07b2.webp",
+    "link": "/players/212831-alisson/27-212831/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "fabinho",
+    "alt": "Fabinho - 87 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50541147.38cb17ad5c4540b620720eaa663759a4b7646ef70913e6068e138e228f893217.webp",
+    "link": "/players/209499-fabinho/27-50541147/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "micah-richards",
+    "alt": "Richards - 87 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50501369.4a1797b783fdcdaa5d2c6a11d9ef3530d5438274c086d05acf9c6c7238d8e01d.webp",
+    "link": "/players/169721-micah-richards/27-50501369/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "florian-wirtz",
+    "alt": "Wirtz - 87 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50588278.8129cfea54ce01a836ebcd22385e80be66f352f1185279ac0d6dbb8ce8d5776a.webp",
+    "link": "/players/256630-florian-wirtz/27-50588278/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "alyssa-thompson",
+    "alt": "Thompson - 87 - UEFA Women&#x27;s Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50605114.379ca0951daf2fdb52a09d42827ff65025d1fd85ed85330bea7c94f061ae66fb.webp",
+    "link": "/players/273466-alyssa-thompson/27-50605114/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "gilberto-mora",
+    "alt": "Mora - 87 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50411047.6f2f55fd0d1b53f734cc4f9f5f8bb7e2dcd871eb13a05da0b0b545ac3d6b62b6.webp",
+    "link": "/players/79399-gilberto-mora/27-50411047/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "phil-foden",
+    "alt": "Foden - 87 - Star Performer",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50569340.927686456f11995841a06bc382da6fa85c3c9e6d192426367fd349a8ab85d875.webp",
+    "link": "/players/237692-phil-foden/27-50569340/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "matheus-cunha",
+    "alt": "Matheus Cunha - 87 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50571891.ffa0c77c1ca74a8122b7c49f133164413a57caa9a8525e7ec676e5f1a6c73201.webp",
+    "link": "/players/240243-matheus-cunha/27-50571891/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "morgan-rogers",
+    "alt": "Rogers - 87 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50591895.8214b54dd25e5a796f4205561e8940e48b428b13a7a6d8304ab221fd730bb3de.webp",
+    "link": "/players/260247-morgan-rogers/27-50591895/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "francisco-conceicao",
+    "alt": "Francisco Concei\u00e7\u00e3o - 87 - UEFA Europa League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50592698.eb39561f4ef65ca8df387ce32d1ffc2ddd2475d088984bb946a9798f20c52a65.webp",
+    "link": "/players/261050-francisco-conceicao/27-50592698/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "nico-schlotterbeck",
+    "alt": "Schlotterbeck - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-247819.6b385772abea9278d483b0c41c7a7a5719a0755a0800ba069ace13c7dabbaffd.webp",
+    "link": "/players/247819-nico-schlotterbeck/27-247819/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "jacobo-ramon-naveros-jacobo",
+    "alt": "Jacobo Ram\u00f3n - 87 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50402614.958d1496dbe64e6b8a13b386a86833b0c20ddfeaca91827f511db163810b9daa.webp",
+    "link": "/players/70966-jacobo-ramon-naveros-jacobo/27-50402614/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "yoan-bonny",
+    "alt": "Bonny - 87 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50591213.7e788c0657bccb7f5e79427564885eded5c799344cfb9096a719102f400eae48.webp",
+    "link": "/players/259565-yoan-bonny/27-50591213/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "nicolo-barella",
+    "alt": "Barella - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-224232.ed91d83ac8dc9c2671ce02f15fce85895af298e661a1b16558c58e4661835c6b.webp",
+    "link": "/players/224232-nicolo-barella/27-224232/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "deniz-undav",
+    "alt": "Undav - 87 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50575824.7f4514b3df3ea8a156f6bf271ece1b7767fe4e7ac2ac058786b150d653ffffa2.webp",
+    "link": "/players/244176-deniz-undav/27-50575824/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "rose-lavelle",
+    "alt": "Lavelle - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-232075.727b121c79767afce905457ccc94eb2cf69f1053ddcc8ab2138f436bf917942a.webp",
+    "link": "/players/232075-rose-lavelle/27-232075/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "jamal-musiala",
+    "alt": "Musiala - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-256790.4053a1b222d0836a0ed64987e9c7c37b85c472f81cd88801db33a3663fa7402f.webp",
+    "link": "/players/256790-jamal-musiala/27-256790/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "viktor-gyokeres",
+    "alt": "Gy\u00f6keres - 87 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50573299.ae6dfcc7a657a4422e07c904e10ab4dd4d76f293d328cc78ac97817a61001ea8.webp",
+    "link": "/players/241651-viktor-gyokeres/27-50573299/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "lautaro-martinez",
+    "alt": "Mart\u00ednez - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-231478.f32837b8d09b1c01de3c00403afc2c78c1c48e94e834259a8b90f1c572caab09.webp",
+    "link": "/players/231478-lautaro-martinez/27-231478/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "martin-odegaard",
+    "alt": "\u00d8degaard - 87 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50554313.b41cad5a66138160ce43fb7eb3c08988e8a8219682e9e342dea956ce34d6a3eb.webp",
+    "link": "/players/222665-martin-odegaard/27-50554313/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "vivianne-miedema",
+    "alt": "Miedema - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-233746.94cb4cc7fa44eccabea2e5b6d513d65154ec6ebc520b93c3b905e331541eee4f.webp",
+    "link": "/players/233746-vivianne-miedema/27-233746/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "ona-batlle",
+    "alt": "Ona Batlle - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-253436.b1ca4db4a00c0aab40025426dafaf4e7cc119e9a25873b08f4cb61d96fae0336.webp",
+    "link": "/players/253436-ona-batlle/27-253436/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "irene-paredes",
+    "alt": "Irene Paredes - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-227190.3b566ed8869305e00b238ff852b84e99b8d531cd3a48342d8f635cc18e115953.webp",
+    "link": "/players/227190-irene-paredes/27-227190/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "mike-maignan",
+    "alt": "Maignan - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-215698.499ca1089d0686d3a8744471729d9791645cac8e56917c0131567256cd4ae391.webp",
+    "link": "/players/215698-mike-maignan/27-215698/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "bukayo-saka",
+    "alt": "Saka - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-246669.0f9b7c5e513be5efa96b359890b379c5687a7533f416a638478acb20c0a17b8a.webp",
+    "link": "/players/246669-bukayo-saka/27-246669/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "ann-katrin-berger",
+    "alt": "Berger - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-258310.b2eb100f1eb294eca4b82a09ba4ee6cc5f7b608a6b8d5b3e61023539cabbccf5.webp",
+    "link": "/players/258310-ann-katrin-berger/27-258310/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "hannah-hampton",
+    "alt": "Hampton - 87 - Rare",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-263009.da99d8df2b26e371574a15a424fd53fc9ffcd196ca4538441a4cbdb9644bba6f.webp",
+    "link": "/players/263009-hannah-hampton/27-263009/",
+    "rating": 87,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "leon-goretzka",
+    "alt": "Goretzka - 86 - FC Heritage",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84095738.a78715165d1c2379162c2e838df95a812f6eb650c62be92c88c54e6643606499.webp",
+    "link": "/players/209658-leon-goretzka/27-84095738/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "federico-chiesa",
+    "alt": "Chiesa - 86 - FC Heritage",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50567453.a2266a2d27c6c42432824ccf6f56fdd4f937faa63047b265b8e782035ed37697.webp",
+    "link": "/players/235805-federico-chiesa/27-50567453/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "konrad-laimer",
+    "alt": "Laimer - 86 - Star Performer",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50557023.5261f475912b018bda5f4dc19bfb1758b8b6f002b2d720a5f0786527ded75b3b.webp",
+    "link": "/players/225375-konrad-laimer/27-50557023/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "hakan-calhanoglu",
+    "alt": "\u00c7alhano\u011flu - 86 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-67316992.6b058b237a6b64ecddcc94307c1354eb649158a70cb4c91a6a1d0ea8f8dc1cf4.webp",
+    "link": "/players/208128-hakan-calhanoglu/27-67316992/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "miguel-layun",
+    "alt": "Lay\u00fan - 86 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50509970.694460104a9c38da70a557d65e51a40d47adecb185005aaed502c4e2ac31a152.webp",
+    "link": "/players/178322-miguel-layun/27-50509970/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "trey-nyoni",
+    "alt": "Nyoni - 86 - Star Performer",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50610776.d1abaf2958a621e852a48791cdd0d9c30d9d0e1ac16b8fd9549131dca9b09c25.webp",
+    "link": "/players/279128-trey-nyoni/27-50610776/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "riccardo-calafiori",
+    "alt": "Calafiori - 86 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50589359.7fa2e64814b27a581f029c8e875421434e88be82a2ce7ba7da1af1d376d84b6b.webp",
+    "link": "/players/257711-riccardo-calafiori/27-50589359/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "lauren-james",
+    "alt": "James - 86 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50596897.7f8d1077de3ac9d98965414a89302fb33a0e90072eda3f4aae8b169c47ae96e9.webp",
+    "link": "/players/265249-lauren-james/27-50596897/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "aiden-mcgeady",
+    "alt": "McGeady - 86 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50487533.900c7c7f94acbd4727e9bb032a1c1a7db5c0aba68e35c732ba3f382b587f6bde.webp",
+    "link": "/players/155885-aiden-mcgeady/27-50487533/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "bryan-mbeumo",
+    "alt": "Mbeumo - 86 - Destined for Glory",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50574662.ad9c59c3099e298017d7d44dbbe3e3161874083176afafed2bbf4849c866d95c.webp",
+    "link": "/players/243014-bryan-mbeumo/27-50574662/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "felix-nmecha",
+    "alt": "Nmecha - 86 - Team of the week",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-67355727.442c0c17c2101b05d8b3ca7daf2707a318dcfe116b83ab275e37fcfe60833ffb.webp",
+    "link": "/players/246863-felix-nmecha/27-67355727/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "yan-diomande",
+    "alt": "Diomande - 86 - Ones to Watch",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50409660.78255e67064e91bfe64933a59d46f06994a8de36ff18ab9728658d6de909e448.webp",
+    "link": "/players/78012-yan-diomande/27-50409660/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "bradley-barcola",
+    "alt": "Barcola - 86 - Star Performer",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-67373516.4bf7a7cd10a856dfa16181ed8f921942bc38e9053b9080fbc626fbb6208315e6.webp",
+    "link": "/players/264652-bradley-barcola/27-67373516/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "andreia-jacinto",
+    "alt": "Andreia Jacinto - 86 - UEFA Women&#x27;s Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50593491.ac07e99e06dbc7e5e8f22b3d103d1aa856fe3d9da2e19e4f2bc0d4332ae6d0eb.webp",
+    "link": "/players/261843-andreia-jacinto/27-50593491/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "sveindis-jane-jonsdottir",
+    "alt": "J\u00f3nsd\u00f3ttir - 86 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50598032.6460a75a52a995cebb5982e6f8416e75f16f4ddb7c09cf64c305f7cca43c2b3a.webp",
+    "link": "/players/266384-sveindis-jane-jonsdottir/27-50598032/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "loic-remy",
+    "alt": "R\u00e9my - 86 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50511175.27df863197b6b5b959d8c0282fd8b63b2c50e075420aaad5923a0cb09143180e.webp",
+    "link": "/players/179527-loic-remy/27-50511175/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "victor-ibarbo",
+    "alt": "Ibarbo - 86 - Hall of FUT: Unleashed",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50536198.91877e75c7600d59a3c78ec2f7e75a9ca80e392ce53b172028447897d008fa41.webp",
+    "link": "/players/204550-victor-ibarbo/27-50536198/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "fikayo-tomori",
+    "alt": "Tomori - 86 - UEFA Europa League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50564404.62a0b92add1e2154b0be19a2783f06a69fd109ce2c6688949f3c89f05ad88d6f.webp",
+    "link": "/players/232756-fikayo-tomori/27-50564404/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "alex-scott",
+    "alt": "Scott - 86 - Future Stars",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50592947.529b201c5ea3fba7d389c6aa30c637ee5d3765615c70cb2792444bc7b55a3481.webp",
+    "link": "/players/261299-alex-scott/27-50592947/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "senne-lammens",
+    "alt": "Lammens - 86 - UEFA Champions League RTTK",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50586451.a5dad071e3381e1edd23f36e2cb9d8c4c27997983f428ef36815f6b2612ee2fe.webp",
+    "link": "/players/254803-senne-lammens/27-50586451/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "james-garner",
+    "alt": "Garner - 86 - Ultimate Scream",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50575305.35770360a3ff0d56b23b78b4b29aa4f095c5e704c4a26dab507ba6ea02060f16.webp",
+    "link": "/players/243657-james-garner/27-50575305/",
+    "rating": 86,
+    "is_icon_hero": false
+  },
+  {
+    "slug": "marcus-rashford",
+    "alt": "Rashford - 86 - FC Heritage",
+    "card": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50563325.c0ddf54bf5d611c3174b4386cc6d432823fda2c54446b5e7d8235d19181de7a7.webp",
+    "link": "/players/231677-marcus-rashford/27-50563325/",
+    "rating": 86,
+    "is_icon_hero": false
+  }
+]

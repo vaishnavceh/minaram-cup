@@ -369,14 +369,14 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Callout: Explore Full 149-Player Hall of Fame */}
+          {/* Callout: Explore Full 400+ Player Hall of Fame */}
           <div className="mt-12 flex justify-center">
             <Link
               to="/hall-of-fame"
               className="inline-flex items-center space-x-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-400 hover:to-amber-300 text-black font-display text-xl tracking-wider transition-all shadow-[0_0_35px_rgba(212,175,55,0.4)] group"
             >
               <Award className="w-6 h-6 text-black group-hover:rotate-12 transition-transform" />
-              <span>EXPLORE ALL 149 TITANS IN THE FOOTBALL HALL OF FAME</span>
+              <span>EXPLORE ALL 400+ TITANS IN THE FOOTBALL HALL OF FAME</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
