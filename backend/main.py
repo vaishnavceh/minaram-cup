@@ -67,7 +67,7 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 async def add_performance_cache_headers(request: Request, call_next):
     response = await call_next(request)
     path = request.url.path
-    if path.startswith("/assets/"):
+    if path.startswith("/assets/") or path.startswith("/images/"):
         # Fingerprinted assets, webp images, and audio: aggressive caching
         response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
     elif path == "/" or path.endswith(".html"):
@@ -86,6 +86,14 @@ if FRONTEND_DIST_DIR.exists() and (FRONTEND_DIST_DIR / "assets").exists():
     app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIST_DIR / "assets")), name="assets")
 elif STATIC_ASSETS_DIR.exists():
     app.mount("/assets", StaticFiles(directory=str(STATIC_ASSETS_DIR)), name="assets")
+
+# Mount static images (Hall of Fame portraits, etc.)
+IMAGES_DIST_DIR = FRONTEND_DIST_DIR / "images"
+IMAGES_PUBLIC_DIR = PROJECT_ROOT / "frontend" / "public" / "images"
+if IMAGES_DIST_DIR.exists():
+    app.mount("/images", StaticFiles(directory=str(IMAGES_DIST_DIR)), name="images")
+elif IMAGES_PUBLIC_DIR.exists():
+    app.mount("/images", StaticFiles(directory=str(IMAGES_PUBLIC_DIR)), name="images")
 
 
 # ----------------------------------------------------
@@ -149,8 +157,8 @@ from fastapi import HTTPException
 
 @app.get("/{full_path:path}")
 async def serve_spa_frontend(full_path: str):
-    # Never catch /api or /assets paths
-    if full_path.startswith("api") or full_path.startswith("assets"):
+    # Never catch /api, /assets, or /images paths
+    if full_path.startswith("api") or full_path.startswith("assets") or full_path.startswith("images"):
         raise HTTPException(status_code=404, detail="Not Found")
 
     if FRONTEND_DIST_DIR.exists():

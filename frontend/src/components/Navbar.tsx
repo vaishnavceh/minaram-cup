@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Radio, Trophy, Calendar, Users, BarChart3, GitFork, Shield, Tv, Sparkles, Laptop } from 'lucide-react';
+import { Menu, X, Radio, Trophy, Calendar, Users, BarChart3, GitFork, Shield, Tv, Sparkles, Laptop, Award } from 'lucide-react';
 import { api } from '../api';
 import { useLiveUpdates } from '../hooks/useLiveUpdates';
 
@@ -92,6 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({ isLiveConnected }) => {
     { name: 'BRACKET', path: '/bracket', icon: GitFork },
     { name: 'TEAMS', path: '/teams', icon: Users },
     { name: 'LIVE', path: '/live', icon: Tv },
+    { name: 'HALL OF FAME', path: '/hall-of-fame', icon: Award },
     { name: 'RULES', path: '/rules', icon: Shield },
   ];
 
@@ -181,10 +182,13 @@ export const Navbar: React.FC<NavbarProps> = ({ isLiveConnected }) => {
             </div>
 
             {/* Commemorative Tribute Badge */}
-            <div className="hidden xl:flex items-center space-x-1.5 px-3 py-1.5 rounded-full border border-amber-400/40 bg-gradient-to-r from-amber-950/60 to-black text-[11px] font-mono font-bold tracking-wider text-amber-300 shadow-[0_0_15px_rgba(212,175,55,0.2)] select-none">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-white uppercase tracking-widest">TRIBUTE TO LEGENDS</span>
-            </div>
+            <Link
+              to="/hall-of-fame"
+              className="hidden xl:flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full border border-amber-400/40 bg-gradient-to-r from-amber-950/60 to-black hover:border-amber-400 text-[11px] font-mono font-bold tracking-wider text-amber-300 shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all cursor-pointer group select-none"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 group-hover:rotate-12 transition-transform" />
+              <span className="text-white uppercase tracking-widest group-hover:text-amber-300 transition-colors">HALL OF FAME</span>
+            </Link>
           </div>
 
           {/* Mobile menu button */}

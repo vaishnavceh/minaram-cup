@@ -18,6 +18,7 @@ const BracketPage = lazy(() => import('./pages/BracketPage').then(m => ({ defaul
 const RulesPage = lazy(() => import('./pages/RulesPage').then(m => ({ default: m.RulesPage })));
 const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })));
 const LivePage = lazy(() => import('./pages/LivePage').then(m => ({ default: m.LivePage })));
+const HallOfFamePage = lazy(() => import('./pages/HallOfFamePage').then(m => ({ default: m.HallOfFamePage })));
 
 const PageFallback: React.FC = () => (
   <div className="min-h-[60vh] flex items-center justify-center">
@@ -83,6 +84,8 @@ export const App: React.FC = () => {
                 <Route path="/live" element={<LivePage />} />
                 <Route path="/rules" element={<RulesPage />} />
                 <Route path="/admin" element={<AdminPage />} />
+                <Route path="/hall-of-fame" element={<HallOfFamePage />} />
+                <Route path="/legends" element={<Navigate to="/hall-of-fame" replace />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Suspense>

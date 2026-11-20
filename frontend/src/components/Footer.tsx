@@ -83,6 +83,11 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/hall-of-fame" className="text-amber-400 font-semibold hover:text-amber-300 transition-colors flex items-center space-x-1">
+                  <span>★ Football Hall of Fame (149 Legends)</span>
+                </Link>
+              </li>
+              <li>
                 <Link to="/rules" className="text-neutral-400 hover:text-amber-300 transition-colors">
                   Official Tournament Rules
                 </Link>
