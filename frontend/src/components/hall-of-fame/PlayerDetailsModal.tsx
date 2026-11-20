@@ -57,16 +57,15 @@ export const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({ player, 
           <X className="w-5 h-5" />
         </button>
 
-        {/* Left / Top: High-Def Player Portrait */}
-        <div className="relative w-full md:w-5/12 h-72 sm:h-80 md:h-auto min-h-[300px] shrink-0 bg-pitch-950 overflow-hidden">
+        {/* Left / Top: High-Def Player Card / Portrait */}
+        <div className="relative w-full md:w-5/12 h-80 sm:h-96 md:h-auto min-h-[340px] shrink-0 bg-gradient-to-b from-[#0F172A]/40 to-[#04060B] overflow-hidden flex items-center justify-center p-4">
           <img
             src={player.image}
             alt={player.name}
-            className="w-full h-full object-cover object-top filter brightness-95"
+            className="max-h-full max-w-full object-contain filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.9)] brightness-100 transition-transform duration-500 hover:scale-105"
           />
-          {/* Gradients */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A101D] via-transparent to-transparent md:hidden" />
-          <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0A101D]" />
+          {/* Subtle glow behind card */}
+          <div className="absolute inset-0 bg-radial from-amber-400/10 via-transparent to-transparent pointer-events-none" />
 
           {/* Positional Watermark */}
           <div className="absolute bottom-4 left-4 z-10 flex items-center space-x-2">

@@ -1,0 +1,454 @@
+{
+  "Lionel Messi": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50489671.728db5053f5c098b4c23d902e2df724320af9dff75831e9a29df6f86d28a3096.webp",
+    "ref": "lionel-messi"
+  },
+  "Cristiano Ronaldo": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-67129665.98705e846e010a27d5c2167b70eeeabe7d9e4bf7eb279ecd8fa272bd27cf22dd.webp",
+    "ref": "cristiano-ronaldo"
+  },
+  "Zinedine Zidane": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1397.b7d4853a204896c7d9ed2a6f3ec95771239f7d4ae9a7f6c69ba76753d4340699.webp",
+    "ref": "zinedine-zidane"
+  },
+  "Ronaldo Naz\u00e1rio": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-37576.69475ea4edc8d234820650e8fa3318235adb4fef5a7ed9ff3bec6440363517d1.webp",
+    "ref": "ronaldo"
+  },
+  "Paolo Maldini": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238439.848e7f14855c7d038fc8422e5fe0f7ce461c232189ea84d9b89ed53f26a0c520.webp",
+    "ref": "paolo-maldini"
+  },
+  "Xavi Hern\u00e1ndez": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-10535.bb5d82d9066100ba11bf55e3e9f365a6e3f43611624abc02c28bc522be52fd33.webp",
+    "ref": "xavi"
+  },
+  "Andr\u00e9s Iniesta": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-41.916f9232a7688de372680c6f940c76d489c82d2a834f611b52992d73edd5fb11.webp",
+    "ref": "iniesta"
+  },
+  "Ronaldinho": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-28130.3600ae64eecc5981928bcb66572359cc55b20adb5deb95b0e67c1842bb781b3d.webp",
+    "ref": "ronaldinho"
+  },
+  "Thierry Henry": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1625.d619212310e91ffb2bbc9c05074e65d5ad89ca486ea2d43699d6e0213673122b.webp",
+    "ref": "thierry-henry"
+  },
+  "Gianluigi Buffon": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1179.ebadca99bf4243fd0348044a0989cd597ad2f6fe09b3641c13c075dbdaffa3bf.webp",
+    "ref": "gianluigi-buffon"
+  },
+  "Andrea Pirlo": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-7763.a4818b358aafaafc4de1b90134281bff970f073fe81db947c0f1a2f631012c60.webp",
+    "ref": "andrea-pirlo"
+  },
+  "Kak\u00e1": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-138449.92f19d3aa6e567df3035458a014c1764fd5e337440ed1317b06a4946c9a4da39.webp",
+    "ref": "kaka"
+  },
+  "Sergio Ramos": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2024/futgg-player-item-card/24-100819158.2e17644d1068f55652b4563da7ae83608fc395bc9f9b3452b74bad2dd5a362c2.webp",
+    "ref": "https://www.fut.gg/players/155862-sergio-ramos/"
+  },
+  "Cafu": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-5003.8b25d77ab758964ed18a4a97407ee5a747445b5d115a176ad0934ed1233772d2.webp",
+    "ref": "cafu"
+  },
+  "Roberto Carlos": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238430.6ae452cd553ca6a61a83874021e49e2487395b4fab8c480f270d3274961137cf.webp",
+    "ref": "roberto-carlos"
+  },
+  "Fabio Cannavaro": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1183.87076c342c77f42dbb62a307bd7efe9f6a4cfc8f14d08bedcbb341431a04bbe1.webp",
+    "ref": "fabio-cannavaro"
+  },
+  "Neymar": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2025/futgg-player-item-card/25-84076951.3c7e17b9e560a7d31e9c376d961093e50c98cc918525344dcecdead58cb3ea9d.webp",
+    "ref": "https://www.fut.gg/players/190871-neymar-jr/"
+  },
+  "Luis Su\u00e1rez": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-176580.b9883f912c97356549996da1fb72a058febc7d2e6d8bea6b94f9851a4b19aa3e.webp",
+    "ref": "luis-suarez"
+  },
+  "Iker Casillas": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-5479.b538cbf84570f82beba6d46c746bb53a1a8120d77c291780f342cc84bfaa4f5f.webp",
+    "ref": "casillas"
+  },
+  "Manuel Neuer": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-167495.25f505c68535502b7dc110cb9981586f134f995823f1a9733928b5b33b17c094.webp",
+    "ref": "manuel-neuer"
+  },
+  "Samuel Eto\u2019o": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-9676.8ae773e8c0abb25c911b1a555a8c90228192f621851137dfc71e1458d5c79fb0.webp",
+    "ref": "samuel-etoo"
+  },
+  "Francesco Totti": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1238.e78a9ab30dba730c78eabc99b120cabb3d9de2668a4f3b4b9552aca87780c6b6.webp",
+    "ref": "francesco-totti"
+  },
+  "Alessandro Del Piero": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238382.1622ac2992a9aa1d565440230dae4bad383fb93c23d06aa080b8c3b009a1fa84.webp",
+    "ref": "alessandro-del-piero"
+  },
+  "Lu\u00eds Figo": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-5589.8f606e517357787e7bf07f731b5bc0f148b30ad147495e3b0ed6a6ebe039e89e.webp",
+    "ref": "luis-figo"
+  },
+  "David Beckham": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-250.ced8871cb16e4a21c7b84a249113e22ed29d5cfe3223309840a305654222b67f.webp",
+    "ref": "david-beckham"
+  },
+  "Steven Gerrard": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-13743.e7899da0fd8febf5527ac512737371be7d296d7e06a6a5d18bf657339eaf31ab.webp",
+    "ref": "steven-gerrard"
+  },
+  "Frank Lampard": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-5471.bd91f9eef92f8ad5a50eb2e09275cd3308a44650a41fc9eb857cb950de41d74a.webp",
+    "ref": "frank-lampard"
+  },
+  "Paul Scholes": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-246.3e949ba097ddb4c5155471099d9497dc1e535ea135a0e3b4ed8a7b4f140ea594.webp",
+    "ref": "paul-scholes"
+  },
+  "Wayne Rooney": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-54050.9a79b26a882e519975e7989efc4413204e1a8c79d458b595fc11048cc8d8b58c.webp",
+    "ref": "wayne-rooney"
+  },
+  "Zlatan Ibrahimovi\u0107": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-41236.ba6cafe326a1b0657a5432b8a472dfa7443a008b45f9a2e8da4abb2258bde994.webp",
+    "ref": "zlatan-ibrahimovic"
+  },
+  "Karim Benzema": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2025/futgg-player-item-card/25-117605665.fac351039d8037de7f7a89c388c74cb4a29d1d55536346040708dcf2bbfdb571.webp",
+    "ref": "https://www.fut.gg/players/165153-karim-benzema/"
+  },
+  "Sergio Busquets": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2025/futgg-player-item-card/25-50521159.78ab99779467faeaed3b8157f273138eef12856c1b57e5e7cbe7bddd8886c571.webp",
+    "ref": "https://www.fut.gg/players/189511-sergio-busquets/"
+  },
+  "Philipp Lahm": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-121939.bc9db64653a4177ce13dbfae9bd4c23d0930ecf38869d068577b8e344ce88234.webp",
+    "ref": "philipp-lahm"
+  },
+  "Alessandro Nesta": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1088.298abefe2f5f417c6a3a11fee9bf68c7ebca02b32cff21a0038c12cbf6b631f3.webp",
+    "ref": "alessandro-nesta"
+  },
+  "Carles Puyol": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238384.abb85fde169c062840ee081fcaebfdc753c58cd069a63a86ae6a3d0049d4a146.webp",
+    "ref": "carles-puyol"
+  },
+  "Franck Rib\u00e9ry": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-156616.de21f287c01ced2edbaf9f7da3bdeb4c2d8a0d9846c86aec85dfb393d546977a.webp",
+    "ref": "franck-ribery"
+  },
+  "Didier Drogba": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-31432.7dabda51447388d63abfdfe0a3f40af78e1cb63271005df5d8db239a8e9d4168.webp",
+    "ref": "didier-drogba"
+  },
+  "Sergio Ag\u00fcero": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-153079.ecf55e6d723b3342e32cd7d6ba3448de8fe33e0b5d2dd6cc5c3391be58f5cdb7.webp",
+    "ref": "sergio-aguero"
+  },
+  "Ra\u00fal": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-45661.af285ff11a7c7bff73cfcf396dc366d390a8fd3ace7ca02c187bbf7ced0c0852.webp",
+    "ref": "raul"
+  },
+  "Andriy Shevchenko": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-13128.6c5d4dd5d15165db96c42628feb342567c68ab8d0d6fb7736835b5d5bbc403ec.webp",
+    "ref": "andriy-shevchenko"
+  },
+  "Miroslav Klose": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-242510.f645b2bc461752a0d3bdefaf69343fbd5e7d0790673e4ab9b47ac035d2decc82.webp",
+    "ref": "miroslav-klose"
+  },
+  "Toni Kroos": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-182521.b665ef5ad462852676464e13d208dd7f444f26f5e539278b58f764ffeac473fe.webp",
+    "ref": "toni-kroos"
+  },
+  "Bastian Schweinsteiger": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-121944.a3b5929ae1ea32ef8fb7f359923f3f21f25dc230e7fd54b0c317f62eaeedffbb.webp",
+    "ref": "bastian-schweinsteiger"
+  },
+  "Patrick Vieira": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238427.91aba23d8bc4e7149ea5adc455adcd2c7ce02d689e52d8a71b9e1904fa92a670.webp",
+    "ref": "patrick-vieira"
+  },
+  "Claude Mak\u00e9l\u00e9l\u00e9": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1668.2e415be88860868d6781709a25b1206a9c9c38e81fcafa942dede49d2f061184.webp",
+    "ref": "claude-makelele"
+  },
+  "Clarence Seedorf": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2024/futgg-player-item-card/24-50332904.07c5a421f9d1d73b43612939844dc0dc569bd6b5f2d41fd9cc48b6b9915d8d49.webp",
+    "ref": "https://www.fut.gg/players/1256-clarence-seedorf/"
+  },
+  "Edwin van der Sar": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-51539.0f16477932b3129773abfb2f446aac39a9debdeb0c495c8aaf9903ca5669f098.webp",
+    "ref": "edwin-van-der-sar"
+  },
+  "Oliver Kahn": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-488.05421fe0428289ad9fd6f52f3948a29a507fd81de6fb54a245a70193c8d85fde.webp",
+    "ref": "oliver-kahn"
+  },
+  "Petr \u010cech": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-48940.cd62b9c7eb01f706d187fe5c43f136ad9de9e9d7a2229229e59d556d20469c81.webp",
+    "ref": "petr-cech"
+  },
+  "Peter Schmeichel": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238428.ab33700006338312b316359a0fb6cbb01aba0b41f63208abd8595a7e05466b7e.webp",
+    "ref": "peter-schmeichel"
+  },
+  "Rio Ferdinand": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-7289.39d522aa53d837c4e5735047865aa781830016897d869d0ebaf92e5e588a6478.webp",
+    "ref": "rio-ferdinand"
+  },
+  "Nemanja Vidi\u0107": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-140601.de37984b7a65471942e9335e0fbe5c707f7519bcb81a7dd20d5e838dddca1939.webp",
+    "ref": "nemanja-vidic"
+  },
+  "Pepe": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-120533.12b2b62f78431c2faec4be567b7f0a69cb427f40e2c19a1beb7444f280862dd8.webp",
+    "ref": "pepe"
+  },
+  "Giorgio Chiellini": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-138956.7171b51d946cbbdfaa3481b1010ced227b98b55038f019046515615422ab293b.webp",
+    "ref": "giorgio-chiellini"
+  },
+  "Marcelo": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-176676.0e34392cf1263a5ee8b17960f19968ef906d70f5613ba735ae9a795c81f4bec1.webp",
+    "ref": "marcelo"
+  },
+  "Lilian Thuram": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1615.9ec774eeccf1adab771d6521944789992d488f83f481073acee3fe3633f8c19f.webp",
+    "ref": "lilian-thuram"
+  },
+  "Javier Zanetti": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1041.e377fd2c1a0f3af8af13410604080591736ccc6429f92138674a7fd7fc67b288.webp",
+    "ref": "javier-zanetti"
+  },
+  "Ashley Cole": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-34079.1706d7732837d6033dfcd6944a74dae2e2e64ec0a5a61ed7190715cb98f0cbcc.webp",
+    "ref": "ashley-cole"
+  },
+  "Gianluca Zambrotta": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-250890.95db17a6abd30eca28fd6bfae3447303dd52e8644617ab85c62aa0da910f82b5.webp",
+    "ref": "gianluca-zambrotta"
+  },
+  "Javier Mascherano": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-142754.e7f09045f6d8def596ba57d5b0802b903c95a97958b508d6a06b5e088959deca.webp",
+    "ref": "javier-mascherano"
+  },
+  "Vincent Kompany": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-251483.a8248a66c21d75eb25e49ad1ca1505d212772370fa15cddfaf4d65a17dac38b5.webp",
+    "ref": "vincent-kompany"
+  },
+  "Ricardo Carvalho": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-3622.aef9bc03c2d4aafec944f7b6e1e5d07420af475b4cd3cebea7716dff1b26ac94.webp",
+    "ref": "ricardo-carvalho"
+  },
+  "Marcel Desailly": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1116.e8b264d7a657330858029e8bd90b4fe142e5757295d943fc3e9eba336aba01df.webp",
+    "ref": "marcel-desailly"
+  },
+  "Rapha\u00ebl Varane": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-201535.eaddcec1e8ee4737c5839f66ae350cc13c838020776ac0f39072d00b8a022d63.webp",
+    "ref": "raphael-varane"
+  },
+  "Yaya Tour\u00e9": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-20289.c02764a419c9c0e14d587442a05c79076ffee9117e7b602738e76bf5533a78ef.webp",
+    "ref": "yaya-toure"
+  },
+  "David Silva": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-214378.f0ebafef10e73f1b8cc17b7c1921216795754171d477c3329f3f208ede716b5f.webp",
+    "ref": "david-silva"
+  },
+  "Xabi Alonso": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-45197.a2d618928b45e8684d3c2f1f18230991fcabc45c6f7ce7d7fa58a20cc327b3ae.webp",
+    "ref": "xabi-alonso"
+  },
+  "Wesley Sneijder": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-274750.d387959f7cb03a4381db818cc007ff70b4abe420cb3d618dc76c3639f5a95176.webp",
+    "ref": "wesley-sneijder"
+  },
+  "Pavel Nedv\u011bd": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-6235.c2f406a4075042a6fba88703d02631d578a159b998b5c520d2a143fe7c6c4a92.webp",
+    "ref": "pavel-nedved"
+  },
+  "Rivaldo": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-4231.59835516289613a5023e0d56dda341a41b766ccaf7d937d7890b231fcbcbcba9.webp",
+    "ref": "rivaldo"
+  },
+  "Roberto Baggio": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1114.52ba40cbeefc7444d8a22666a04c9d2e2b46d747a874833bb8a31d13c7c07750.webp",
+    "ref": "roberto-baggio"
+  },
+  "Dennis Bergkamp": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238388.8c6b8453473d8bd0019bc2673c610420d80403c137b86371d7407f5ad4c74b33.webp",
+    "ref": "dennis-bergkamp"
+  },
+  "Ruud van Nistelrooy": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-10264.00f4c4fb84b8868d88e760e253d4a95ad3206d7dbaa2cc07b1b8a792ff5023fe.webp",
+    "ref": "ruud-van-nistelrooy"
+  },
+  "Robin van Persie": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-262112.1bd808db72dea7acdc415b341ca1d1d971d6317882d4f14b30ceb320242b0b14.webp",
+    "ref": "robin-van-persie"
+  },
+  "Alan Shearer": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-51.fc886a7d9638aeba5affbfd9e9afa70ff51b50d87f38df16a7d969805571c819.webp",
+    "ref": "alan-shearer"
+  },
+  "Michael Owen": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-5419.aa653e2cd70717530f1478624a83b693645e616019d7f6c13597162ab7c71b3f.webp",
+    "ref": "michael-owen"
+  },
+  "Fernando Torres": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-49369.71ebe04a35418de876fcf43701bb7f8895f5f17913f47428eca2f7c7adbae7df.webp",
+    "ref": "fernando-torres"
+  },
+  "Henrik Larsson": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-239261.4b8f9cac2183ab55ac880e275bd41fa0ada98f69d129374ecee5a8731116451e.webp",
+    "ref": "henrik-larsson"
+  },
+  "Gheorghe Hagi": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-166124.880f26d24ac4e44ddeeb2813dacee082e8cf42def44df6ae21905fc813888f3e.webp",
+    "ref": "gheorghe-hagi"
+  },
+  "Juan Rom\u00e1n Riquelme": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-23174.18e39fa4a39443d437d24147a74b3d65f99fd17b0618a0994c3b0202dd488e8c.webp",
+    "ref": "juan-roman-riquelme"
+  },
+  "Hristo Stoichkov": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-4833.5d195edc7a88c747b1457c7fc830ac5af4072a36db08dcb336671152f9e1e749.webp",
+    "ref": "hristo-stoichkov"
+  },
+  "Gareth Bale": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-71557.040d3afc976b42480a4c2aad712248c05e7d7798086a7590c97472cdd430a27a.webp",
+    "ref": "gareth-bale"
+  },
+  "\u00c1ngel Di Mar\u00eda": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-183898.e1b4adb0614ea15defc85a26380c5ce6f4e825c9ed195985a6f76ba5d1909c03.webp",
+    "ref": "angel-di-maria"
+  },
+  "Antoine Griezmann": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-50526413.3d8fc9dba1527b13ee6a4a4af6f9199a6ddd8dee4fe71218c5e6536ab0c6c6db.webp",
+    "ref": "antoine-griezmann"
+  },
+  "Eden Hazard": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-183277.647400d08a4d3be92e8eeecf5d71a55f0a43882f4311bbf418f311e12e72c2f5.webp",
+    "ref": "eden-hazard"
+  },
+  "Jay-Jay Okocha": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-570.9abb9d0d851763eaba694bf22412cc9f518ad8fd866f85bb66903aa32fcbca98.webp",
+    "ref": "jay-jay-okocha"
+  },
+  "Rui Costa": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1025.a8a4331ec699c4ab903ac263009ad3b10f26946b235a994c1b4dbc27afe8491a.webp",
+    "ref": "rui-costa"
+  },
+  "Hugo Lloris": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-167948.0f612f1a7e41399870d02e769e221ba471b6210290fdc7038a8ce80239f1c966.webp",
+    "ref": "hugo-lloris"
+  },
+  "L\u00facio": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-266690.a905b4a7570cdc7bd778de043bad0ac473bbfc654afe29d692b873768ee3202d.webp",
+    "ref": "lucio"
+  },
+  "Rafael M\u00e1rquez": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-26709.3486f339a6ad111a6d72572b38694f0a6e6d0028071dfeafa1dad1d230331592.webp",
+    "ref": "rafael-marquez"
+  },
+  "Z\u00e9 Roberto": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-28765.cc950866710fe8462b2b6ff262ae594107e3036f72f59aa788e692f75a070278.webp",
+    "ref": "jose-roberto-da-silva-junior"
+  },
+  "Gilberto Silva": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-47390.23514a71a0481c9a56abfeb7236d035e2162eca53189643a49203d75fbaac9b6.webp",
+    "ref": "gilberto-silva"
+  },
+  "Michael Essien": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-45674.2db365d73bd366e4c254f65f0b69f31ace594758c7f15298ec36a9c506a8102e.webp",
+    "ref": "michael-essien"
+  },
+  "Gennaro Gattuso": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-243030.36a8ab91359985044e0c755b1f0d21631f59465627e5d3706dcec9e9aad8f4ca.webp",
+    "ref": "gennaro-gattuso"
+  },
+  "Roy Keane": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-240.0ed7c2ed9778a0804aaee1119f62c36dcba98c152aad09fe9c9fffb8e1130cfe.webp",
+    "ref": "roy-keane"
+  },
+  "Robert Pir\u00e8s": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-1605.a12f809b3112f3c70ca1963bf58cd3905b0a9a1ad6a3e5c3cccd55759ccbfb7c.webp",
+    "ref": "robert-pires"
+  },
+  "Esteban Cambiasso": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-138123.4feb70f49c5b44acade555788c64a7cdbd07b3e6f430322f47e537608b4f48aa.webp",
+    "ref": "esteban-cambiasso"
+  },
+  "Juan Sebasti\u00e1n Ver\u00f3n": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-84129107.e51bb013e5d2c3bc62946945a8c8ed963e506cd904b88eaf93742a5ab141ff44.webp",
+    "ref": "juan-sebastian-veron"
+  },
+  "Cesc F\u00e0bregas": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-162895.0bc7a2cc13b9195136ff25029ca1d1c7aff4331c2bad9ed8d6b2d29dfdb81acf.webp",
+    "ref": "cesc-fabregas"
+  },
+  "Daniele De Rossi": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-53302.08219ebd8b46179dc9d64d4f424c58bc3955e3d91ad2ce0d9e5aa2d9c7b8355e.webp",
+    "ref": "daniele-de-rossi"
+  },
+  "Marek Ham\u0161\u00edk": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-171877.a25a563f96956344d288e4681a54bfa9a33aba7be9b5fdd1c9560a27b169725c.webp",
+    "ref": "marek-hamsik"
+  },
+  "Hidetoshi Nakata": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-242625.80a9f7291c170b8f0a17b7879cf492d62111d77c4bd574d7482ea7ccc429adc1.webp",
+    "ref": "hidetoshi-nakata"
+  },
+  "Gabriel Batistuta": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-221162.52c544755c6f8a21636346f406a3324da9f2d2907eedbbfff8e3ed0d6017f789.webp",
+    "ref": "gabriel-batistuta"
+  },
+  "Hern\u00e1n Crespo": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-7512.8c637713e40fe3d35192a2b108b796b5fba82c48f9ed9f78f09a375fd21716ed.webp",
+    "ref": "hernan-crespo"
+  },
+  "Carlos T\u00e9vez": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-274966.be5b2dc62da2c526258275b0bc7e89c9739c2cd53cfc5ab16d1471b6cccb91dd.webp",
+    "ref": "carlos-tevez"
+  },
+  "Diego Forl\u00e1n": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-266691.d280ac71adc73c5fd7bdfe700a906fe7785cbd25f4d45137ec87cf0eee81741e.webp",
+    "ref": "diego-forlan"
+  },
+  "Patrick Kluivert": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-238424.c534f8af937a82671a7145faf1e3e02ab1572eb951a71fefdf60796f0009c01f.webp",
+    "ref": "patrick-kluivert"
+  },
+  "Roy Makaay": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-10704.e7fe301aaef5faf74f9a91aa7ace4e61593ce66535b539535ad375a452c475e8.webp",
+    "ref": "roy-makaay"
+  },
+  "Edin D\u017eeko": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-180930.5701bbd98070d7038d1b5cdbb6f76788ff7ff63da03c32df09cadd1cf55ccfe6.webp",
+    "ref": "edin-dzeko"
+  },
+  "Dimitar Berbatov": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-30110.e3e8f4bc9ed904a2e9e0cecf3bf4a13bb0625e447db67a5b3d24df460e4a3a98.webp",
+    "ref": "dimitar-berbatov"
+  },
+  "Diego Milito": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-262271.a4a0106fa63b5dc3c257e65fdc3ce51c312ef88f947230dd1d149fb061d9e177.webp",
+    "ref": "diego-milito"
+  },
+  "Fernando Morientes": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-5661.1548cdccc4b0d27f7ba4bfcdabcf215c82d090bedce224adc4192b95b172e2a6.webp",
+    "ref": "fernando-morientes"
+  },
+  "Park Ji-sung": {
+    "card_url": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=500/2027/futgg-player-item-card/27-266473.fa6b4f4b4e3db3a91fd40ee53c8a139b975fdb134dc0bc3306420d2ed42f6691.webp",
+    "ref": "park-ji-sung"
+  }
+}
